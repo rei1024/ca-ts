@@ -13,8 +13,8 @@ Deno.test("readRLE cloverleaf", () => {
     "#C https://conwaylife.com/patterns/cloverleafinterchange.rle",
   ]);
   assertEquals(rle.trailingComment, "");
-  assertEquals(rle.size.width, 13);
-  assertEquals(rle.size.height, 13);
+  assertEquals(rle.size?.width, 13);
+  assertEquals(rle.size?.height, 13);
   assertEquals(rle.XRLE, null);
 });
 
@@ -55,24 +55,24 @@ bob$2bo$3o!`);
 
 Deno.test("readRLE header", () => {
   const output = readRLE(`x=3,y=2,rule=B23/S1`);
-  assertEquals(output.size.width, 3);
-  assertEquals(output.size.height, 2);
+  assertEquals(output.size?.width, 3);
+  assertEquals(output.size?.height, 2);
   assertEquals(output.ruleString, "B23/S1");
   assertEquals(output.cells, []);
 });
 
 Deno.test("readRLE header #r rule", () => {
   const output = readRLE(`#r 23/3\nx=3,y=2`);
-  assertEquals(output.size.width, 3);
-  assertEquals(output.size.height, 2);
+  assertEquals(output.size?.width, 3);
+  assertEquals(output.size?.height, 2);
   assertEquals(output.ruleString, "23/3");
   assertEquals(output.cells, []);
 });
 
 Deno.test("readRLE header #r is ignored if rule is present", () => {
   const output = readRLE(`#r 23/3\nx=3,y=2,rule=B23/S1`);
-  assertEquals(output.size.width, 3);
-  assertEquals(output.size.height, 2);
+  assertEquals(output.size?.width, 3);
+  assertEquals(output.size?.height, 2);
   assertEquals(output.ruleString, "B23/S1");
   assertEquals(output.cells, []);
 });
@@ -84,15 +84,14 @@ Deno.test("readRLE comment space prefix", () => {
 
 Deno.test("readRLE header without rule", () => {
   const output = readRLE(`x=4,y=0`);
-  assertEquals(output.size.width, 4);
-  assertEquals(output.size.height, 0);
+  assertEquals(output.size?.width, 4);
+  assertEquals(output.size?.height, 0);
   assertEquals(output.ruleString, "B3/S23");
 });
 
 Deno.test("readRLE empty", () => {
   const output = readRLE(``);
-  assertEquals(output.size.width, 0);
-  assertEquals(output.size.height, 0);
+  assertEquals(output.size, null);
   assertEquals(output.ruleString, ""); // FIXME: default rule
   assertEquals(output.cells, []);
 });
@@ -102,8 +101,7 @@ Deno.test("readRLE b", () => {
   assertEquals(output.cells, []);
   assertEquals(output.comments, []);
   assertEquals(output.XRLE, null);
-  assertEquals(output.size.width, 0);
-  assertEquals(output.size.height, 0);
+  assertEquals(output.size, null);
 });
 
 Deno.test("readRLE 3b", () => {
@@ -265,8 +263,8 @@ Deno.test("readRLE CXRLE with rule", () => {
     { x: 1, y: 2, state: 1 },
   ]);
   assertEquals(output.XRLE, { generation: "0", position: { x: 1, y: 2 } });
-  assertEquals(output.size.width, 2);
-  assertEquals(output.size.height, 3);
+  assertEquals(output.size?.width, 2);
+  assertEquals(output.size?.height, 3);
 });
 
 Deno.test("readRLE trailingComment 1", () => {

@@ -66,7 +66,9 @@ export function writeRLE(rle: RLE, options?: WriteRLEOptions): string {
 
   return [
     ...rle.comments,
-    `x = ${rle.size.width}, y = ${rle.size.height}, rule = ${rle.ruleString}`,
+    (rle.size != null
+      ? `x = ${rle.size.width}, y = ${rle.size.height}, `
+      : "") + `rule = ${rle.ruleString}`,
     ...format(parts, MAX_CHAR),
   ].join(
     "\n",

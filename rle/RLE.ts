@@ -34,7 +34,7 @@ export type RLE = {
   size: {
     width: number;
     height: number;
-  };
+  } | null;
   /**
    * Extended RLE Format
    * "#CXRLE Pos=0,-1377 Gen=34801"

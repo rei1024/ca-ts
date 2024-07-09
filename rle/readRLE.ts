@@ -11,7 +11,7 @@ export class RLEVistor implements IRLEVistor {
   /** rule = ... */
   public ruleString = "";
   /** x = ..., y = ... */
-  public size: { width: number; height: number } = { width: 0, height: 0 };
+  public size: { width: number; height: number } | null = null;
   public XRLE:
     | { position: { x: number; y: number } | null; generation: string | null }
     | null = null;
