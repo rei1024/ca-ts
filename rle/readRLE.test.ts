@@ -13,8 +13,8 @@ Deno.test("readRLE cloverleaf", () => {
     "#C https://conwaylife.com/patterns/cloverleafinterchange.rle",
   ]);
   assertEquals(rle.trailingComment, "");
-  assertEquals(rle.size.width, 13);
-  assertEquals(rle.size.height, 13);
+  assertEquals(rle.size?.width, 13);
+  assertEquals(rle.size?.height, 13);
   assertEquals(rle.XRLE, null);
 });
 
@@ -55,24 +55,32 @@ bob$2bo$3o!`);
 
 Deno.test("readRLE header", () => {
   const output = readRLE(`x=3,y=2,rule=B23/S1`);
-  assertEquals(output.size.width, 3);
-  assertEquals(output.size.height, 2);
+  assertEquals(output.size?.width, 3);
+  assertEquals(output.size?.height, 2);
+  assertEquals(output.ruleString, "B23/S1");
+  assertEquals(output.cells, []);
+});
+
+Deno.test("readRLE header twice", () => {
+  const output = readRLE(`x=3,y=2,rule=B23/S1`);
+  assertEquals(output.size?.width, 3);
+  assertEquals(output.size?.height, 2);
   assertEquals(output.ruleString, "B23/S1");
   assertEquals(output.cells, []);
 });
 
 Deno.test("readRLE header #r rule", () => {
   const output = readRLE(`#r 23/3\nx=3,y=2`);
-  assertEquals(output.size.width, 3);
-  assertEquals(output.size.height, 2);
+  assertEquals(output.size?.width, 3);
+  assertEquals(output.size?.height, 2);
   assertEquals(output.ruleString, "23/3");
   assertEquals(output.cells, []);
 });
 
 Deno.test("readRLE header #r is ignored if rule is present", () => {
   const output = readRLE(`#r 23/3\nx=3,y=2,rule=B23/S1`);
-  assertEquals(output.size.width, 3);
-  assertEquals(output.size.height, 2);
+  assertEquals(output.size?.width, 3);
+  assertEquals(output.size?.height, 2);
   assertEquals(output.ruleString, "B23/S1");
   assertEquals(output.cells, []);
 });
@@ -84,15 +92,14 @@ Deno.test("readRLE comment space prefix", () => {
 
 Deno.test("readRLE header without rule", () => {
   const output = readRLE(`x=4,y=0`);
-  assertEquals(output.size.width, 4);
-  assertEquals(output.size.height, 0);
+  assertEquals(output.size?.width, 4);
+  assertEquals(output.size?.height, 0);
   assertEquals(output.ruleString, "B3/S23");
 });
 
 Deno.test("readRLE empty", () => {
   const output = readRLE(``);
-  assertEquals(output.size.width, 0);
-  assertEquals(output.size.height, 0);
+  assertEquals(output.size, null);
   assertEquals(output.ruleString, ""); // FIXME: default rule
   assertEquals(output.cells, []);
 });
@@ -102,8 +109,7 @@ Deno.test("readRLE b", () => {
   assertEquals(output.cells, []);
   assertEquals(output.comments, []);
   assertEquals(output.XRLE, null);
-  assertEquals(output.size.width, 0);
-  assertEquals(output.size.height, 0);
+  assertEquals(output.size, null);
 });
 
 Deno.test("readRLE 3b", () => {
@@ -265,8 +271,8 @@ Deno.test("readRLE CXRLE with rule", () => {
     { x: 1, y: 2, state: 1 },
   ]);
   assertEquals(output.XRLE, { generation: "0", position: { x: 1, y: 2 } });
-  assertEquals(output.size.width, 2);
-  assertEquals(output.size.height, 3);
+  assertEquals(output.size?.width, 2);
+  assertEquals(output.size?.height, 3);
 });
 
 Deno.test("readRLE trailingComment 1", () => {
@@ -299,4 +305,27 @@ Deno.test("readRLE error invalid state 256", () => {
 Deno.test("readRLE 'Illegal multi-char state'", () => {
   const output = readRLE("pY");
   assertEquals(output.cells, [{ x: 0, y: 0, state: 1 }]);
+});
+
+Deno.test("readRLE forgiving niemiec cells", () => {
+  const output = readRLE(`#N 16chacha.rle
+#O Mark D. Niemiec's life synthesis database, Thu Feb 19 02:03:06 2015
+x = 129, y = 46, rule = B3/S23
+61bobo$61boo$62bo3$49bobo$50boo$50bo6$110bo$109bo$109b3o$114bo$64bobo
+46bo$48b3o13boo31bo15b3o$50bo14bo19bx12bo6bo$obo3bo33bo8bo34bxbx9b3o5b
+obo17bx$booboo19bx12bobo14bo8b3o17bxbx17bobo8bo6bxbxbx$bo3boo17bxbx12b
+oo3bo9bobo7bo16bxxbxbxbx4b3o5boobobobo5bo7bxbxbxbx$23bxbx19bo7bobo9bo
+3boo10bxbxbxbxx6bo5boboboboo5b3o4bxbxbxbx$bboo20bx18b3o8bo14bobo11bxbx
+8bo8bobo17bxbxbx$boo57bo8bo13bxbx17bobo5b3o11bx$3bo40bo14bo24bx19bo6bo
+$44boo13b3o32b3o15bo$43bobo50bo$95bo$98b3o$100bo$99bo6$59bo$58boo$58bo
+bo3$47bo$47boo$46bobo!
+  `);
+  assertEquals(output.cells.length, 183);
+});
+
+Deno.test("readRLE forgiving niemiec cells 2", () => {
+  const output = readRLE(`x = 0, y = 0, rule = B3/S23
+61z!
+  `);
+  assertEquals(output.cells.length, 0);
 });

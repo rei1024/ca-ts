@@ -41,6 +41,11 @@ export function writeRLE(rle: RLE, options?: WriteRLEOptions): string {
       );
       prevX = -1;
     }
+
+    if (prevY > cell.y || (prevX !== -1 && prevX > cell.x)) {
+      throw new Error("cells must be sorted");
+    }
+
     if (prevX === -1) {
       if (cell.x !== 0) {
         items.push({ count: cell.x, value: emptyCellChar });
@@ -66,10 +71,33 @@ export function writeRLE(rle: RLE, options?: WriteRLEOptions): string {
 
   return [
     ...rle.comments,
-    `x = ${rle.size.width}, y = ${rle.size.height}, rule = ${rle.ruleString}`,
+    (rle.size != null
+      ? `x = ${rle.size.width}, y = ${rle.size.height}, `
+      : (() => {
+        const { width, height } = max(rle.cells);
+        return `x = ${width}, y = ${height}, `;
+      })()) + `rule = ${rle.ruleString}`,
     ...format(parts, MAX_CHAR),
   ].join(
     "\n",
   ) + rle.trailingComment +
     "\n";
+}
+
+function max(cells: CACell[]): { width: number; height: number } {
+  if (cells.length === 0) {
+    return { width: 0, height: 0 };
+  }
+
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const cell of cells) {
+    maxX = Math.max(maxX, cell.x);
+    maxY = Math.max(maxY, cell.y);
+  }
+
+  return {
+    width: maxX + 1,
+    height: maxY + 1,
+  };
 }
