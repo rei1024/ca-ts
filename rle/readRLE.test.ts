@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { readRLE } from "./readRLE.ts";
 import { RLE_TEST_DATA } from "./test-data/mod.ts";
 
@@ -288,4 +288,15 @@ Deno.test("readRLE trailingComment 3", () => {
     `#CXRLE Gen=0 Pos=1,2\nx = 2, y = 3, rule = B3/S23\no!abc\ndef\nghi`,
   );
   assertEquals(output.trailingComment, "abc\ndef\nghi");
+});
+
+Deno.test("readRLE error invalid state 256", () => {
+  assertThrows(() => {
+    const x = readRLE("yP");
+  }, "invalid state");
+});
+
+Deno.test("readRLE 'Illegal multi-char state'", () => {
+  const output = readRLE("pY");
+  assertEquals(output.cells, [{ x: 0, y: 0, state: 1 }]);
 });

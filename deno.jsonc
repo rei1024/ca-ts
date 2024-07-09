@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
     "strict": true,
+    "exactOptionalPropertyTypes": true,
     "useUnknownInCatchVariables": true,
     "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true
   },
-  "imports": { "@std/assert": "jsr:@std/assert@^1.0.0" },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@^1.0.0"
+  },
   "tasks": {
     "t": "deno test --doc",
     "w": "deno test --watch",

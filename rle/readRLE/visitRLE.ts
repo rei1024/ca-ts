@@ -125,6 +125,9 @@ class VisitState {
           }
           const x = this.offsetX + this.x;
           const y = this.offsetY + this.y;
+          if (state > 255) {
+            throw new Error("invalid state");
+          }
           for (let j = 0; j < n; j++) {
             visitor.visitCell(x + j, y, state);
           }
