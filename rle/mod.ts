@@ -1,6 +1,9 @@
 /**
- * Run Length Encoded file format
+ * Run Length Encoded (RLE) file format parser and writer
  *
+ * RLE is a file format for storing cellular automaton patterns used by programs such as [Golly](https://golly.sourceforge.io/).
+ *
+ * ### Example
  * ```ts
  * import { readRLE, writeRLE, type RLE } from "@ca-ts/rle";
  * import { assertEquals } from "@std/assert";
