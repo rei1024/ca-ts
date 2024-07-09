@@ -22,3 +22,6 @@ jobs:
 
       - name: Check
         run: deno task ok
+
+      - name: Publish (Dry Run)
+        run: deno publish --dry-run
