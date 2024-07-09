@@ -9,7 +9,7 @@
   "tasks": {
     "t": "deno test --doc",
     "w": "deno test --watch",
-    "ok": "deno lint && deno fmt --check"
+    "ok": "deno lint && deno task t && deno fmt --check"
   },
   "exclude": [
     ".git"

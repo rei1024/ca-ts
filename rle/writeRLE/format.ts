@@ -1,12 +1,12 @@
 /**
- * 1行の文字数が`MAX_CHAR`以下になるようにする
+ * Ensure that the number of characters in one line is less than `MAX_CHAR`.
  */
 export function format(parts: string[], MAX_CHAR: number): string[] {
   const lines: string[] = [];
   let line: string | undefined = undefined;
 
   for (const part of parts) {
-    // TODO partに改行が含まれる場合
+    // TODO: when `part` contains "\n"
     const nextLineLength = (line?.length ?? 0) + part.length;
     if (nextLineLength > MAX_CHAR) {
       if (line !== undefined) {

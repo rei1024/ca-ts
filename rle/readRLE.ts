@@ -10,10 +10,8 @@ export class RLEVistor implements IRLEVistor {
   public trailingComment: string = "";
   /** rule = ... */
   public ruleString = "";
-  /** x = ... */
-  public width = 0;
-  /** y = ... */
-  public height = 0;
+  /** x = ..., y = ... */
+  public size: { width: number; height: number } = { width: 0, height: 0 };
   public XRLE:
     | { position: { x: number; y: number } | null; generation: string | null }
     | null = null;
@@ -40,8 +38,7 @@ export class RLEVistor implements IRLEVistor {
     if (isNaN(x) || isNaN(y)) {
       throw Error("Parse error");
     }
-    this.width = x;
-    this.height = y;
+    this.size = { width: x, height: y };
   }
 
   visitRule(ruleString: string): void {
@@ -66,10 +63,7 @@ export function readRLE(source: string): RLE {
     comments: visitor.comments,
     trailingComment: visitor.trailingComment,
     ruleString: visitor.ruleString,
-    size: {
-      width: visitor.width,
-      height: visitor.height,
-    },
+    size: visitor.size,
     XRLE: visitor.XRLE,
   };
 }
