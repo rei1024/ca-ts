@@ -1,5 +1,5 @@
 /**
- * Ensure that the number of characters in one line is less than `MAX_CHAR`.
+ * Ensure that the number of characters in one line is less than or equal to `MAX_CHAR`.
  */
 export function format(parts: string[], MAX_CHAR: number): string[] {
   const lines: string[] = [];

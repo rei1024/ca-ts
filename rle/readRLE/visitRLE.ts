@@ -44,6 +44,7 @@ class VisitState {
   constructor(
     private visitor: IRLEVistor,
   ) {}
+
   read(lines: Iterable<string>) {
     const trailingCommentLines: string[] = [];
     let rleFinished = false;

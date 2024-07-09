@@ -32,7 +32,7 @@ export function writeRLE(rle: RLE, options?: WriteRLEOptions): string {
 
   for (const cell of cells) {
     const prevY = prevCell?.y ?? 0;
-    // -1は新しい行
+    // -1 is new line
     let prevX = prevCell?.x ?? -1;
 
     if (cell.y !== prevY) {
