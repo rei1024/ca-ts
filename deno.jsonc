@@ -5,8 +5,7 @@
     "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true
   },
-  "imports": {
-  },
+  "imports": { "@std/assert": "jsr:@std/assert@^0.226.0" },
   "tasks": {
     "t": "deno test",
     "ok": "deno lint && deno fmt --check"
@@ -15,7 +14,7 @@
     ".git"
   ],
   "publish": {
-    "exclude": ["docs", ".vscode"]
+    "exclude": ["docs", ".vscode", "rle/test-data"]
   },
   "lint": {
     "rules": {
