@@ -1,9 +1,9 @@
-import type { RLE } from "./RLE.ts";
+import type { CACell, RLE } from "./RLE.ts";
 
 import { type IRLEVisitor, visitRLE } from "./readRLE/visitRLE.ts";
 
 export class RLEVisitor implements IRLEVisitor {
-  public cells: { x: number; y: number; state: number }[] = [];
+  public cells: CACell[] = [];
   /** include # */
   public comments: string[] = [];
   /** include # */
@@ -46,7 +46,7 @@ export class RLEVisitor implements IRLEVisitor {
   }
 
   visitCell(x: number, y: number, state: number): void {
-    this.cells.push({ x, y, state });
+    this.cells.push({ position: { x, y }, state });
   }
 }
 

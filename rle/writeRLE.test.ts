@@ -2,6 +2,11 @@ import { assertEquals, assertThrows } from "@std/assert";
 import { RLE_TEST_DATA } from "./test-data/mod.ts";
 import { readRLE } from "./readRLE.ts";
 import { writeRLE } from "./writeRLE.ts";
+import type { CACell } from "./mod.ts";
+
+function makeCells(list: { x: number; y: number }[]): CACell[] {
+  return list.map((p) => ({ position: p, state: 1 }));
+}
 
 Deno.test("writeRLE", () => {
   assertEquals(
@@ -64,11 +69,11 @@ Deno.test("writeRLE", () => {
 
   assertEquals(
     writeRLE({
-      cells: [
-        { x: 0, y: 0, state: 1 },
-        { x: 1, y: 0, state: 1 },
-        { x: 2, y: 0, state: 1 },
-      ],
+      cells: makeCells([
+        { x: 0, y: 0 },
+        { x: 1, y: 0 },
+        { x: 2, y: 0 },
+      ]),
       comments: [],
       trailingComment: "",
       ruleString: "B3/S23",
@@ -80,10 +85,10 @@ Deno.test("writeRLE", () => {
 
   assertEquals(
     writeRLE({
-      cells: [
-        { x: 1, y: 3, state: 1 },
-        { x: 1, y: 10, state: 1 },
-      ],
+      cells: makeCells([
+        { x: 1, y: 3 },
+        { x: 1, y: 10 },
+      ]),
       comments: [],
       trailingComment: "",
       ruleString: "B3/S23",
@@ -95,11 +100,11 @@ Deno.test("writeRLE", () => {
 
   assertEquals(
     writeRLE({
-      cells: [
-        { x: 0, y: 0, state: 1 },
-        { x: 1, y: 0, state: 1 },
-        { x: 2, y: 0, state: 1 },
-      ],
+      cells: makeCells([
+        { x: 0, y: 0 },
+        { x: 1, y: 0 },
+        { x: 2, y: 0 },
+      ]),
       comments: ["#N Blinker"],
       trailingComment: "",
       ruleString: "B3/S23",
@@ -119,7 +124,7 @@ x = 3, y = 1, rule = B3/S23
 Deno.test("writeRLE not sorted", () => {
   assertThrows(() => {
     writeRLE({
-      cells: [{ x: 1, y: 0, state: 1 }, { x: 0, y: 0, state: 1 }],
+      cells: makeCells([{ x: 1, y: 0 }, { x: 0, y: 0 }]),
       comments: [],
       trailingComment: "",
       ruleString: "B3/S23",
@@ -133,7 +138,7 @@ Deno.test("writeRLE not sorted", () => {
 
   assertThrows(() => {
     writeRLE({
-      cells: [{ x: 0, y: 1, state: 1 }, { x: 0, y: 0, state: 1 }],
+      cells: makeCells([{ x: 0, y: 1 }, { x: 0, y: 0 }]),
       comments: [],
       trailingComment: "",
       ruleString: "B3/S23",
@@ -149,7 +154,7 @@ Deno.test("writeRLE not sorted", () => {
 Deno.test("writeRLE invalid state", () => {
   assertThrows(() => {
     writeRLE({
-      cells: [{ x: 1, y: 0, state: 256 }],
+      cells: [{ position: { x: 1, y: 0 }, state: 256 }],
       comments: [],
       trailingComment: "",
       ruleString: "B3/S23",
@@ -163,7 +168,7 @@ Deno.test("writeRLE invalid state", () => {
 
   assertThrows(() => {
     writeRLE({
-      cells: [{ x: 1, y: 0, state: -1 }],
+      cells: [{ position: { x: 1, y: 0 }, state: -1 }],
       comments: [],
       trailingComment: "",
       ruleString: "B3/S23",
@@ -177,7 +182,7 @@ Deno.test("writeRLE invalid state", () => {
 
   assertThrows(() => {
     writeRLE({
-      cells: [{ x: 1, y: 0, state: 0.5 }],
+      cells: [{ position: { x: 1, y: 0 }, state: 0.5 }],
       comments: [],
       trailingComment: "",
       ruleString: "B3/S23",
@@ -191,7 +196,37 @@ Deno.test("writeRLE invalid state", () => {
 
   assertThrows(() => {
     writeRLE({
-      cells: [{ x: 1, y: 0, state: NaN }],
+      cells: [{ position: { x: 1, y: 0 }, state: NaN }],
+      comments: [],
+      trailingComment: "",
+      ruleString: "B3/S23",
+      size: {
+        width: 0,
+        height: 0,
+      },
+      XRLE: null,
+    });
+  });
+});
+
+Deno.test("writeRLE negative position", () => {
+  assertThrows(() => {
+    writeRLE({
+      cells: [{ position: { x: -1, y: 0 }, state: 1 }],
+      comments: [],
+      trailingComment: "",
+      ruleString: "B3/S23",
+      size: {
+        width: 0,
+        height: 0,
+      },
+      XRLE: null,
+    });
+  });
+
+  assertThrows(() => {
+    writeRLE({
+      cells: [{ position: { x: 1, y: -1 }, state: 1 }],
       comments: [],
       trailingComment: "",
       ruleString: "B3/S23",
@@ -245,7 +280,7 @@ obo$35b3o3b3o29bo$36bo5bo30b2o2$35b2o5b2o$35b2o5b2o!\n`);
 
 Deno.test("writeRLE 1..255", () => {
   const cells = Array(255).fill(null).map((_, i) => i + 1).map((s) => {
-    return { x: s, y: 0, state: s };
+    return { position: { x: s, y: 0 }, state: s };
   });
 
   const str = writeRLE({

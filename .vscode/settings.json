@@ -1,5 +1,6 @@
 {
   "editor.defaultFormatter": "denoland.vscode-deno",
   "editor.formatOnSave": true,
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "typescript.preferences.preferTypeOnlyAutoImports": true
 }

@@ -1,0 +1,18 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "ignorePaths": ["./rle/test-data/mod.ts"],
+  "words": [
+    "bobo",
+    "bobobobo",
+    "XRLE",
+    "CXRLE",
+    "chacha",
+    "Goucher",
+    "niemiec",
+    "IRLE",
+    "conwaylife",
+    "deno",
+    "denoland"
+  ]
+}
