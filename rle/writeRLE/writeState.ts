@@ -8,8 +8,11 @@ for (let i = 0; i < 256; i++) {
 }
 
 export function writeState(state: number, isMultiState: boolean): string {
-  if (!isMultiState) return state === 1 ? "o" : "b";
   if (!Number.isInteger(state)) throw new Error("invalid state");
+  if (state < 0) throw new Error("invalid state");
+
+  if (!isMultiState) return state === 1 ? "o" : "b";
+
   if (state > 255) throw new Error("invalid state");
 
   return states[state] ?? (() => {
