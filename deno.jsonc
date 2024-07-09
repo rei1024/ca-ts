@@ -7,14 +7,15 @@
   },
   "imports": { "@std/assert": "jsr:@std/assert@^0.226.0" },
   "tasks": {
-    "t": "deno test",
+    "t": "deno test --doc",
+    "w": "deno test --watch",
     "ok": "deno lint && deno fmt --check"
   },
   "exclude": [
     ".git"
   ],
   "publish": {
-    "exclude": ["docs", ".vscode", "rle/test-data"]
+    "exclude": ["docs", ".vscode"]
   },
   "lint": {
     "rules": {
