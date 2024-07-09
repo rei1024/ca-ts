@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { readRLE } from "./readRLE.ts";
 import { RLE_TEST_DATA } from "./test-data/mod.ts";
 
@@ -61,6 +61,22 @@ Deno.test("readRLE header", () => {
   assertEquals(output.cells, []);
 });
 
+Deno.test("readRLE header #r rule", () => {
+  const output = readRLE(`#r 23/3\nx=3,y=2`);
+  assertEquals(output.size.width, 3);
+  assertEquals(output.size.height, 2);
+  assertEquals(output.ruleString, "23/3");
+  assertEquals(output.cells, []);
+});
+
+Deno.test("readRLE header #r is ignored if rule is present", () => {
+  const output = readRLE(`#r 23/3\nx=3,y=2,rule=B23/S1`);
+  assertEquals(output.size.width, 3);
+  assertEquals(output.size.height, 2);
+  assertEquals(output.ruleString, "B23/S1");
+  assertEquals(output.cells, []);
+});
+
 Deno.test("readRLE comment space prefix", () => {
   const output = readRLE(`#C Comment 1\n  #C Comment 2\nx=3,y=2,rule=B23/S1`);
   assertEquals(output.comments, ["#C Comment 1", "  #C Comment 2"]);
@@ -111,19 +127,12 @@ o
    o
 
 `);
-  assertEquals(output.cells, [{ x: 0, y: 0, state: 1 }, {
-    x: 1,
-    y: 0,
-    state: 1,
-  }, {
-    x: 2,
-    y: 0,
-    state: 1,
-  }, {
-    x: 3,
-    y: 0,
-    state: 1,
-  }]);
+  assertEquals(output.cells, [
+    { x: 0, y: 0, state: 1 },
+    { x: 1, y: 0, state: 1 },
+    { x: 2, y: 0, state: 1 },
+    { x: 3, y: 0, state: 1 },
+  ]);
 });
 
 Deno.test("readRLE 2o", () => {
@@ -239,9 +248,13 @@ Deno.test("readRLE 2$", () => {
 
 Deno.test("readRLE CXRLE", () => {
   const output = readRLE(`#CXRLE Gen=0 Pos=1,2\no`);
+  assertEquals(output.XRLE, { generation: "0", position: { x: 1, y: 2 } });
   assertEquals(output.cells, [
     { x: 1, y: 2, state: 1 },
   ]);
+
+  // convertible to JSON
+  JSON.stringify(output);
 });
 
 Deno.test("readRLE CXRLE with rule", () => {
@@ -275,4 +288,15 @@ Deno.test("readRLE trailingComment 3", () => {
     `#CXRLE Gen=0 Pos=1,2\nx = 2, y = 3, rule = B3/S23\no!abc\ndef\nghi`,
   );
   assertEquals(output.trailingComment, "abc\ndef\nghi");
+});
+
+Deno.test("readRLE error invalid state 256", () => {
+  assertThrows(() => {
+    const x = readRLE("yP");
+  }, "invalid state");
+});
+
+Deno.test("readRLE 'Illegal multi-char state'", () => {
+  const output = readRLE("pY");
+  assertEquals(output.cells, [{ x: 0, y: 0, state: 1 }]);
 });
