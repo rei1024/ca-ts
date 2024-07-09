@@ -31,9 +31,6 @@ const A_CODE = "A".charCodeAt(0);
 const ZERO_CODE = "0".charCodeAt(0);
 const LOWER_P_CODE = "p".charCodeAt(0);
 
-/**
- * https://sourceforge.net/p/golly/code/ci/62b3eb0c4195066cfabc3c0a7b1d3ee7643c1222/tree/gollybase/readpattern.cpp
- */
 class VisitState {
   private x = 0;
   private y = 0;
@@ -112,12 +109,11 @@ class VisitState {
             state = 24 * (c.charCodeAt(0) - LOWER_P_CODE + 1);
             i++;
             const c2 = line[i];
-            if (c2 === undefined) {
-              throw Error("Parse error");
-            }
-            if ("A" <= c2 && c2 <= "X") {
+            if (c2 !== undefined && "A" <= c2 && c2 <= "X") {
               state = state + c2.charCodeAt(0) - A_CODE + 1;
             } else {
+              // allow Niemiec cells ('z' and 'x')
+              // if (c2 === undefined) {}
               // return "Illegal multi-char state"
               state = 1;
               i--;

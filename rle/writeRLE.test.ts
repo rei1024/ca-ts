@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { RLE_TEST_DATA } from "./test-data/mod.ts";
 import { readRLE } from "./readRLE.ts";
 import { writeRLE } from "./writeRLE.ts";
@@ -49,6 +49,35 @@ Deno.test("writeRLE", () => {
     "x = 0, y = 0, rule = B3/S23\n!abc\ndef\n",
   );
 
+  assertThrows(() => {
+    writeRLE({
+      cells: [{ x: 1, y: 0, state: 1 }, { x: 0, y: 0, state: 1 }],
+      comments: [],
+      trailingComment: "",
+      ruleString: "B3/S23",
+      size: {
+        width: 0,
+        height: 0,
+      },
+      XRLE: null,
+    });
+  });
+
+  assertThrows(() => {
+    writeRLE({
+      cells: [{ x: 0, y: 1, state: 1 }, { x: 0, y: 0, state: 1 }],
+      comments: [],
+      trailingComment: "",
+      ruleString: "B3/S23",
+      size: {
+        width: 0,
+        height: 0,
+      },
+      XRLE: null,
+    });
+  });
+
+  // empty size
   assertEquals(
     writeRLE({
       cells: [],
@@ -58,7 +87,38 @@ Deno.test("writeRLE", () => {
       size: null,
       XRLE: null,
     }),
-    "rule = B3/S23\n!\n",
+    "x = 0, y = 0, rule = B3/S23\n!\n",
+  );
+
+  assertEquals(
+    writeRLE({
+      cells: [
+        { x: 0, y: 0, state: 1 },
+        { x: 1, y: 0, state: 1 },
+        { x: 2, y: 0, state: 1 },
+      ],
+      comments: [],
+      trailingComment: "",
+      ruleString: "B3/S23",
+      size: null,
+      XRLE: null,
+    }),
+    "x = 3, y = 1, rule = B3/S23\n3o!\n",
+  );
+
+  assertEquals(
+    writeRLE({
+      cells: [
+        { x: 1, y: 3, state: 1 },
+        { x: 1, y: 10, state: 1 },
+      ],
+      comments: [],
+      trailingComment: "",
+      ruleString: "B3/S23",
+      size: null,
+      XRLE: null,
+    }),
+    "x = 2, y = 11, rule = B3/S23\n3$bo7$bo!\n",
   );
 
   assertEquals(

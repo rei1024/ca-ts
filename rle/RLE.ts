@@ -8,6 +8,9 @@
 export type RLE = {
   /**
    * Cells
+   *
+   * Must be sorted lexicographically on (y, x)
+   * @example [{ x: 2, y: 0, state: 1 }]
    */
   cells: CACell[];
   /**
@@ -20,7 +23,7 @@ export type RLE = {
   /**
    * after !
    *
-   * maybe include "\n"
+   * may include "\n"
    */
   trailingComment: string;
   /**
@@ -32,7 +35,9 @@ export type RLE = {
    * "x = ..., y = ..."
    */
   size: {
+    /** x */
     width: number;
+    /** y */
     height: number;
   } | null;
   /**
@@ -54,19 +59,24 @@ export type RLE = {
   } | null;
 };
 
+/**
+ * A cell of cellular automataon
+ */
 export type CACell = {
   /**
    * x coordinate
+   * `>= 0`
    */
   x: number;
   /**
    * y coordinate
+   * `>= 0`
    */
   y: number;
   /**
    * State of the cell (non zero)
    *
-   * 1, 2, ...
+   * 1..255 (inclusive)
    * @example 1
    */
   state: number;
