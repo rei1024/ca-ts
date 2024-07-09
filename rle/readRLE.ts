@@ -1,8 +1,8 @@
 import type { RLE } from "./RLE.ts";
 
-import { type IRLEVistor, visitRLE } from "./readRLE/visitRLE.ts";
+import { type IRLEVisitor, visitRLE } from "./readRLE/visitRLE.ts";
 
-export class RLEVistor implements IRLEVistor {
+export class RLEVisitor implements IRLEVisitor {
   public cells: { x: number; y: number; state: number }[] = [];
   /** include # */
   public comments: string[] = [];
@@ -55,7 +55,7 @@ export class RLEVistor implements IRLEVistor {
  * @throws
  */
 export function readRLE(source: string): RLE {
-  const visitor = new RLEVistor();
+  const visitor = new RLEVisitor();
   visitRLE(visitor, source);
 
   return {

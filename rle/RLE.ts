@@ -60,7 +60,7 @@ export type RLE = {
 };
 
 /**
- * A cell of cellular automataon
+ * A cell of cellular automaton
  */
 export type CACell = {
   /**
