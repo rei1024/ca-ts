@@ -248,9 +248,13 @@ Deno.test("readRLE 2$", () => {
 
 Deno.test("readRLE CXRLE", () => {
   const output = readRLE(`#CXRLE Gen=0 Pos=1,2\no`);
+  assertEquals(output.XRLE, { generation: "0", position: { x: 1, y: 2 } });
   assertEquals(output.cells, [
     { x: 1, y: 2, state: 1 },
   ]);
+
+  // convertible to JSON
+  JSON.stringify(output);
 });
 
 Deno.test("readRLE CXRLE with rule", () => {

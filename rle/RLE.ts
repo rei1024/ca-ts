@@ -1,7 +1,7 @@
 /**
  * Run Length Encoded file format
  *
- * ### Reference
+ * ## Reference
  * - [Run Length Encoded | LifeWiki](https://conwaylife.com/wiki/Run_Length_Encoded)
  * - [Extended RLE format | Golly Help](https://golly.sourceforge.io/Help/formats.html#rle)
  */
