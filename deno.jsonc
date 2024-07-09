@@ -12,9 +12,11 @@
     "ok": "deno lint && deno fmt --check"
   },
   "exclude": [
-    ".git",
-    "docs"
+    ".git"
   ],
+  "publish": {
+    "exclude": ["docs", ".vscode"]
+  },
   "lint": {
     "rules": {
       "include": [
