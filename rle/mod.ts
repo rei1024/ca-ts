@@ -4,6 +4,7 @@
  * ```ts
  * import { readRLE, writeRLE, type RLE } from "@ca-ts/rle";
  * import { assertEquals } from "@std/assert";
+ *
  * const rle: RLE = readRLE(`#N Glider
  * #O Richard K. Guy
  * #C The smallest, most common, and first discovered spaceship. Diagonal, has period 4 and speed c/4.
@@ -66,6 +67,6 @@
  * @module
  */
 
-export type { RLE } from "./RLE.ts";
+export type { CACell, RLE } from "./RLE.ts";
 export { readRLE } from "./readRLE.ts";
 export { writeRLE } from "./writeRLE.ts";
