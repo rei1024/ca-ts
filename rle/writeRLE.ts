@@ -6,7 +6,7 @@ import { writeState } from "./writeRLE/writeState.ts";
 /**
  * Option for {@link writeRLE}
  */
-type WriteRLEOption = {
+export type WriteRLEOptions = {
   /** Use "." and "A" for two states cells if true */
   forceMultiState?: boolean;
   /** max character count for a line. default is 70. */
@@ -16,7 +16,7 @@ type WriteRLEOption = {
 /**
  * Convert {@link RLE} to string.
  */
-export function writeRLE(rle: RLE, options?: WriteRLEOption): string {
+export function writeRLE(rle: RLE, options?: WriteRLEOptions): string {
   const MAX_CHAR = options?.maxLineChars ?? 70;
 
   const cells = rle.cells.filter((cell) => cell.state !== 0);

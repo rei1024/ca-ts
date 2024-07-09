@@ -69,4 +69,4 @@
 
 export type { CACell, RLE } from "./RLE.ts";
 export { readRLE } from "./readRLE.ts";
-export { writeRLE } from "./writeRLE.ts";
+export { writeRLE, type WriteRLEOptions } from "./writeRLE.ts";
