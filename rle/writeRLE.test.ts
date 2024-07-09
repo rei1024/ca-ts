@@ -51,6 +51,18 @@ Deno.test("writeRLE", () => {
 
   assertEquals(
     writeRLE({
+      cells: [],
+      comments: [],
+      trailingComment: "",
+      ruleString: "B3/S23",
+      size: null,
+      XRLE: null,
+    }),
+    "rule = B3/S23\n!\n",
+  );
+
+  assertEquals(
+    writeRLE({
       cells: [
         { x: 0, y: 0, state: 1 },
         { x: 1, y: 0, state: 1 },
