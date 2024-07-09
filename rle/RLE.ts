@@ -64,9 +64,10 @@ export type CACell = {
    */
   y: number;
   /**
-   * State of the cell
+   * State of the cell (non zero)
    *
-   * 0, 1, ...
+   * 1, 2, ...
+   * @example 1
    */
   state: number;
 };
