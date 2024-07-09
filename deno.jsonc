@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "useUnknownInCatchVariables": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true
+  },
+  "imports": {
+  },
+  "tasks": {
+    "t": "deno test",
+    "ok": "deno lint && deno fmt --check"
+  },
+  "exclude": [
+    ".git",
+    "docs"
+  ],
+  "lint": {
+    "rules": {
+      "include": [
+        "camelcase",
+        "no-sync-fn-in-async-fn",
+        "single-var-declarator",
+        "verbatim-module-syntax"
+      ],
+      "exclude": ["no-unused-vars"]
+    }
+  },
+  "workspaces": [
+    "./rle"
+  ]
+}
