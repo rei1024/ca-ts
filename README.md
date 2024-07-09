@@ -2,6 +2,9 @@
 
 Cellular Automaton Library for TypeScript
 
+These packages are published on [JSR](https://jsr.io/) and are available for use
+in Node.js and Deno.
+
 ## Packages
 
 | Package                          | Latest version                                                        | Description                    |

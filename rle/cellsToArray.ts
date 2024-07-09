@@ -2,6 +2,7 @@ import type { CACell } from "./RLE.ts";
 import { getSizeOfCells } from "./getSizeOfCells.ts";
 
 /**
+ * Convert a list of cells to a two-dimensional array.
  * @param cells RLE
  * @returns 2 dim array of states
  */
@@ -13,6 +14,7 @@ export function cellsToArray(
   const array = Array(size.height).fill(0).map(() =>
     Array(size.width).fill(0).map(() => 0)
   );
+
   for (const cell of cells) {
     const row = array[cell.position.y];
     if (row === undefined) {
