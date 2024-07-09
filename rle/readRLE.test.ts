@@ -61,6 +61,22 @@ Deno.test("readRLE header", () => {
   assertEquals(output.cells, []);
 });
 
+Deno.test("readRLE header #r rule", () => {
+  const output = readRLE(`#r 23/3\nx=3,y=2`);
+  assertEquals(output.size.width, 3);
+  assertEquals(output.size.height, 2);
+  assertEquals(output.ruleString, "23/3");
+  assertEquals(output.cells, []);
+});
+
+Deno.test("readRLE header #r is ignored if rule is present", () => {
+  const output = readRLE(`#r 23/3\nx=3,y=2,rule=B23/S1`);
+  assertEquals(output.size.width, 3);
+  assertEquals(output.size.height, 2);
+  assertEquals(output.ruleString, "B23/S1");
+  assertEquals(output.cells, []);
+});
+
 Deno.test("readRLE comment space prefix", () => {
   const output = readRLE(`#C Comment 1\n  #C Comment 2\nx=3,y=2,rule=B23/S1`);
   assertEquals(output.comments, ["#C Comment 1", "  #C Comment 2"]);
@@ -111,19 +127,12 @@ o
    o
 
 `);
-  assertEquals(output.cells, [{ x: 0, y: 0, state: 1 }, {
-    x: 1,
-    y: 0,
-    state: 1,
-  }, {
-    x: 2,
-    y: 0,
-    state: 1,
-  }, {
-    x: 3,
-    y: 0,
-    state: 1,
-  }]);
+  assertEquals(output.cells, [
+    { x: 0, y: 0, state: 1 },
+    { x: 1, y: 0, state: 1 },
+    { x: 2, y: 0, state: 1 },
+    { x: 3, y: 0, state: 1 },
+  ]);
 });
 
 Deno.test("readRLE 2o", () => {
