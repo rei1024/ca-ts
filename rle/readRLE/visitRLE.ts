@@ -1,6 +1,6 @@
 import { parseXRLELine } from "./XRLE.ts";
 
-export type IRLEVistor = {
+export type IRLEVisitor = {
   /**
    * Extended RLE Format
    * "#CXRLE Pos=0,-1377 Gen=34801"
@@ -39,7 +39,7 @@ class VisitState {
   private offsetY = 0;
 
   constructor(
-    private visitor: IRLEVistor,
+    private visitor: IRLEVisitor,
   ) {}
 
   read(lines: Iterable<string>) {
@@ -178,7 +178,7 @@ class VisitState {
   }
 }
 
-export function visitRLE(visitor: IRLEVistor, source: string): void {
+export function visitRLE(visitor: IRLEVisitor, source: string): void {
   const visitState = new VisitState(visitor);
   visitState.read(source.split(/\n|\r\n/g));
 }

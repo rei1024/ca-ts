@@ -10,14 +10,16 @@ export type RLE = {
    * Cells
    *
    * Must be sorted lexicographically on (y, x)
-   * @example [{ x: 2, y: 0, state: 1 }]
+   *
+   * Example: `[{ position: { x: 2, y: 0 }, state: 1 }]`
    */
   cells: CACell[];
   /**
    * includes '#'
    *
    * may contains space before '#'
-   * @example ['#C Comment', '   #C Comment 2']
+   *
+   * Example: `['#C Comment', '   #C Comment 2']`
    */
   comments: string[];
   /**
@@ -28,7 +30,8 @@ export type RLE = {
   trailingComment: string;
   /**
    * "rule = ..."
-   * @example 'B3/S23'
+   *
+   * Example: 'B3/S23'
    */
   ruleString: string;
   /**
@@ -60,24 +63,26 @@ export type RLE = {
 };
 
 /**
- * A cell of cellular automataon
+ * A cell of cellular automaton
  */
 export type CACell = {
-  /**
-   * x coordinate
-   * `>= 0`
-   */
-  x: number;
-  /**
-   * y coordinate
-   * `>= 0`
-   */
-  y: number;
+  /** Position of the cell */
+  position: {
+    /**
+     * x coordinate
+     * `>= 0`
+     */
+    x: number;
+    /**
+     * y coordinate
+     * `>= 0`
+     */
+    y: number;
+  };
   /**
    * State of the cell (non zero)
    *
    * 1..255 (inclusive)
-   * @example 1
    */
   state: number;
 };

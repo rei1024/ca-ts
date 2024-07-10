@@ -12,7 +12,8 @@
   "tasks": {
     "t": "deno test --doc",
     "w": "deno test --watch",
-    "ok": "deno lint && deno task t && deno fmt --check"
+    "ok": "deno lint && deno task t && deno fmt --check",
+    "spell": "npx cspell ."
   },
   "exclude": [
     ".git"
@@ -32,6 +33,7 @@
     }
   },
   "workspaces": [
-    "./rle"
+    "./rle",
+    "./plaintext"
   ]
 }

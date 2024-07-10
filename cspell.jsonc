@@ -1,0 +1,19 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "ignorePaths": ["./rle/test-data/mod.ts", "deno.lock"],
+  "words": [
+    "bobo",
+    "bobobobo",
+    "XRLE",
+    "CXRLE",
+    "chacha",
+    "Goucher",
+    "niemiec",
+    "IRLE",
+    "conwaylife",
+    "deno",
+    "denoland",
+    "Oscillizer"
+  ]
+}

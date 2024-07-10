@@ -19,11 +19,11 @@
  *   rle,
  *   {
  *     cells: [
- *       { x: 1, y: 0, state: 1 },
- *       { x: 2, y: 1, state: 1 },
- *       { x: 0, y: 2, state: 1 },
- *       { x: 1, y: 2, state: 1 },
- *       { x: 2, y: 2, state: 1 },
+ *       { position: { x: 1, y: 0 }, state: 1 },
+ *       { position: { x: 2, y: 1 }, state: 1 },
+ *       { position: { x: 0, y: 2 }, state: 1 },
+ *       { position: { x: 1, y: 2 }, state: 1 },
+ *       { position: { x: 2, y: 2 }, state: 1 },
  *     ],
  *     comments: [
  *       "#N Glider",
@@ -44,9 +44,9 @@
  * assertEquals(
  *   writeRLE({
  *     cells: [
- *       { x: 0, y: 0, state: 1 },
- *       { x: 1, y: 0, state: 1 },
- *       { x: 2, y: 0, state: 1 },
+ *       { position: { x: 0, y: 0 }, state: 1 },
+ *       { position: { x: 1, y: 0 }, state: 1 },
+ *       { position: { x: 2, y: 0 }, state: 1 },
  *     ],
  *     comments: ["#N Blinker"],
  *     trailingComment: "",
@@ -73,3 +73,4 @@
 export type { CACell, RLE } from "./RLE.ts";
 export { readRLE } from "./readRLE.ts";
 export { writeRLE, type WriteRLEOptions } from "./writeRLE.ts";
+export { cellsToArray } from "./cellsToArray.ts";
