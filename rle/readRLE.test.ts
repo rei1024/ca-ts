@@ -227,6 +227,7 @@ Deno.test("readRLE !", () => {
   assertEquals(output.cells, [
     { position: { x: 0, y: 0 }, state: 1 },
   ]);
+  assertEquals(output.trailingComment, "o");
 });
 
 Deno.test("readRLE ! with break", () => {
@@ -277,29 +278,40 @@ Deno.test("readRLE CXRLE with rule", () => {
 
 Deno.test("readRLE trailingComment 1", () => {
   const output = readRLE(
-    `#CXRLE Gen=0 Pos=1,2\nx = 2, y = 3, rule = B3/S23\no!`,
+    `x = 2, y = 3, rule = B3/S23\no!`,
   );
   assertEquals(output.trailingComment, "");
 });
 
 Deno.test("readRLE trailingComment 2", () => {
   const output = readRLE(
-    `#CXRLE Gen=0 Pos=1,2\nx = 2, y = 3, rule = B3/S23\no!abc`,
+    `x = 2, y = 3, rule = B3/S23\no!abc`,
   );
   assertEquals(output.trailingComment, "abc");
 });
 
 Deno.test("readRLE trailingComment 3", () => {
   const output = readRLE(
-    `#CXRLE Gen=0 Pos=1,2\nx = 2, y = 3, rule = B3/S23\no!abc\ndef\n xyz`,
+    `x = 2, y = 3, rule = B3/S23\no!abc\ndef\n xyz`,
   );
   assertEquals(output.trailingComment, "abc\ndef\n xyz");
 });
 
+Deno.test("readRLE trailingComment new line", () => {
+  const output = readRLE(
+    `x = 2, y = 3, rule = B3/S23\no!\nabc`,
+  );
+  assertEquals(output.trailingComment, "\nabc");
+});
+
 Deno.test("readRLE error invalid state 256", () => {
-  assertThrows(() => {
-    const x = readRLE("yP");
-  }, "invalid state");
+  assertThrows(
+    () => {
+      readRLE("yP");
+    },
+    Error,
+    "invalid state",
+  );
 });
 
 Deno.test("readRLE 'Illegal multi-char state'", () => {

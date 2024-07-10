@@ -122,33 +122,41 @@ x = 3, y = 1, rule = B3/S23
 });
 
 Deno.test("writeRLE not sorted", () => {
-  assertThrows(() => {
-    writeRLE({
-      cells: makeCells([{ x: 1, y: 0 }, { x: 0, y: 0 }]),
-      comments: [],
-      trailingComment: "",
-      ruleString: "B3/S23",
-      size: {
-        width: 0,
-        height: 0,
-      },
-      XRLE: null,
-    });
-  });
+  assertThrows(
+    () => {
+      writeRLE({
+        cells: makeCells([{ x: 1, y: 0 }, { x: 0, y: 0 }]),
+        comments: [],
+        trailingComment: "",
+        ruleString: "B3/S23",
+        size: {
+          width: 0,
+          height: 0,
+        },
+        XRLE: null,
+      });
+    },
+    Error,
+    "cells must be sorted",
+  );
 
-  assertThrows(() => {
-    writeRLE({
-      cells: makeCells([{ x: 0, y: 1 }, { x: 0, y: 0 }]),
-      comments: [],
-      trailingComment: "",
-      ruleString: "B3/S23",
-      size: {
-        width: 0,
-        height: 0,
-      },
-      XRLE: null,
-    });
-  });
+  assertThrows(
+    () => {
+      writeRLE({
+        cells: makeCells([{ x: 0, y: 1 }, { x: 0, y: 0 }]),
+        comments: [],
+        trailingComment: "",
+        ruleString: "B3/S23",
+        size: {
+          width: 0,
+          height: 0,
+        },
+        XRLE: null,
+      });
+    },
+    Error,
+    "cells must be sorted",
+  );
 });
 
 Deno.test("writeRLE invalid state", () => {
@@ -210,33 +218,41 @@ Deno.test("writeRLE invalid state", () => {
 });
 
 Deno.test("writeRLE negative position", () => {
-  assertThrows(() => {
-    writeRLE({
-      cells: [{ position: { x: -1, y: 0 }, state: 1 }],
-      comments: [],
-      trailingComment: "",
-      ruleString: "B3/S23",
-      size: {
-        width: 0,
-        height: 0,
-      },
-      XRLE: null,
-    });
-  });
+  assertThrows(
+    () => {
+      writeRLE({
+        cells: [{ position: { x: -1, y: 0 }, state: 1 }],
+        comments: [],
+        trailingComment: "",
+        ruleString: "B3/S23",
+        size: {
+          width: 0,
+          height: 0,
+        },
+        XRLE: null,
+      });
+    },
+    Error,
+    "Negative position is not supported",
+  );
 
-  assertThrows(() => {
-    writeRLE({
-      cells: [{ position: { x: 1, y: -1 }, state: 1 }],
-      comments: [],
-      trailingComment: "",
-      ruleString: "B3/S23",
-      size: {
-        width: 0,
-        height: 0,
-      },
-      XRLE: null,
-    });
-  });
+  assertThrows(
+    () => {
+      writeRLE({
+        cells: [{ position: { x: 1, y: -1 }, state: 1 }],
+        comments: [],
+        trailingComment: "",
+        ruleString: "B3/S23",
+        size: {
+          width: 0,
+          height: 0,
+        },
+        XRLE: null,
+      });
+    },
+    Error,
+    "Negative position is not supported",
+  );
 });
 
 Deno.test("writeRLE readRLE", () => {

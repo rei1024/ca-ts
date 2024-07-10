@@ -7,9 +7,10 @@ in Node.js and Deno.
 
 ## Packages
 
-| Package                          | Latest version                                                        | Description                    |
-| -------------------------------- | --------------------------------------------------------------------- | ------------------------------ |
-| [rle](https://jsr.io/@ca-ts/rle) | [![JSR](https://jsr.io/badges/@ca-ts/rle)](https://jsr.io/@ca-ts/rle) | Run Length Encoded file format |
+| Package                                             | Latest version                                                                    | Description                    |
+| --------------------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------ |
+| [@ca-ts/rle](https://jsr.io/@ca-ts/rle)             | [![JSR](https://jsr.io/badges/@ca-ts/rle)](https://jsr.io/@ca-ts/rle)             | Run Length Encoded file format |
+| [@ca-ts/plaintext](https://jsr.io/@ca-ts/plaintext) | [![JSR](https://jsr.io/badges/@ca-ts/plaintext)](https://jsr.io/@ca-ts/plaintext) | Plaintext file format          |
 
 ## Development
 

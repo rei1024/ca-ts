@@ -33,6 +33,7 @@
     }
   },
   "workspaces": [
-    "./rle"
+    "./rle",
+    "./plaintext"
   ]
 }

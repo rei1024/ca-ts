@@ -5,7 +5,7 @@ import { format } from "./writeRLE/format.ts";
 import { writeState } from "./writeRLE/writeState.ts";
 
 /**
- * Option for {@link writeRLE}
+ * Options for {@link writeRLE}
  */
 export type WriteRLEOptions = {
   /** Use "." and "A" for two states cells if true */
