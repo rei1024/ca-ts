@@ -3,7 +3,7 @@
  *
  * ## Example
  * ```ts
- * import { parseApgcode } from "./mod.ts"
+ * import { parseApgcode } from "@ca-ts/apgcode"
  *
  * const parsedCode = parseApgcode("xs4_33");
  * ```
