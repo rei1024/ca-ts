@@ -70,6 +70,16 @@ Deno.test("parseExtendedWechslerFormat Queen bee shuttle", () => {
   const _cells = parseExtendedWechslerFormat("w33z8kqrqk8zzzx33");
 });
 
+Deno.test("parseExtendedWechslerFormat y0 yz", () => {
+  const cells = parseExtendedWechslerFormat("1y01yz1");
+  assertEquals(cells, [{ x: 0, y: 0 }, { x: 5, y: 0 }, { x: 45, y: 0 }]);
+});
+
+Deno.test("parseExtendedWechslerFormat yz twice", () => {
+  const cells = parseExtendedWechslerFormat("1yzyz1");
+  assertEquals(cells, [{ x: 0, y: 0 }, { x: 79, y: 0 }]);
+});
+
 Deno.test("parseApgcode Error", () => {
   assertThrows(() => {
     parseApgcode("!");
