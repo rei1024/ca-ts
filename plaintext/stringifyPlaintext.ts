@@ -1,9 +1,9 @@
 import type { Plaintext } from "./Plaintext.ts";
 
 /**
- * Convert {@link Plaintext} to string.
+ * Convert {@link Plaintext} to a string.
  */
-export function writePlaintext(
+export function stringifyPlaintext(
   plaintext:
     & Pick<Plaintext, "description" | "pattern">
     & Partial<Pick<Plaintext, "size">>,

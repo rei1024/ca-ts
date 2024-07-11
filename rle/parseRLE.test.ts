@@ -1,9 +1,9 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { readRLE } from "./readRLE.ts";
+import { parseRLE } from "./parseRLE.ts";
 import { RLE_TEST_DATA } from "./test-data/mod.ts";
 
-Deno.test("readRLE cloverleaf", () => {
-  const rle = readRLE(RLE_TEST_DATA.cloverleaf);
+Deno.test("parseRLE cloverleaf", () => {
+  const rle = parseRLE(RLE_TEST_DATA.cloverleaf);
   assertEquals(rle.ruleString, "B3/S23");
   assertEquals(rle.cells.length, 56);
   assertEquals(rle.comments, [
@@ -18,8 +18,8 @@ Deno.test("readRLE cloverleaf", () => {
   assertEquals(rle.XRLE, null);
 });
 
-Deno.test("readRLE glider", () => {
-  const rle = readRLE(`#N Glider
+Deno.test("parseRLE glider", () => {
+  const rle = parseRLE(`#N Glider
 #O Richard K. Guy
 #C The smallest, most common, and first discovered spaceship. Diagonal, has period 4 and speed c/4.
 #C www.conwaylife.com/wiki/index.php?title=Glider
@@ -53,77 +53,77 @@ bob$2bo$3o!`);
   );
 });
 
-Deno.test("readRLE header", () => {
-  const output = readRLE(`x=3,y=2,rule=B23/S1`);
+Deno.test("parseRLE header", () => {
+  const output = parseRLE(`x=3,y=2,rule=B23/S1`);
   assertEquals(output.size?.width, 3);
   assertEquals(output.size?.height, 2);
   assertEquals(output.ruleString, "B23/S1");
   assertEquals(output.cells, []);
 });
 
-Deno.test("readRLE header without rule", () => {
-  const output = readRLE(`x=3,y=2`);
+Deno.test("parseRLE header without rule", () => {
+  const output = parseRLE(`x=3,y=2`);
   assertEquals(output.size?.width, 3);
   assertEquals(output.size?.height, 2);
   assertEquals(output.ruleString, "B3/S23"); // TBD: null?
   assertEquals(output.cells, []);
 });
 
-Deno.test("readRLE header #r rule", () => {
-  const output = readRLE(`#r 23/3\nx=3,y=2`);
+Deno.test("parseRLE header #r rule", () => {
+  const output = parseRLE(`#r 23/3\nx=3,y=2`);
   assertEquals(output.size?.width, 3);
   assertEquals(output.size?.height, 2);
   assertEquals(output.ruleString, "23/3");
   assertEquals(output.cells, []);
 });
 
-Deno.test("readRLE header #r is ignored if rule is present", () => {
-  const output = readRLE(`#r 23/3\nx=3,y=2,rule=B23/S1`);
+Deno.test("parseRLE header #r is ignored if rule is present", () => {
+  const output = parseRLE(`#r 23/3\nx=3,y=2,rule=B23/S1`);
   assertEquals(output.size?.width, 3);
   assertEquals(output.size?.height, 2);
   assertEquals(output.ruleString, "B23/S1");
   assertEquals(output.cells, []);
 });
 
-Deno.test("readRLE comment space prefix", () => {
-  const output = readRLE(`#C Comment 1\n  #C Comment 2\nx=3,y=2,rule=B23/S1`);
+Deno.test("parseRLE comment space prefix", () => {
+  const output = parseRLE(`#C Comment 1\n  #C Comment 2\nx=3,y=2,rule=B23/S1`);
   assertEquals(output.comments, ["#C Comment 1", "  #C Comment 2"]);
 });
 
-Deno.test("readRLE header without rule", () => {
-  const output = readRLE(`x=4,y=0`);
+Deno.test("parseRLE header without rule", () => {
+  const output = parseRLE(`x=4,y=0`);
   assertEquals(output.size?.width, 4);
   assertEquals(output.size?.height, 0);
   assertEquals(output.ruleString, "B3/S23");
 });
 
-Deno.test("readRLE empty", () => {
-  const output = readRLE(``);
+Deno.test("parseRLE empty", () => {
+  const output = parseRLE(``);
   assertEquals(output.size, null);
   assertEquals(output.ruleString, ""); // FIXME: default rule
   assertEquals(output.cells, []);
 });
 
-Deno.test("readRLE b", () => {
-  const output = readRLE(`b`);
+Deno.test("parseRLE b", () => {
+  const output = parseRLE(`b`);
   assertEquals(output.cells, []);
   assertEquals(output.comments, []);
   assertEquals(output.XRLE, null);
   assertEquals(output.size, null);
 });
 
-Deno.test("readRLE 3b", () => {
-  const output = readRLE(`3b`);
+Deno.test("parseRLE 3b", () => {
+  const output = parseRLE(`3b`);
   assertEquals(output.cells, []);
 });
 
-Deno.test("readRLE o", () => {
-  const output = readRLE(`o`);
+Deno.test("parseRLE o", () => {
+  const output = parseRLE(`o`);
   assertEquals(output.cells, [{ position: { x: 0, y: 0 }, state: 1 }]);
 });
 
-Deno.test("readRLE empty lines", () => {
-  const output = readRLE(`x=3,y=2,rule=B23/S1
+Deno.test("parseRLE empty lines", () => {
+  const output = parseRLE(`x=3,y=2,rule=B23/S1
 o
   
 o
@@ -141,46 +141,46 @@ o
   ]);
 });
 
-Deno.test("readRLE 2o", () => {
-  const output = readRLE(`2o`);
+Deno.test("parseRLE 2o", () => {
+  const output = parseRLE(`2o`);
   assertEquals(output.cells, [
     { position: { x: 0, y: 0 }, state: 1 },
     { position: { x: 1, y: 0 }, state: 1 },
   ]);
 });
 
-Deno.test("readRLE 3b2o", () => {
-  const output = readRLE(`3b2o`);
+Deno.test("parseRLE 3b2o", () => {
+  const output = parseRLE(`3b2o`);
   assertEquals(output.cells, [
     { position: { x: 3, y: 0 }, state: 1 },
     { position: { x: 4, y: 0 }, state: 1 },
   ]);
 });
 
-Deno.test("readRLE 10b1o", () => {
-  const output = readRLE(`10b1o`);
+Deno.test("parseRLE 10b1o", () => {
+  const output = parseRLE(`10b1o`);
   assertEquals(output.cells, [
     { position: { x: 10, y: 0 }, state: 1 },
   ]);
 });
 
-Deno.test("readRLE 123b1o", () => {
-  const output = readRLE(`123b1o`);
+Deno.test("parseRLE 123b1o", () => {
+  const output = parseRLE(`123b1o`);
   assertEquals(output.cells, [
     { position: { x: 123, y: 0 }, state: 1 },
   ]);
 });
 
-Deno.test("readRLE A~X", () => {
-  const output = readRLE(`AX`);
+Deno.test("parseRLE A~X", () => {
+  const output = parseRLE(`AX`);
   assertEquals(output.cells, [
     { position: { x: 0, y: 0 }, state: 1 },
     { position: { x: 1, y: 0 }, state: 24 },
   ]);
 });
 
-Deno.test("readRLE multi state", () => {
-  const output = readRLE(`pApXqAqXyAyO`);
+Deno.test("parseRLE multi state", () => {
+  const output = parseRLE(`pApXqAqXyAyO`);
   assertEquals(output.cells, [
     { position: { x: 0, y: 0 }, state: 25 },
     { position: { x: 1, y: 0 }, state: 48 },
@@ -191,23 +191,23 @@ Deno.test("readRLE multi state", () => {
   ]);
 });
 
-Deno.test("readRLE multi state error state become 1: 1", () => {
-  const output = readRLE(`qZ`);
+Deno.test("parseRLE multi state error state become 1: 1", () => {
+  const output = parseRLE(`qZ`);
   assertEquals(output.cells, [
     { position: { x: 0, y: 0 }, state: 1 },
   ]);
 });
 
-Deno.test("readRLE multi state error state become 1: 2", () => {
-  const output = readRLE(`BqZ`);
+Deno.test("parseRLE multi state error state become 1: 2", () => {
+  const output = parseRLE(`BqZ`);
   assertEquals(output.cells, [
     { position: { x: 0, y: 0 }, state: 2 },
     { position: { x: 1, y: 0 }, state: 1 },
   ]);
 });
 
-Deno.test("readRLE multi state error state become 1: 3", () => {
-  const output = readRLE(`BqZC`);
+Deno.test("parseRLE multi state error state become 1: 3", () => {
+  const output = parseRLE(`BqZC`);
   assertEquals(output.cells, [
     { position: { x: 0, y: 0 }, state: 2 },
     { position: { x: 1, y: 0 }, state: 1 },
@@ -215,46 +215,46 @@ Deno.test("readRLE multi state error state become 1: 3", () => {
   ]);
 });
 
-Deno.test("readRLE multi state x", () => {
-  const output = readRLE(`xA`);
+Deno.test("parseRLE multi state x", () => {
+  const output = parseRLE(`xA`);
   assertEquals(output.cells, [
     { position: { x: 0, y: 0 }, state: 217 },
   ]);
 });
 
-Deno.test("readRLE !", () => {
-  const output = readRLE(`o!o`);
+Deno.test("parseRLE !", () => {
+  const output = parseRLE(`o!o`);
   assertEquals(output.cells, [
     { position: { x: 0, y: 0 }, state: 1 },
   ]);
   assertEquals(output.trailingComment, "o");
 });
 
-Deno.test("readRLE ! with break", () => {
-  const output = readRLE(`o!o\no`);
+Deno.test("parseRLE ! with break", () => {
+  const output = parseRLE(`o!o\no`);
   assertEquals(output.cells, [
     { position: { x: 0, y: 0 }, state: 1 },
   ]);
 });
 
-Deno.test("readRLE $", () => {
-  const output = readRLE(`o$o`);
+Deno.test("parseRLE $", () => {
+  const output = parseRLE(`o$o`);
   assertEquals(output.cells, [
     { position: { x: 0, y: 0 }, state: 1 },
     { position: { x: 0, y: 1 }, state: 1 },
   ]);
 });
 
-Deno.test("readRLE 2$", () => {
-  const output = readRLE(`o2$o`);
+Deno.test("parseRLE 2$", () => {
+  const output = parseRLE(`o2$o`);
   assertEquals(output.cells, [
     { position: { x: 0, y: 0 }, state: 1 },
     { position: { x: 0, y: 2 }, state: 1 },
   ]);
 });
 
-Deno.test("readRLE CXRLE", () => {
-  const output = readRLE(`#CXRLE Gen=0 Pos=1,2\no`);
+Deno.test("parseRLE CXRLE", () => {
+  const output = parseRLE(`#CXRLE Gen=0 Pos=1,2\no`);
   assertEquals(output.XRLE, { generation: "0", position: { x: 1, y: 2 } });
   assertEquals(output.cells, [
     { position: { x: 1, y: 2 }, state: 1 },
@@ -264,8 +264,8 @@ Deno.test("readRLE CXRLE", () => {
   JSON.stringify(output);
 });
 
-Deno.test("readRLE CXRLE with rule", () => {
-  const output = readRLE(
+Deno.test("parseRLE CXRLE with rule", () => {
+  const output = parseRLE(
     `#CXRLE Gen=0 Pos=1,2\nx = 2, y = 3, rule = B3/S23\no`,
   );
   assertEquals(output.cells, [
@@ -276,56 +276,56 @@ Deno.test("readRLE CXRLE with rule", () => {
   assertEquals(output.size?.height, 3);
 });
 
-Deno.test("readRLE trailingComment 1", () => {
-  const output = readRLE(
+Deno.test("parseRLE trailingComment 1", () => {
+  const output = parseRLE(
     `x = 2, y = 3, rule = B3/S23\no!`,
   );
   assertEquals(output.trailingComment, "");
 });
 
-Deno.test("readRLE trailingComment 2", () => {
-  const output = readRLE(
+Deno.test("parseRLE trailingComment 2", () => {
+  const output = parseRLE(
     `x = 2, y = 3, rule = B3/S23\no!abc`,
   );
   assertEquals(output.trailingComment, "abc");
 });
 
-Deno.test("readRLE trailingComment 3", () => {
-  const output = readRLE(
+Deno.test("parseRLE trailingComment 3", () => {
+  const output = parseRLE(
     `x = 2, y = 3, rule = B3/S23\no!abc\ndef\n xyz`,
   );
   assertEquals(output.trailingComment, "abc\ndef\n xyz");
 });
 
-Deno.test("readRLE trailingComment new line", () => {
-  const output = readRLE(
+Deno.test("parseRLE trailingComment new line", () => {
+  const output = parseRLE(
     `x = 2, y = 3, rule = B3/S23\no!\nabc`,
   );
   assertEquals(output.trailingComment, "\nabc");
 });
 
-Deno.test("readRLE error invalid state 256", () => {
+Deno.test("parseRLE error invalid state 256", () => {
   assertThrows(
     () => {
-      readRLE("yP");
+      parseRLE("yP");
     },
     Error,
     "invalid state",
   );
 });
 
-Deno.test("readRLE 'Illegal multi-char state'", () => {
-  const output = readRLE("pY");
+Deno.test("parseRLE 'Illegal multi-char state'", () => {
+  const output = parseRLE("pY");
   assertEquals(output.cells, [{ position: { x: 0, y: 0 }, state: 1 }]);
 });
 
-Deno.test("readRLE forgiving niemiec cells", () => {
-  const output = readRLE(RLE_TEST_DATA.chacha);
+Deno.test("parseRLE forgiving niemiec cells", () => {
+  const output = parseRLE(RLE_TEST_DATA.chacha);
   assertEquals(output.cells.length, 183);
 });
 
-Deno.test("readRLE forgiving niemiec cells 2", () => {
-  const output = readRLE(`x = 0, y = 0, rule = B3/S23
+Deno.test("parseRLE forgiving niemiec cells 2", () => {
+  const output = parseRLE(`x = 0, y = 0, rule = B3/S23
 61z!
   `);
   assertEquals(output.cells.length, 0);

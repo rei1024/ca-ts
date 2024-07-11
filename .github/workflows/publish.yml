@@ -12,6 +12,7 @@ jobs:
 
     permissions:
       contents: read
+      # Need for publish
       id-token: write
 
     steps:

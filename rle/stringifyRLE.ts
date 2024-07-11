@@ -1,13 +1,13 @@
 import type { CACell, RLE } from "./RLE.ts";
 import { getSizeOfCells } from "./getSizeOfCells.ts";
-import { compressRLE } from "./writeRLE/compressRLE.ts";
-import { format } from "./writeRLE/format.ts";
-import { writeState } from "./writeRLE/writeState.ts";
+import { compressRLE } from "./stringifyRLE/compressRLE.ts";
+import { format } from "./stringifyRLE/format.ts";
+import { stateToString } from "./stringifyRLE/stateToString.ts";
 
 /**
- * Options for {@link writeRLE}
+ * Options for {@link stringifyRLE}
  */
-export type WriteRLEOptions = {
+export type StringifyRLEOptions = {
   /** Use "." and "A" for two states cells if true */
   forceMultiState?: boolean;
   /** max character count for a line. default is 70. */
@@ -15,9 +15,9 @@ export type WriteRLEOptions = {
 };
 
 /**
- * Convert {@link RLE} to string.
+ * Convert {@link RLE} to a string.
  */
-export function writeRLE(rle: RLE, options?: WriteRLEOptions): string {
+export function stringifyRLE(rle: RLE, options?: StringifyRLEOptions): string {
   const MAX_CHAR = options?.maxLineChars ?? 70;
 
   const cells = rle.cells.filter((cell) => cell.state !== 0);
@@ -62,7 +62,7 @@ export function writeRLE(rle: RLE, options?: WriteRLEOptions): string {
       });
     }
 
-    items.push({ count: 1, value: writeState(cell.state, isMultiState) });
+    items.push({ count: 1, value: stateToString(cell.state, isMultiState) });
 
     prevCell = cell;
   }
