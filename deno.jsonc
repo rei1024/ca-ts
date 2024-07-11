@@ -32,7 +32,7 @@
       "exclude": ["no-unused-vars"]
     }
   },
-  "workspaces": [
+  "workspace": [
     "./rle",
     "./plaintext"
   ]
