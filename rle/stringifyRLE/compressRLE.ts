@@ -3,6 +3,7 @@ export function compressRLE<T>(
 ): { count: number; value: T }[] {
   const encoded: { count: number; value: T }[] = [];
   let prev: { count: number; value: T } | null = null;
+
   for (const item of array) {
     if (prev !== null) {
       if (item.value === prev.value) {

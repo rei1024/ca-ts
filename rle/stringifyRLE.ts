@@ -32,7 +32,10 @@ export function stringifyRLE(rle: RLE, options?: StringifyRLEOptions): string {
   let prevCell: CACell | undefined = undefined;
 
   for (const cell of cells) {
-    if (cell.position.x < 0 || cell.position.y < 0) {
+    const currentX = cell.position.x;
+    const currentY = cell.position.y;
+
+    if (currentX < 0 || currentY < 0) {
       throw new Error("Negative position is not supported");
     }
 
@@ -40,24 +43,24 @@ export function stringifyRLE(rle: RLE, options?: StringifyRLEOptions): string {
     // -1 is new line
     let prevX = prevCell?.position.x ?? -1;
 
-    if (cell.position.y !== prevY) {
+    if (currentY !== prevY) {
       items.push(
-        { count: cell.position.y - prevY, value: "$" },
+        { count: currentY - prevY, value: "$" },
       );
       prevX = -1;
     }
 
-    if (prevY > cell.position.y || (prevX !== -1 && prevX > cell.position.x)) {
+    if (prevY > currentY || (prevX !== -1 && prevX > currentX)) {
       throw new Error("cells must be sorted");
     }
 
     if (prevX === -1) {
-      if (cell.position.x !== 0) {
-        items.push({ count: cell.position.x, value: emptyCellChar });
+      if (currentX !== 0) {
+        items.push({ count: currentX, value: emptyCellChar });
       }
-    } else if (cell.position.x - (prevX + 1) >= 1) {
+    } else if (currentX - (prevX + 1) >= 1) {
       items.push({
-        count: cell.position.x - (prevX + 1),
+        count: currentX - (prevX + 1),
         value: emptyCellChar,
       });
     }
