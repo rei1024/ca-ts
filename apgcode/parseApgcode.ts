@@ -2,6 +2,13 @@ import type { Apgcode } from "./Apgcode.ts";
 
 /**
  * Parse {@link Apgcode}.
+ *
+ * ```ts
+ * import { parseApgcode } from "@ca-ts/apgcode";
+ *
+ * const parsedCode = parseApgcode("xq4_27deee6");
+ * ```
+ *
  * @param identifier Example: `xq4_27deee6`
  * @throws
  */
@@ -75,7 +82,15 @@ export function parseApgcode(identifier: string): Apgcode {
 
 /**
  * Parse [Extended Wechsler format](https://conwaylife.com/wiki/Apgcode#Extended_Wechsler_format)
+ *
+ * ```ts
+ * import { parseExtendedWechslerFormat } from "@ca-ts/apgcode";
+ *
+ * const cells = parseExtendedWechslerFormat("27deee6");
+ * ```
+ *
  * @param source Example: `27deee6`
+ * @returns List of living cells
  * @throws
  */
 export function parseExtendedWechslerFormat(

@@ -1,5 +1,5 @@
 /**
- * apgcode
+ * apgcode is a compact format for representing patterns in cellular automata.
  *
  * ## Reference
  * - [apgcode | LifeWiki](https://conwaylife.com/wiki/Apgcode)
