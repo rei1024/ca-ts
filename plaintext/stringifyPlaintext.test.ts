@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { writePlaintext } from "./writePlaintext.ts";
+import { stringifyPlaintext } from "./stringifyPlaintext.ts";
 
 const blinker = `!Name: Blinker
 !
@@ -11,9 +11,9 @@ const glider = `!Name: Glider
 ..O
 OOO`;
 
-Deno.test("writePlaintext blinker", () => {
+Deno.test("stringifyPlaintext blinker", () => {
   assertEquals(
-    writePlaintext({
+    stringifyPlaintext({
       description: ["!Name: Blinker", "!"],
       pattern: [[1, 1, 1]],
     }),
@@ -21,7 +21,7 @@ Deno.test("writePlaintext blinker", () => {
   );
 
   assertEquals(
-    writePlaintext({
+    stringifyPlaintext({
       description: ["!Name: Blinker", "!"],
       pattern: [[1, 1, 1]],
       size: { width: 0, height: 0 }, // type check
@@ -30,9 +30,9 @@ Deno.test("writePlaintext blinker", () => {
   );
 });
 
-Deno.test("writePlaintext empty description", () => {
+Deno.test("stringifyPlaintext empty description", () => {
   assertEquals(
-    writePlaintext({
+    stringifyPlaintext({
       description: [],
       pattern: [[1, 1, 1]],
     }),
@@ -40,9 +40,9 @@ Deno.test("writePlaintext empty description", () => {
   );
 });
 
-Deno.test("writePlaintext glider", () => {
+Deno.test("stringifyPlaintext glider", () => {
   assertEquals(
-    writePlaintext({
+    stringifyPlaintext({
       description: [
         "!Name: Glider",
         "!",
@@ -57,9 +57,9 @@ Deno.test("writePlaintext glider", () => {
   );
 });
 
-Deno.test("writePlaintext description no exclamation mark error", () => {
+Deno.test("stringifyPlaintext description no exclamation mark error", () => {
   assertThrows(() => {
-    writePlaintext({
+    stringifyPlaintext({
       description: [
         "No exclamation mark",
       ],

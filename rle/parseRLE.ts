@@ -1,6 +1,6 @@
 import type { CACell, RLE } from "./RLE.ts";
 
-import { type IRLEVisitor, visitRLE } from "./readRLE/visitRLE.ts";
+import { type IRLEVisitor, visitRLE } from "./parseRLE/visitRLE.ts";
 
 export class RLEVisitor implements IRLEVisitor {
   public cells: CACell[] = [];
@@ -54,7 +54,7 @@ export class RLEVisitor implements IRLEVisitor {
  * Parse {@link RLE} file.
  * @throws
  */
-export function readRLE(source: string): RLE {
+export function parseRLE(source: string): RLE {
   const visitor = new RLEVisitor();
   visitRLE(visitor, source);
 

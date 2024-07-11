@@ -4,10 +4,10 @@ const LOWER_P_CODE_POINT = "p".codePointAt(0) ?? 0;
 const states: string[] = [];
 
 for (let i = 0; i < 256; i++) {
-  states.push(writeStateNaive(i));
+  states.push(stateToStringNaive(i));
 }
 
-export function writeState(state: number, isMultiState: boolean): string {
+export function stateToString(state: number, isMultiState: boolean): string {
   if (!Number.isInteger(state)) throw new Error("invalid state");
   if (state < 0) throw new Error("invalid state");
 
@@ -20,7 +20,7 @@ export function writeState(state: number, isMultiState: boolean): string {
   })();
 }
 
-function writeStateNaive(state: number): string {
+function stateToStringNaive(state: number): string {
   if (state === 0) return ".";
   if (state <= 24) {
     return String.fromCodePoint(UPPER_A_CODE_POINT + state - 1);

@@ -1,13 +1,13 @@
 import type { CACell, RLE } from "./RLE.ts";
 import { getSizeOfCells } from "./getSizeOfCells.ts";
-import { compressRLE } from "./writeRLE/compressRLE.ts";
-import { format } from "./writeRLE/format.ts";
-import { writeState } from "./writeRLE/writeState.ts";
+import { compressRLE } from "./stringifyRLE/compressRLE.ts";
+import { format } from "./stringifyRLE/format.ts";
+import { stateToString } from "./stringifyRLE/stateToString.ts";
 
 /**
- * Options for {@link writeRLE}
+ * Options for {@link stringifyRLE}
  */
-export type WriteRLEOptions = {
+export type StringifyRLEOptions = {
   /** Use "." and "A" for two states cells if true */
   forceMultiState?: boolean;
   /** max character count for a line. default is 70. */
@@ -15,9 +15,9 @@ export type WriteRLEOptions = {
 };
 
 /**
- * Convert {@link RLE} to string.
+ * Convert {@link RLE} to a string.
  */
-export function writeRLE(rle: RLE, options?: WriteRLEOptions): string {
+export function stringifyRLE(rle: RLE, options?: StringifyRLEOptions): string {
   const MAX_CHAR = options?.maxLineChars ?? 70;
 
   const cells = rle.cells.filter((cell) => cell.state !== 0);
@@ -32,7 +32,10 @@ export function writeRLE(rle: RLE, options?: WriteRLEOptions): string {
   let prevCell: CACell | undefined = undefined;
 
   for (const cell of cells) {
-    if (cell.position.x < 0 || cell.position.y < 0) {
+    const currentX = cell.position.x;
+    const currentY = cell.position.y;
+
+    if (currentX < 0 || currentY < 0) {
       throw new Error("Negative position is not supported");
     }
 
@@ -40,29 +43,29 @@ export function writeRLE(rle: RLE, options?: WriteRLEOptions): string {
     // -1 is new line
     let prevX = prevCell?.position.x ?? -1;
 
-    if (cell.position.y !== prevY) {
+    if (currentY !== prevY) {
       items.push(
-        { count: cell.position.y - prevY, value: "$" },
+        { count: currentY - prevY, value: "$" },
       );
       prevX = -1;
     }
 
-    if (prevY > cell.position.y || (prevX !== -1 && prevX > cell.position.x)) {
+    if (prevY > currentY || (prevX !== -1 && prevX > currentX)) {
       throw new Error("cells must be sorted");
     }
 
     if (prevX === -1) {
-      if (cell.position.x !== 0) {
-        items.push({ count: cell.position.x, value: emptyCellChar });
+      if (currentX !== 0) {
+        items.push({ count: currentX, value: emptyCellChar });
       }
-    } else if (cell.position.x - (prevX + 1) >= 1) {
+    } else if (currentX - (prevX + 1) >= 1) {
       items.push({
-        count: cell.position.x - (prevX + 1),
+        count: currentX - (prevX + 1),
         value: emptyCellChar,
       });
     }
 
-    items.push({ count: 1, value: writeState(cell.state, isMultiState) });
+    items.push({ count: 1, value: stateToString(cell.state, isMultiState) });
 
     prevCell = cell;
   }

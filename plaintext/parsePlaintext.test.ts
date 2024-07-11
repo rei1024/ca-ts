@@ -1,9 +1,9 @@
 import { assertEquals } from "@std/assert";
-import { readPlaintext } from "./readPlaintext.ts";
+import { parsePlaintext } from "./parsePlaintext.ts";
 
-Deno.test("readPlaintext blinker", () => {
+Deno.test("parsePlaintext blinker", () => {
   assertEquals(
-    readPlaintext(`!Name: Blinker
+    parsePlaintext(`!Name: Blinker
 !
 OOO`),
     {
@@ -17,9 +17,9 @@ OOO`),
   );
 });
 
-Deno.test("readPlaintext glider", () => {
+Deno.test("parsePlaintext glider", () => {
   assertEquals(
-    readPlaintext(`!Name: Glider
+    parsePlaintext(`!Name: Glider
 !
 .O.
 ..O
@@ -41,18 +41,37 @@ OOO`),
     },
   );
 });
-Deno.test("readPlaintext empty line", () => {
+
+Deno.test("parsePlaintext empty line", () => {
   assertEquals(
-    readPlaintext(`!Name: Test
+    parsePlaintext(`!Name: Test
 !
 O
 
 O`),
     {
       description: ["!Name: Test", "!"],
-      pattern: [[1], [], [1]],
+      pattern: [[1], [0], [1]],
       size: {
         width: 1,
+        height: 3,
+      },
+    },
+  );
+});
+
+Deno.test("parsePlaintext padding", () => {
+  assertEquals(
+    parsePlaintext(`!Name: Test
+!
+O.O
+OO
+O`),
+    {
+      description: ["!Name: Test", "!"],
+      pattern: [[1, 0, 1], [1, 1, 0], [1, 0, 0]],
+      size: {
+        width: 3,
         height: 3,
       },
     },

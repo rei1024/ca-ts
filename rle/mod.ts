@@ -5,10 +5,10 @@
  *
  * ## Example
  * ```ts
- * import { readRLE, writeRLE, type RLE } from "@ca-ts/rle";
+ * import { parseRLE, stringifyRLE, type RLE } from "@ca-ts/rle";
  * import { assertEquals } from "@std/assert";
  *
- * const rle: RLE = readRLE(`#N Glider
+ * const rle: RLE = parseRLE(`#N Glider
  * #O Richard K. Guy
  * #C The smallest, most common, and first discovered spaceship. Diagonal, has period 4 and speed c/4.
  * #C www.conwaylife.com/wiki/index.php?title=Glider
@@ -42,7 +42,7 @@
  * );
  *
  * assertEquals(
- *   writeRLE({
+ *   stringifyRLE({
  *     cells: [
  *       { position: { x: 0, y: 0 }, state: 1 },
  *       { position: { x: 1, y: 0 }, state: 1 },
@@ -71,6 +71,6 @@
  */
 
 export type { CACell, RLE } from "./RLE.ts";
-export { readRLE } from "./readRLE.ts";
-export { writeRLE, type WriteRLEOptions } from "./writeRLE.ts";
+export { parseRLE } from "./parseRLE.ts";
+export { stringifyRLE, type StringifyRLEOptions } from "./stringifyRLE.ts";
 export { cellsToArray } from "./cellsToArray.ts";

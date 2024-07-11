@@ -1,16 +1,16 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { RLE_TEST_DATA } from "./test-data/mod.ts";
-import { readRLE } from "./readRLE.ts";
-import { writeRLE } from "./writeRLE.ts";
+import { parseRLE } from "./parseRLE.ts";
+import { stringifyRLE } from "./stringifyRLE.ts";
 import type { CACell } from "./mod.ts";
 
 function makeCells(list: { x: number; y: number }[]): CACell[] {
   return list.map((p) => ({ position: p, state: 1 }));
 }
 
-Deno.test("writeRLE", () => {
+Deno.test("stringifyRLE", () => {
   assertEquals(
-    writeRLE({
+    stringifyRLE({
       cells: [],
       comments: [],
       trailingComment: "",
@@ -25,7 +25,7 @@ Deno.test("writeRLE", () => {
   );
 
   assertEquals(
-    writeRLE({
+    stringifyRLE({
       cells: [],
       comments: ["#Comment"],
       trailingComment: "",
@@ -40,7 +40,7 @@ Deno.test("writeRLE", () => {
   );
 
   assertEquals(
-    writeRLE({
+    stringifyRLE({
       cells: [],
       comments: [],
       trailingComment: "abc\ndef",
@@ -56,7 +56,7 @@ Deno.test("writeRLE", () => {
 
   // empty size
   assertEquals(
-    writeRLE({
+    stringifyRLE({
       cells: [],
       comments: [],
       trailingComment: "",
@@ -68,7 +68,7 @@ Deno.test("writeRLE", () => {
   );
 
   assertEquals(
-    writeRLE({
+    stringifyRLE({
       cells: makeCells([
         { x: 0, y: 0 },
         { x: 1, y: 0 },
@@ -84,7 +84,7 @@ Deno.test("writeRLE", () => {
   );
 
   assertEquals(
-    writeRLE({
+    stringifyRLE({
       cells: makeCells([
         { x: 1, y: 3 },
         { x: 1, y: 10 },
@@ -99,7 +99,7 @@ Deno.test("writeRLE", () => {
   );
 
   assertEquals(
-    writeRLE({
+    stringifyRLE({
       cells: makeCells([
         { x: 0, y: 0 },
         { x: 1, y: 0 },
@@ -121,10 +121,10 @@ x = 3, y = 1, rule = B3/S23
   );
 });
 
-Deno.test("writeRLE not sorted", () => {
+Deno.test("stringifyRLE not sorted", () => {
   assertThrows(
     () => {
-      writeRLE({
+      stringifyRLE({
         cells: makeCells([{ x: 1, y: 0 }, { x: 0, y: 0 }]),
         comments: [],
         trailingComment: "",
@@ -142,7 +142,7 @@ Deno.test("writeRLE not sorted", () => {
 
   assertThrows(
     () => {
-      writeRLE({
+      stringifyRLE({
         cells: makeCells([{ x: 0, y: 1 }, { x: 0, y: 0 }]),
         comments: [],
         trailingComment: "",
@@ -159,9 +159,9 @@ Deno.test("writeRLE not sorted", () => {
   );
 });
 
-Deno.test("writeRLE invalid state", () => {
+Deno.test("stringifyRLE invalid state", () => {
   assertThrows(() => {
-    writeRLE({
+    stringifyRLE({
       cells: [{ position: { x: 1, y: 0 }, state: 256 }],
       comments: [],
       trailingComment: "",
@@ -175,7 +175,7 @@ Deno.test("writeRLE invalid state", () => {
   });
 
   assertThrows(() => {
-    writeRLE({
+    stringifyRLE({
       cells: [{ position: { x: 1, y: 0 }, state: -1 }],
       comments: [],
       trailingComment: "",
@@ -189,7 +189,7 @@ Deno.test("writeRLE invalid state", () => {
   });
 
   assertThrows(() => {
-    writeRLE({
+    stringifyRLE({
       cells: [{ position: { x: 1, y: 0 }, state: 0.5 }],
       comments: [],
       trailingComment: "",
@@ -203,7 +203,7 @@ Deno.test("writeRLE invalid state", () => {
   });
 
   assertThrows(() => {
-    writeRLE({
+    stringifyRLE({
       cells: [{ position: { x: 1, y: 0 }, state: NaN }],
       comments: [],
       trailingComment: "",
@@ -217,10 +217,10 @@ Deno.test("writeRLE invalid state", () => {
   });
 });
 
-Deno.test("writeRLE negative position", () => {
+Deno.test("stringifyRLE negative position", () => {
   assertThrows(
     () => {
-      writeRLE({
+      stringifyRLE({
         cells: [{ position: { x: -1, y: 0 }, state: 1 }],
         comments: [],
         trailingComment: "",
@@ -238,7 +238,7 @@ Deno.test("writeRLE negative position", () => {
 
   assertThrows(
     () => {
-      writeRLE({
+      stringifyRLE({
         cells: [{ position: { x: 1, y: -1 }, state: 1 }],
         comments: [],
         trailingComment: "",
@@ -255,9 +255,9 @@ Deno.test("writeRLE negative position", () => {
   );
 });
 
-Deno.test("writeRLE readRLE", () => {
+Deno.test("stringifyRLE parseRLE", () => {
   function assertBack(str: string) {
-    assertEquals(writeRLE(readRLE(str)).trim(), str.trim());
+    assertEquals(stringifyRLE(parseRLE(str)).trim(), str.trim());
   }
 
   assertBack(`x = 0, y = 0, rule = B3/S23\n!\n`);
@@ -294,12 +294,12 @@ obo$35b3o3b3o29bo$36bo5bo30b2o2$35b2o5b2o$35b2o5b2o!\n`);
   assertBack(`x = 0, y = 0, rule = B3/S23\n!abc\ndef`);
 });
 
-Deno.test("writeRLE 1..255", () => {
+Deno.test("stringifyRLE 1..255", () => {
   const cells = Array(255).fill(null).map((_, i) => i + 1).map((s) => {
     return { position: { x: s, y: 0 }, state: s };
   });
 
-  const str = writeRLE({
+  const str = stringifyRLE({
     cells: cells,
     comments: [],
     trailingComment: "",
@@ -310,6 +310,6 @@ Deno.test("writeRLE 1..255", () => {
     },
     XRLE: null,
   });
-  const rle = readRLE(str);
+  const rle = parseRLE(str);
   assertEquals(rle.cells, cells);
 });

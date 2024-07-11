@@ -3,7 +3,7 @@ import type { Plaintext } from "./Plaintext.ts";
 /**
  * Parse {@link Plaintext} file.
  */
-export function readPlaintext(source: string): Plaintext {
+export function parsePlaintext(source: string): Plaintext {
   const description: string[] = [];
   const pattern: number[][] = [];
   const lines = source.split(/\n|\r\n/g);
@@ -16,11 +16,19 @@ export function readPlaintext(source: string): Plaintext {
     }
   }
 
+  const width = pattern.reduce((acc, x) => Math.max(acc, x.length), 0);
+
+  for (const [i, row] of pattern.entries()) {
+    if (row.length < width) {
+      pattern[i] = row.concat(Array(width - row.length).fill(0).map(() => 0));
+    }
+  }
+
   return {
     description,
     pattern,
     size: {
-      width: pattern.reduce((acc, x) => Math.max(acc, x.length), 0),
+      width: width,
       height: pattern.length,
     },
   };

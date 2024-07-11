@@ -3,11 +3,11 @@
  *
  * ## Example
  * ```ts
- * import { readPlaintext } from "@ca-ts/plaintext"
+ * import { parsePlaintext } from "@ca-ts/plaintext"
  * import { assertEquals } from "@std/assert";
  *
  * assertEquals(
- *   readPlaintext(`!Name: Glider
+ *   parsePlaintext(`!Name: Glider
  * !
  * .O.
  * ..O
@@ -36,5 +36,5 @@
  */
 
 export type { Plaintext } from "./Plaintext.ts";
-export { readPlaintext } from "./readPlaintext.ts";
-export { writePlaintext } from "./writePlaintext.ts";
+export { parsePlaintext } from "./parsePlaintext.ts";
+export { stringifyPlaintext } from "./stringifyPlaintext.ts";
