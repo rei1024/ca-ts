@@ -14,5 +14,11 @@
  * @module
  */
 
-export type { Apgcode } from "./Apgcode.ts";
+export type {
+  Apgcode,
+  ApgcodeLinear,
+  ApgcodeOscillator,
+  ApgcodeSpaceship,
+  ApgcodeStillLife,
+} from "./Apgcode.ts";
 export { parseApgcode, parseExtendedWechslerFormat } from "./parseApgcode.ts";
