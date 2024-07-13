@@ -159,6 +159,55 @@ Deno.test("stringifyRLE not sorted", () => {
   );
 });
 
+Deno.test("stringifyRLE acceptUnorderedCells", () => {
+  stringifyRLE({
+    cells: makeCells([{ x: 1, y: 0 }, { x: 0, y: 0 }]),
+    comments: [],
+    trailingComment: "",
+    ruleString: "B3/S23",
+    size: {
+      width: 0,
+      height: 0,
+    },
+    XRLE: null,
+  }, { acceptUnorderedCells: true });
+
+  {
+    const input = makeCells([{ x: 0, y: 1 }, { x: 0, y: 0 }]);
+    const clone = structuredClone(input);
+    stringifyRLE({
+      cells: input,
+      comments: [],
+      trailingComment: "",
+      ruleString: "B3/S23",
+      size: {
+        width: 0,
+        height: 0,
+      },
+      XRLE: null,
+    }, { acceptUnorderedCells: true });
+    assertEquals(input, clone, "no mutation");
+  }
+
+  stringifyRLE({
+    cells: makeCells([{ x: 1, y: 2 }, { x: 2, y: 0 }, { x: 1, y: 1 }, {
+      x: 0,
+      y: 1,
+    }, {
+      x: 0,
+      y: 0,
+    }]),
+    comments: [],
+    trailingComment: "",
+    ruleString: "B3/S23",
+    size: {
+      width: 0,
+      height: 0,
+    },
+    XRLE: null,
+  }, { acceptUnorderedCells: true });
+});
+
 Deno.test("stringifyRLE invalid state", () => {
   assertThrows(() => {
     stringifyRLE({

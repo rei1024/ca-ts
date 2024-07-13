@@ -10,8 +10,16 @@ import { stateToString } from "./stringifyRLE/stateToString.ts";
 export type StringifyRLEOptions = {
   /** Use "." and "A" for two states cells if true */
   forceMultiState?: boolean;
-  /** max character count for a line. default is 70. */
+  /**
+   * Max character count for a line. default is 70.
+   * @default 70
+   */
   maxLineChars?: number;
+  /**
+   * Accept unordered cells. default is false.
+   * @default false
+   */
+  acceptUnorderedCells?: boolean;
 };
 
 /**
@@ -21,6 +29,16 @@ export function stringifyRLE(rle: RLE, options?: StringifyRLEOptions): string {
   const MAX_CHAR = options?.maxLineChars ?? 70;
 
   const cells = rle.cells.filter((cell) => cell.state !== 0);
+
+  if (options?.acceptUnorderedCells) {
+    cells.sort((a, b) => {
+      if (a.position.y === b.position.y) {
+        return a.position.x - b.position.x;
+      } else {
+        return a.position.y - b.position.y;
+      }
+    });
+  }
 
   const isMultiState = options?.forceMultiState
     ? true
