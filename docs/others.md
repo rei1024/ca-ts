@@ -7,3 +7,4 @@
   - [RLE](https://github.com/scorbiclife/oscillizer/blob/5486f6b9c0a6a3f768cf8ebcdf4625bc7c98b93f/src/MVC/Controllers/OscStatsController/RLEHelpers.js)
 - [margolus-js](https://github.com/raffimolero/margolus-js)
 - [cellular-automata-rule-parser](https://github.com/kchapelier/cellular-automata-rule-parser)
+- [caplayer](https://github.com/teraxtech/caplayer/blob/6dbf1fb880cf0520b7797d8c98921405b534947b/caplayer.js#L3785)
