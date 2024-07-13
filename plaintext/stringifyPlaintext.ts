@@ -2,6 +2,15 @@ import type { Plaintext } from "./Plaintext.ts";
 
 /**
  * Convert {@link Plaintext} to a string.
+ *
+ * ```ts
+ * import { stringifyPlaintext } from "@ca-ts/plaintext"
+ *
+ * stringifyPlaintext({
+ *   description: ["!Name: Blinker", "!"],
+ *   pattern: [[1, 1, 1]]
+ * })
+ * ```
  */
 export function stringifyPlaintext(
   plaintext:

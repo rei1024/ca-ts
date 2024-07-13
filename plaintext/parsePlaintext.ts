@@ -2,6 +2,14 @@ import type { Plaintext } from "./Plaintext.ts";
 
 /**
  * Parse {@link Plaintext} file.
+ *
+ * ```ts
+ * parsePlaintext(`!Name: Glider
+ * !
+ * .O.
+ * ..O
+ * OOO`)
+ * ```
  */
 export function parsePlaintext(source: string): Plaintext {
   const description: string[] = [];
