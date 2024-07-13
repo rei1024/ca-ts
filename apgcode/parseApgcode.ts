@@ -1,6 +1,16 @@
 import type { Apgcode } from "./Apgcode.ts";
 
 /**
+ * Thrown by {@link parseApgcode}
+ */
+export class ApgcodeParseError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ApgcodeParseError";
+  }
+}
+
+/**
  * Parse {@link Apgcode}.
  *
  * ```ts
@@ -14,7 +24,7 @@ import type { Apgcode } from "./Apgcode.ts";
  */
 export function parseApgcode(identifier: string): Apgcode {
   if (!/^[0-9a-zA-Z_]*$/.test(identifier)) {
-    throw new Error("invalid character");
+    throw new ApgcodeParseError("invalid character");
   }
 
   if (identifier.startsWith("xs")) {
@@ -22,7 +32,7 @@ export function parseApgcode(identifier: string): Apgcode {
     const [pop] = identifier.split("_", 1);
 
     if (pop === undefined || pop.length === 0 || !/^[0-9+]$/.test(pop)) {
-      throw new Error("Parse error");
+      throw new ApgcodeParseError("Parse error");
     }
 
     const rest = identifier.slice(pop.length + 1); // +1 for _
@@ -38,7 +48,7 @@ export function parseApgcode(identifier: string): Apgcode {
     const [pop] = identifier.split("_", 1);
 
     if (pop === undefined || pop.length === 0 || !/^[0-9+]$/.test(pop)) {
-      throw new Error("Parse error");
+      throw new ApgcodeParseError("Parse error");
     }
 
     const rest = identifier.slice(pop.length + 1); // +1 for _
@@ -53,7 +63,7 @@ export function parseApgcode(identifier: string): Apgcode {
     identifier = identifier.slice("yl".length);
     const array = identifier.split("_");
     if (array.length !== 4) {
-      throw new Error("Parse Error");
+      throw new ApgcodeParseError("Parse Error");
     }
     return {
       type: "linear",
@@ -62,22 +72,22 @@ export function parseApgcode(identifier: string): Apgcode {
       debrisPeriod: Number(array[1]),
       populationGrowthAmount: Number(array[2]),
       hash: array[3] ?? (() => {
-        throw new Error("Parse Error");
+        throw new ApgcodeParseError("Parse Error");
       })(),
     };
   } else if (identifier.startsWith("methuselah")) {
-    throw new Error("unsupported");
+    throw new ApgcodeParseError("unsupported");
   } else if (identifier.startsWith("messless")) {
-    throw new Error("unsupported");
+    throw new ApgcodeParseError("unsupported");
   } else if (identifier.startsWith("megasized")) {
-    throw new Error("unsupported");
+    throw new ApgcodeParseError("unsupported");
   } else if (identifier.startsWith("ov")) {
-    throw new Error("unsupported");
+    throw new ApgcodeParseError("unsupported");
   } else if (identifier.startsWith("zz") || identifier === "PATHOLOGICAL") {
-    throw new Error("unsupported");
+    throw new ApgcodeParseError("unsupported");
   }
 
-  throw new Error("Parse error");
+  throw new ApgcodeParseError("Parse error");
 }
 
 /**
@@ -97,7 +107,9 @@ export function parseExtendedWechslerFormat(
   source: string,
 ): { x: number; y: number }[] {
   if (!/^[0-9a-z]*$/.test(source)) {
-    throw new Error("invalid character for Extended Wechsler format");
+    throw new ApgcodeParseError(
+      "invalid character for Extended Wechsler format",
+    );
   }
 
   let x = 0;
@@ -126,11 +138,11 @@ export function parseExtendedWechslerFormat(
         charIndex++;
         const nextChar = chars[charIndex];
         if (nextChar === undefined) {
-          throw new Error("Parse error");
+          throw new ApgcodeParseError("Parse error");
         }
         const zeroNum = charToNumForY(nextChar);
         if (zeroNum === null) {
-          throw new Error("Parse error");
+          throw new ApgcodeParseError("Parse error");
         }
         x += zeroNum;
       } else if (char === "z") {
@@ -156,6 +168,7 @@ export function parseExtendedWechslerFormat(
 }
 
 const ZERO_CODE = "0".charCodeAt(0);
+const LOWER_A_CODE = "a".charCodeAt(0);
 
 /**
  * @param char length is 1
@@ -165,7 +178,7 @@ function charToNum(char: string): number | null {
     return char.charCodeAt(0) - ZERO_CODE;
   }
   if ("a" <= char && char <= "v") {
-    return char.charCodeAt(0) - "a".charCodeAt(0) + 10;
+    return char.charCodeAt(0) - LOWER_A_CODE + 10;
   }
 
   return null;
@@ -179,7 +192,7 @@ function charToNumForY(char: string): number | null {
     return char.charCodeAt(0) - ZERO_CODE + 4;
   }
   if ("a" <= char && char <= "z") {
-    return char.charCodeAt(0) - "a".charCodeAt(0) + 4 + 10;
+    return char.charCodeAt(0) - LOWER_A_CODE + 4 + 10;
   }
 
   return null;

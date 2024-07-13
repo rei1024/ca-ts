@@ -1,3 +1,4 @@
+import { RLEParseError } from "./RLEParseError.ts";
 import { parseXRLELine } from "./XRLE.ts";
 
 export type IRLEVisitor = {
@@ -45,11 +46,13 @@ class VisitState {
   read(lines: Iterable<string>) {
     const trailingCommentLines: string[] = [];
     let rleFinished = false;
+    let lineNum = 0;
     for (const line of lines) {
+      lineNum++;
       if (rleFinished) {
         trailingCommentLines.push(line);
       } else {
-        const result = this.readLine(line);
+        const result = this.readLine(line, lineNum);
         if (result === "end") {
           rleFinished = true;
         }
@@ -63,7 +66,7 @@ class VisitState {
   /**
    * @returns `"end"` for `"!"` line
    */
-  private readLine(line: string): "continue" | "end" {
+  private readLine(line: string, lineNum: number): "continue" | "end" {
     if (line.trimStart().startsWith("#")) {
       this.readComment(line);
       return "continue";
@@ -71,7 +74,7 @@ class VisitState {
       line.startsWith("x") &&
       (line.startsWith("x ") || line.startsWith("x="))
     ) {
-      this.readRule(line);
+      this.readRule(line, lineNum);
       return "continue";
     }
 
@@ -122,7 +125,7 @@ class VisitState {
           const x = this.offsetX + this.x;
           const y = this.offsetY + this.y;
           if (state > 255) {
-            throw new Error("invalid state");
+            throw new RLEParseError("invalid state", { line: lineNum });
           }
           for (let j = 0; j < n; j++) {
             visitor.visitCell(x + j, y, state);
@@ -155,16 +158,16 @@ class VisitState {
     this.visitor.visitComment(line);
   }
 
-  private readRule(line: string) {
+  private readRule(line: string, lineNum: number) {
     const reg = /x\s*=\s*(\d+)\s*,\s*y\s*=\s*(\d+)\s*(,\s*rule\s*=(.*))?/;
     const res = line.match(reg);
     if (res === null) {
-      throw Error("Parse error");
+      throw new RLEParseError("invalid header", { line: lineNum });
     }
     const x = res[1];
     const y = res[2];
     if (x === undefined || y === undefined) {
-      throw Error("Parse error");
+      throw new RLEParseError("invalid header", { line: lineNum });
     }
     this.visitor.visitSize({ x: Number(x), y: Number(y) });
     const rule = res[4];

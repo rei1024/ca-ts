@@ -3,12 +3,15 @@ import type { Plaintext } from "./Plaintext.ts";
 /**
  * Parse {@link Plaintext} file.
  *
+ * @example
  * ```ts
- * parsePlaintext(`!Name: Glider
+ * import { parsePlaintext } from "@ca-ts/plaintext";
+ *
+ * const parsedResult = parsePlaintext(`!Name: Glider
  * !
  * .O.
  * ..O
- * OOO`)
+ * OOO`);
  * ```
  */
 export function parsePlaintext(source: string): Plaintext {

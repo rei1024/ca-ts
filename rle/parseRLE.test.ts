@@ -1,6 +1,7 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { parseRLE } from "./parseRLE.ts";
 import { RLE_TEST_DATA } from "./test-data/mod.ts";
+import { RLEParseError } from "./parseRLE/RLEParseError.ts";
 
 Deno.test("parseRLE cloverleaf", () => {
   const rle = parseRLE(RLE_TEST_DATA.cloverleaf);
@@ -309,7 +310,7 @@ Deno.test("parseRLE error invalid state 256", () => {
     () => {
       parseRLE("yP");
     },
-    Error,
+    RLEParseError,
     "invalid state",
   );
 });

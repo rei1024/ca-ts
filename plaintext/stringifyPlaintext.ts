@@ -3,13 +3,14 @@ import type { Plaintext } from "./Plaintext.ts";
 /**
  * Convert {@link Plaintext} to a string.
  *
+ * @example
  * ```ts
- * import { stringifyPlaintext } from "@ca-ts/plaintext"
+ * import { stringifyPlaintext } from "@ca-ts/plaintext";
  *
- * stringifyPlaintext({
+ * const plaintextString = stringifyPlaintext({
  *   description: ["!Name: Blinker", "!"],
  *   pattern: [[1, 1, 1]]
- * })
+ * });
  * ```
  */
 export function stringifyPlaintext(
