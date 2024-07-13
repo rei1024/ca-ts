@@ -13,6 +13,8 @@ Deno.test("parseApgcode block", () => {
     assertEquals(parsedCode.population, 4);
     assertEquals(parsedCode.cells.length, 4);
   }
+  // convertible to JSON
+  JSON.stringify(parseApgcode);
 });
 
 Deno.test("parseApgcode hwss", () => {

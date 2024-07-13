@@ -45,18 +45,20 @@ export function parseApgcode(identifier: string): Apgcode {
     };
   } else if (identifier.startsWith("xp") || identifier.startsWith("xq")) {
     identifier = identifier.slice("xp".length);
-    const [pop] = identifier.split("_", 1);
+    const [period] = identifier.split("_", 1);
 
-    if (pop === undefined || pop.length === 0 || !/^[0-9+]$/.test(pop)) {
+    if (
+      period === undefined || period.length === 0 || !/^[0-9+]$/.test(period)
+    ) {
       throw new ApgcodeParseError("Parse error");
     }
 
-    const rest = identifier.slice(pop.length + 1); // +1 for _
+    const rest = identifier.slice(period.length + 1); // +1 for _
     const pattern = parseExtendedWechslerFormat(rest);
 
     return {
       type: identifier.startsWith("xp") ? "oscillator" : "spaceship",
-      period: Number(pop),
+      period: Number(period),
       cells: pattern,
     };
   } else if (identifier.startsWith("yl")) {
