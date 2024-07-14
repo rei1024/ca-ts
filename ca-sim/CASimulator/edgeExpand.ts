@@ -4,8 +4,8 @@ export function edgeExpand<
   T extends string | boolean | number | bigint | null | undefined,
 >(
   offsetArray: OffsetTwoDimArray<T>,
-  defaultValue: T,
 ) {
+  const defaultValue = offsetArray.config.defaultValue;
   const { dx, dy, width, height } = offsetArray.getInternal();
 
   if (width === 0 || height === 0) {

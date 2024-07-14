@@ -10,7 +10,7 @@ export class OffsetTwoDimArray<
   private height: number = 0;
   private array: T[][] = [];
 
-  constructor(private config: { defaultValue: T }) {}
+  constructor(readonly config: { readonly defaultValue: T }) {}
 
   map<S extends string | boolean | number | bigint | null | undefined>(
     fn: (value: T) => S,

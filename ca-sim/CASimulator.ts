@@ -23,6 +23,7 @@ export class CASimulator {
   readonly offsetArray = new OffsetTwoDimArray<number>({
     defaultValue: 0,
   });
+  private generation = 0;
 
   constructor(
     config: { transitionRule: (condition: Condition) => number },
@@ -46,9 +47,10 @@ export class CASimulator {
   }
 
   next(): void {
+    this.generation++;
     const offsetArray = this.offsetArray;
 
-    edgeExpand(offsetArray, 0);
+    edgeExpand(offsetArray);
     const transitionRule = this.transitionRule;
     const current = offsetArray.clone();
     offsetArray.forEach(offsetArray.getRect(), (state, p) => {
@@ -82,6 +84,10 @@ export class CASimulator {
       }
     });
     return count;
+  }
+
+  getGeneration(): number {
+    return this.generation;
   }
 }
 

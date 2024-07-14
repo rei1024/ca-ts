@@ -50,6 +50,7 @@ x = 9, y = 9, rule = 23/3
     ca.next();
   }
   assertEquals(ca.getPopulation(), 28);
+  assertEquals(ca.getGeneration(), 16);
 });
 
 Deno.test.ignore("CASimulator r", () => {
@@ -66,4 +67,5 @@ b2o$2ob$bo!`,
   ca.nextN(1103);
 
   assertEquals(ca.getPopulation(), 116);
+  assertEquals(ca.getGeneration(), 1103);
 });
