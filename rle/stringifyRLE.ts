@@ -25,10 +25,13 @@ export type StringifyRLEOptions = {
 /**
  * Convert {@link RLE} to a string.
  */
-export function stringifyRLE(rle: RLE, options?: StringifyRLEOptions): string {
+export function stringifyRLE(
+  rle: Partial<RLE>,
+  options?: StringifyRLEOptions,
+): string {
   const MAX_CHAR = options?.maxLineChars ?? 70;
 
-  const cells = rle.cells.filter((cell) => cell.state !== 0);
+  let cells = (rle.cells ?? []).filter((cell) => cell.state !== 0);
 
   if (options?.acceptUnorderedCells) {
     cells.sort((a, b) => {
@@ -37,6 +40,19 @@ export function stringifyRLE(rle: RLE, options?: StringifyRLEOptions): string {
       } else {
         return a.position.y - b.position.y;
       }
+    });
+  }
+
+  if (rle.XRLE?.position) {
+    const offset = rle.XRLE.position;
+    cells = cells.map((c) => {
+      return {
+        position: {
+          x: c.position.x - offset.x,
+          y: c.position.y - offset.y,
+        },
+        state: c.state,
+      };
     });
   }
 
@@ -99,16 +115,16 @@ export function stringifyRLE(rle: RLE, options?: StringifyRLEOptions): string {
   }
 
   return [
-    ...rle.comments,
+    ...rle.comments ?? [],
     (rle.size != null
       ? `x = ${rle.size.width}, y = ${rle.size.height}, `
       : (() => {
-        const { width, height } = getSizeOfCells(rle.cells);
+        const { width, height } = getSizeOfCells(rle.cells ?? []);
         return `x = ${width}, y = ${height}, `;
-      })()) + `rule = ${rle.ruleString}`,
+      })()) + `rule = ${rle.ruleString ?? "B3/S23"}`,
     ...format(parts, MAX_CHAR),
   ].join(
     "\n",
-  ) + rle.trailingComment +
+  ) + (rle.trailingComment ?? "") +
     "\n";
 }
