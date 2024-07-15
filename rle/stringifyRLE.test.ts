@@ -88,7 +88,7 @@ Deno.test("stringifyRLE", () => {
     "x = 3, y = 1, rule = B3/S23\n3o!\n",
   );
 
-  // parital
+  // partial
   assertEquals(
     stringifyRLE({
       cells: makeCells([
