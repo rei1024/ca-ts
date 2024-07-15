@@ -1,6 +1,10 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { cellsToArray } from "../rle/cellsToArray.ts";
-import { parseApgcode, parseExtendedWechslerFormat } from "./parseApgcode.ts";
+import {
+  ApgcodeParseError,
+  parseApgcode,
+  parseExtendedWechslerFormat,
+} from "./parseApgcode.ts";
 
 Deno.test("parseApgcode block", () => {
   const parsedCode = parseApgcode("xs4_33");
@@ -9,6 +13,8 @@ Deno.test("parseApgcode block", () => {
     assertEquals(parsedCode.population, 4);
     assertEquals(parsedCode.cells.length, 4);
   }
+  // convertible to JSON
+  JSON.stringify(parseApgcode);
 });
 
 Deno.test("parseApgcode hwss", () => {
@@ -83,27 +89,27 @@ Deno.test("parseExtendedWechslerFormat yz twice", () => {
 Deno.test("parseApgcode Error", () => {
   assertThrows(() => {
     parseApgcode("!");
-  });
+  }, ApgcodeParseError);
 });
 
 Deno.test("parseApgcode population error", () => {
   assertThrows(() => {
     parseApgcode("xsa_33");
-  });
+  }, ApgcodeParseError);
 });
 
 Deno.test("parseApgcode period error", () => {
   assertThrows(() => {
     parseApgcode("xpa_33");
-  });
+  }, ApgcodeParseError);
 
   assertThrows(() => {
     parseApgcode("xqa_33");
-  });
+  }, ApgcodeParseError);
 });
 
 Deno.test("parseExtendedWechslerFormat Error", () => {
   assertThrows(() => {
     parseExtendedWechslerFormat("!");
-  });
+  }, ApgcodeParseError);
 });

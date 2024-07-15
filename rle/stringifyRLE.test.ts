@@ -10,6 +10,11 @@ function makeCells(list: { x: number; y: number }[]): CACell[] {
 
 Deno.test("stringifyRLE", () => {
   assertEquals(
+    stringifyRLE({}),
+    "x = 0, y = 0, rule = B3/S23\n!\n",
+  );
+
+  assertEquals(
     stringifyRLE({
       cells: [],
       comments: [],
@@ -79,6 +84,18 @@ Deno.test("stringifyRLE", () => {
       ruleString: "B3/S23",
       size: null,
       XRLE: null,
+    }),
+    "x = 3, y = 1, rule = B3/S23\n3o!\n",
+  );
+
+  // partial
+  assertEquals(
+    stringifyRLE({
+      cells: makeCells([
+        { x: 0, y: 0 },
+        { x: 1, y: 0 },
+        { x: 2, y: 0 },
+      ]),
     }),
     "x = 3, y = 1, rule = B3/S23\n3o!\n",
   );
@@ -157,6 +174,55 @@ Deno.test("stringifyRLE not sorted", () => {
     Error,
     "cells must be sorted",
   );
+});
+
+Deno.test("stringifyRLE acceptUnorderedCells", () => {
+  stringifyRLE({
+    cells: makeCells([{ x: 1, y: 0 }, { x: 0, y: 0 }]),
+    comments: [],
+    trailingComment: "",
+    ruleString: "B3/S23",
+    size: {
+      width: 0,
+      height: 0,
+    },
+    XRLE: null,
+  }, { acceptUnorderedCells: true });
+
+  {
+    const input = makeCells([{ x: 0, y: 1 }, { x: 0, y: 0 }]);
+    const clone = structuredClone(input);
+    stringifyRLE({
+      cells: input,
+      comments: [],
+      trailingComment: "",
+      ruleString: "B3/S23",
+      size: {
+        width: 0,
+        height: 0,
+      },
+      XRLE: null,
+    }, { acceptUnorderedCells: true });
+    assertEquals(input, clone, "no mutation");
+  }
+
+  stringifyRLE({
+    cells: makeCells([{ x: 1, y: 2 }, { x: 2, y: 0 }, { x: 1, y: 1 }, {
+      x: 0,
+      y: 1,
+    }, {
+      x: 0,
+      y: 0,
+    }]),
+    comments: [],
+    trailingComment: "",
+    ruleString: "B3/S23",
+    size: {
+      width: 0,
+      height: 0,
+    },
+    XRLE: null,
+  }, { acceptUnorderedCells: true });
 });
 
 Deno.test("stringifyRLE invalid state", () => {
@@ -292,6 +358,12 @@ obo$35b3o3b3o29bo$36bo5bo30b2o2$35b2o5b2o$35b2o5b2o!\n`);
   assertBack(RLE_TEST_DATA.cloverleaf);
 
   assertBack(`x = 0, y = 0, rule = B3/S23\n!abc\ndef`);
+
+  assertBack(`#CXRLE Gen=0 Pos=0,0\nx = 2, y = 3, rule = B3/S23\no!`);
+
+  // with offset
+  assertBack(`#CXRLE Gen=0 Pos=1,2\nx = 2, y = 3, rule = B3/S23\no!`);
+  assertBack(`#CXRLE Gen=0 Pos=-1,-2\nx = 2, y = 3, rule = B3/S23\no!`);
 });
 
 Deno.test("stringifyRLE 1..255", () => {

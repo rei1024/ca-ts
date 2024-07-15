@@ -1,4 +1,5 @@
 import type { CACell, RLE } from "./RLE.ts";
+import { RLEParseError } from "./parseRLE/RLEParseError.ts";
 
 import { type IRLEVisitor, visitRLE } from "./parseRLE/visitRLE.ts";
 
@@ -36,7 +37,7 @@ export class RLEVisitor implements IRLEVisitor {
 
   visitSize({ x, y }: { x: number; y: number }): void {
     if (isNaN(x) || isNaN(y)) {
-      throw Error("Parse error");
+      throw new RLEParseError("Parse error");
     }
     this.size = { width: x, height: y };
   }
@@ -52,6 +53,15 @@ export class RLEVisitor implements IRLEVisitor {
 
 /**
  * Parse {@link RLE} file.
+ *
+ * @example
+ * ```ts
+ * import { parseRLE, type RLE } from "@ca-ts/rle"
+ *
+ * const rle: RLE = parseRLE(`#N Glider
+ * x = 3, y = 3, rule = B3/S23
+ * bob$2bo$3o!`);
+ * ```
  * @throws
  */
 export function parseRLE(source: string): RLE {

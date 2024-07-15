@@ -1,10 +1,7 @@
 /**
- * apgcode
- *
- * ## Reference
- * - [apgcode | LifeWiki](https://conwaylife.com/wiki/Apgcode)
+ * Still life
  */
-export type Apgcode = {
+export type ApgcodeStillLife = {
   /** `xs` */
   type: "still-life";
   /** the population for the still life */
@@ -15,9 +12,14 @@ export type Apgcode = {
    * sorted lexicographically on (y, x)
    */
   cells: { x: number; y: number }[];
-} | {
-  /** `xp`, `xq` */
-  type: "oscillator" | "spaceship";
+};
+
+/**
+ * Oscillator
+ */
+export type ApgcodeOscillator = {
+  /** `xp` */
+  type: "oscillator";
   /** the period of the object */
   period: number;
   /**
@@ -26,7 +28,28 @@ export type Apgcode = {
    * sorted lexicographically on (y, x)
    */
   cells: { x: number; y: number }[];
-} | {
+};
+
+/**
+ * Spaceship
+ */
+export type ApgcodeSpaceship = {
+  /** `xq` */
+  type: "spaceship";
+  /** the period of the object */
+  period: number;
+  /**
+   * pattern
+   *
+   * sorted lexicographically on (y, x)
+   */
+  cells: { x: number; y: number }[];
+};
+
+/**
+ * Linear
+ */
+export type ApgcodeLinear = {
   /** `yl` */
   type: "linear";
   /** first value */
@@ -38,3 +61,15 @@ export type Apgcode = {
   /** fourth value */
   hash: string;
 };
+
+/**
+ * apgcode is a compact format for representing patterns in cellular automata.
+ *
+ * ## Reference
+ * - [apgcode | LifeWiki](https://conwaylife.com/wiki/Apgcode)
+ */
+export type Apgcode =
+  | ApgcodeStillLife
+  | ApgcodeOscillator
+  | ApgcodeSpaceship
+  | ApgcodeLinear;

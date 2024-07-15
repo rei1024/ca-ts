@@ -1,7 +1,11 @@
 {
   "version": "0.2",
   "language": "en",
-  "ignorePaths": ["./rle/test-data/mod.ts", "deno.lock"],
+  "ignorePaths": [
+    "./rle/test-data/mod.ts",
+    "apgcode/parseApgcode.test.ts",
+    "deno.lock"
+  ],
   "words": [
     "bobo",
     "bobobobo",
@@ -15,6 +19,13 @@
     "deno",
     "denoland",
     "Oscillizer",
-    "Apgcode"
+    "Apgcode",
+    "Wechsler",
+    "hwss",
+    "margolus",
+    "messless",
+    "megasized",
+    "deee",
+    "caplayer"
   ]
 }
