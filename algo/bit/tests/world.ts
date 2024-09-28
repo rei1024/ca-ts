@@ -4,12 +4,12 @@ function mod(i: number, j: number) {
 }
 
 /**
- * ライフゲームのルール
- * @param cell 自身の状態（0が死で1が生）
- * @param count 近傍セルの生個数
- * @returns
+ * Rule of Gonway's Game of Life
+ * @param cell state of center cell
+ * @param count number of neighbour live cell
+ * @returns next state of center cell
  */
-const updateCell = (cell: number, count: number): number => {
+const updateCell = (cell: 0 | 1, count: number): 0 | 1 => {
   if (cell === 0 && count === 3) {
     return 1;
   } else if (cell === 1 && (count === 2 || count === 3)) {
@@ -128,7 +128,7 @@ export class World {
           array[down + right]!;
         const middleOffset = middle + j;
         tempArray[middleOffset] = updateCell(
-          array[middleOffset]!,
+          array[middleOffset]! as 0 | 1,
           count,
         );
       }
