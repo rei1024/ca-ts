@@ -55,7 +55,7 @@ export class BitWorld {
   }
 
   /**
-   * set alive cell at (x, y)
+   * set live cell at (x, y)
    */
   set(x: number, y: number) {
     this.bitGrid.set(x, y);
@@ -115,7 +115,7 @@ export class BitWorld {
   }
 
   /**
-   * has alive cell at border
+   * has live cell at border
    */
   hasAliveCellAtBorder(): boolean {
     return this.bitGrid.hasAliveCellAtBorder();

@@ -9,6 +9,9 @@ const getOffset = (width32: number, iHeight: number, jWidth: number) => {
   return iHeight * width32 + jWidth;
 };
 
+/**
+ * 2D bit array
+ */
 export class BitGrid {
   constructor(
     private readonly width32: number,
@@ -142,7 +145,7 @@ export class BitGrid {
   }
 
   /**
-   * has alive cell at border
+   * has live cell at border
    */
   hasAliveCellAtBorder(): boolean {
     const width = this.width32;
@@ -213,7 +216,7 @@ export class BitGrid {
             if (minXFound) {
               minX = Math.min(minX, x);
             } else {
-              // 初回はそのまま記録
+              // first found
               minXFound = true;
               minX = x;
             }
