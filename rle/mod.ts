@@ -73,4 +73,4 @@
 export type { CACell, RLE } from "./RLE.ts";
 export { parseRLE } from "./parseRLE.ts";
 export { stringifyRLE, type StringifyRLEOptions } from "./stringifyRLE.ts";
-export { cellsToArray } from "./cellsToArray.ts";
+export { cellsToArray } from "./lib/cellsToArray.ts";

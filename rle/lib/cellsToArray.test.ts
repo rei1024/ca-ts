@@ -1,5 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { cellsToArray } from "./cellsToArray.ts";
+import { cellsToArray } from "../lib/cellsToArray.ts";
 
 Deno.test("cellsToArray glider", () => {
   const glider = [
