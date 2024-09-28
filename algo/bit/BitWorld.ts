@@ -65,17 +65,17 @@ export class BitWorld {
     return this.bitGrid.getArray();
   }
 
-  forEach(fn: (i: number, j: number, alive: 0 | 1) => void) {
+  forEach(fn: (x: number, y: number, alive: 0 | 1) => void) {
     this.bitGrid.forEach(fn);
   }
 
-  forEachAlive(fn: (i: number, j: number) => void) {
+  forEachAlive(fn: (x: number, y: number) => void) {
     this.bitGrid.forEachAlive(fn);
   }
 
   getCellArray(): { x: number; y: number }[] {
     const array: { x: number; y: number }[] = [];
-    this.bitGrid.forEachAlive((y, x) => {
+    this.bitGrid.forEachAlive((x, y) => {
       array.push({ x, y });
     });
 

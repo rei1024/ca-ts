@@ -90,14 +90,14 @@ export class BitGrid {
 
   getArray(): (0 | 1)[][] {
     const a: (0 | 1)[][] = [];
-    this.forEach((i, j, alive) => {
-      a[i] ??= [];
-      a[i][j] = alive;
+    this.forEach((x, y, alive) => {
+      a[y] ??= [];
+      a[y][x] = alive;
     });
     return a;
   }
 
-  forEach(fn: (i: number, j: number, alive: 0 | 1) => void) {
+  forEach(fn: (x: number, y: number, alive: 0 | 1) => void) {
     const width = this.width32;
     const height = this.height;
     const array = this.uint32array;
@@ -111,13 +111,13 @@ export class BitGrid {
         const BITS_J = j * BITS;
         for (let u = 0; u < BITS; u++) {
           const alive = (value & (1 << (BITS_MINUS_1 - u))) !== 0 ? 1 : 0;
-          fn(i, BITS_J + u, alive);
+          fn(BITS_J + u, i, alive);
         }
       }
     }
   }
 
-  forEachAlive(fn: (i: number, j: number) => void) {
+  forEachAlive(fn: (x: number, y: number) => void) {
     const width = this.width32;
     const height = this.height;
     const array = this.uint32array;
@@ -133,7 +133,7 @@ export class BitGrid {
           for (let u = 0; u < BITS; u++) {
             const alive = (value & (1 << (BITS_MINUS_1 - u))) !== 0;
             if (alive) {
-              fn(i, BITS_J + u);
+              fn(BITS_J + u, i);
             }
           }
         }

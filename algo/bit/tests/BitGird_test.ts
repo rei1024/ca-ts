@@ -82,8 +82,8 @@ Deno.test("BitGrid make", () => {
 Deno.test("BitGrid get", () => {
   const grid = BitGrid.make({ width: 32, height: 5 });
   grid.random();
-  grid.forEach((i, j, state) => {
-    assertEquals(grid.get(j, i), state);
+  grid.forEach((x, y, state) => {
+    assertEquals(grid.get(x, y), state);
   });
 });
 

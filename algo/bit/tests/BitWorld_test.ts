@@ -6,7 +6,7 @@ Deno.test("BitWorld is correct", () => {
   const bitWorld = BitWorld.make({ width: 32 * 3, height: 32 });
   const world = new World(32 * 3, 32);
 
-  bitWorld.forEach((y, x) => {
+  bitWorld.forEach((x, y) => {
     if (Math.random() > 0.5) {
       bitWorld.set(x, y);
       world.set(x, y);
@@ -27,7 +27,7 @@ Deno.test("BitWorld is correct 2", () => {
   const bitWorld = BitWorld.make({ width: 32 * 1, height: 32 });
   const world = new World(32 * 1, 32);
 
-  bitWorld.forEach((y, x) => {
+  bitWorld.forEach((x, y) => {
     if (Math.random() > 0.5) {
       bitWorld.set(x, y);
       world.set(x, y);

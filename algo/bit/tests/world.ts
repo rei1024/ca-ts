@@ -76,29 +76,29 @@ export class World {
 
   getArray() {
     const a: boolean[][] = [];
-    this.forEach((i, j, alive) => {
-      a[i] ??= [];
-      a[i][j] = alive;
+    this.forEach((x, y, alive) => {
+      a[y] ??= [];
+      a[y][x] = alive;
     });
     return a;
   }
 
-  forEach(fn: (i: number, j: number, alive: boolean) => void) {
+  forEach(fn: (x: number, y: number, alive: boolean) => void) {
     const width = this.width;
     const height = this.height;
     const array = this.array;
     for (let i = 0; i < height; i++) {
       const middle = i * width;
       for (let j = 0; j < width; j++) {
-        fn(i, j, array[middle + j] ? true : false);
+        fn(j, i, array[middle + j] ? true : false);
       }
     }
   }
 
-  forEachAlive(fn: (i: number, j: number) => void) {
-    this.forEach((i, j, alive) => {
+  forEachAlive(fn: (x: number, y: number) => void) {
+    this.forEach((x, y, alive) => {
       if (alive) {
-        fn(i, j);
+        fn(x, y);
       }
     });
   }
