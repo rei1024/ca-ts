@@ -28,8 +28,8 @@ export class World {
   private array: Uint8Array;
   private tempArray: Uint8Array;
   /**
-   * @param {number} width
-   * @param {number} height
+   * @param width
+   * @param height
    */
   constructor(width: number, height: number) {
     if (typeof width !== "number") {
@@ -52,22 +52,25 @@ export class World {
     return this.height;
   }
 
+  /**
+   * set all cells to dead
+   */
   clear() {
     this.array.fill(0);
   }
 
   /**
-   * @param {number} x
-   * @param {number} y
+   * @param x
+   * @param y
    */
   set(x: number, y: number) {
     this.array[y * this.width + x] = 1;
   }
 
-  random() {
+  random({ liveRatio }: { liveRatio?: number } = {}) {
     const array = this.array;
     array.forEach((_, i) => {
-      array[i] = Math.random() < 0.6 ? 0 : 1;
+      array[i] = Math.random() < (liveRatio ?? 0.5) ? 0 : 1;
     });
   }
 
