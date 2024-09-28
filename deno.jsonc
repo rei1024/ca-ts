@@ -35,6 +35,7 @@
   "workspace": [
     "./rle",
     "./plaintext",
-    "./apgcode"
+    "./apgcode",
+    "./algo"
   ]
 }
