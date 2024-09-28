@@ -1,3 +1,11 @@
+/**
+ * Common types and functions
+ * @module
+ */
+
+/**
+ * Rectangle
+ */
 export interface Rect {
   minX: number;
   minY: number;

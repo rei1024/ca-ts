@@ -1,4 +1,4 @@
-import type { CACell } from "./mod.ts";
+import type { CACell } from "../mod.ts";
 
 export function getSizeOfCells(
   cells: CACell[],

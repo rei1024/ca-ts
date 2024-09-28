@@ -30,6 +30,7 @@ export class BitWorld {
   static make({ width, height }: {
     /**
      * Actual width is ceil(width / 32) * 32
+     * @example 32
      */
     width: number;
     height: number;

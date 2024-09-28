@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { cellsToArray } from "../rle/cellsToArray.ts";
+import { cellsToArray } from "../rle/lib/cellsToArray.ts";
 import {
   ApgcodeParseError,
   parseApgcode,
