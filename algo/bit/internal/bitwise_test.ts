@@ -24,7 +24,7 @@ function checkCorrect() {
   const sum = (a: number[]) => a.reduce((acc, x) => acc + x, 0);
   const array = Array(8).fill(0).map(() => [0, 1]);
   for (const x of cartesian(array)) {
-    // @ts-ignore length is corrent
+    // @ts-ignore length is correct
     const sorted = sort(...x);
     const num = sum(sorted);
 

@@ -237,7 +237,7 @@ export class BitGrid {
       this.getWidth32() !== otherBitGrid.getWidth32() ||
       this.getHeight() !== otherBitGrid.getHeight()
     ) {
-      throw TypeError(name + ": diffrent grid size");
+      throw TypeError(name + ": different grid size");
     }
   }
 
@@ -246,7 +246,7 @@ export class BitGrid {
    */
   equal(otherBitGrid: BitGrid): boolean {
     this.assertSameSize("BitGrid.equal", otherBitGrid);
-    return euqalUint32(
+    return equalUint32(
       this.asInternalUint32Array(),
       otherBitGrid.asInternalUint32Array(),
     );
@@ -275,7 +275,7 @@ export class BitGrid {
   }
 }
 
-function euqalUint32(a: Uint32Array, b: Uint32Array): boolean {
+function equalUint32(a: Uint32Array, b: Uint32Array): boolean {
   if (a.length !== b.length) {
     return false;
   }
