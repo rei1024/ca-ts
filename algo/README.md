@@ -1,8 +1,8 @@
-/**
- * Conway's Game of Life simulation by bitwise operations.
- *
- * @example
- * ```ts
+## Example
+
+### Simulation by bitwise operations
+
+```ts
 import { BitWorld } from "@ca-ts/algo/bit";
 const world = BitWorld.make({ width: 32, height: 32 });
 world.random();
@@ -17,9 +17,4 @@ setInterval(() => {
   );
   world.next();
 }, 100);
- * ```
- *
- * @module
- */
-export { BitGrid } from "./BitGrid.ts";
-export { BitWorld } from "./BitWorld.ts";
+```
