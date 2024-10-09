@@ -16,8 +16,8 @@ in Node.js and Deno.
 
 ## Development
 
-- [Deno](https://docs.deno.com/runtime/manual/)
-  - Above v1.45
+- [Deno](https://docs.deno.com/runtime/)
+  - Above 2.0
 - [VS Code](https://code.visualstudio.com/)
   - Install Deno (denoland.vscode-deno) Extension
 
