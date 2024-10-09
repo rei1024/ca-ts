@@ -47,7 +47,7 @@ export type ApgcodeSpaceship = {
 };
 
 /**
- * Linear
+ * Linear growth
  */
 export type ApgcodeLinear = {
   /** `yl` */
