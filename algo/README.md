@@ -2,7 +2,7 @@
 
 ### Simulation by bitwise operations
 
-```ts
+```ts ignore
 import { BitWorld } from "@ca-ts/algo/bit";
 // Simulate Conway's Game of Life
 const world = BitWorld.make({ width: 32, height: 32 });
