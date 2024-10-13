@@ -11,8 +11,6 @@ export type OuterTotalisticRule = {
   };
 };
 
-export type ParsedRule = OuterTotalisticRule;
-
 /**
  * Parse {@link OuterTotalisticRule}
  *
@@ -27,7 +25,7 @@ parseOuterTotalistic("B3/S23")
  */
 export function parseOuterTotalistic(
   ruleString: string,
-): OuterTotalisticRule | null {
+): OuterTotalisticRule {
   ruleString = ruleString.trim();
 
   // B/S
@@ -60,7 +58,7 @@ export function parseOuterTotalistic(
     }
   }
 
-  return null;
+  throw new Error("Parse Error");
 }
 
 function bsToTransition(b: string, s: string): {
@@ -69,6 +67,10 @@ function bsToTransition(b: string, s: string): {
 } {
   const bs = b.split("").map((x) => Number(x)).sort((a, b) => a - b);
   const ss = s.split("").map((x) => Number(x)).sort((a, b) => a - b);
+  if (bs.includes(9) || ss.includes(9)) {
+    throw new Error("include 9");
+  }
+
   return {
     birth: bs,
     survive: ss,
