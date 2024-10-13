@@ -4,7 +4,7 @@ function mod(i: number, j: number) {
 }
 
 /**
- * Rule of Gonway's Game of Life
+ * Rule of Conway's Game of Life
  * @param cell state of center cell
  * @param count number of neighbour live cell
  * @returns next state of center cell
