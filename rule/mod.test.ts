@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from "@std/assert";
+import { assertEquals } from "@std/assert";
 import { parseRule } from "./mod.ts";
 
 Deno.test("parseRule B3/S23", () => {
