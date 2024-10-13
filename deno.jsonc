@@ -36,6 +36,7 @@
     "./rle",
     "./plaintext",
     "./apgcode",
-    "./algo"
+    "./algo",
+    "./rule"
   ]
 }
