@@ -7,8 +7,12 @@
     "deno.lock"
   ],
   "words": [
+    // random
     "bobo",
     "bobobobo",
+    "deee",
+    "efgh",
+    // words
     "XRLE",
     "CXRLE",
     "chacha",
@@ -29,6 +33,9 @@
     "caplayer",
     "rulestring",
     "Totalistic",
-    "Hensel"
+    "Hensel",
+    "caplayer",
+    "Eron",
+    "neighbour"
   ]
 }

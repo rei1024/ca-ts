@@ -16,6 +16,7 @@ export type Plaintext = {
    *
    * - 0: off
    * - 1: on
+   * @example [[1, 1], [1, 1]]
    */
   pattern: number[][];
   /**

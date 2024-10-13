@@ -142,6 +142,23 @@ o
   ]);
 });
 
+Deno.test("parseRLE comment between", () => {
+  const output = parseRLE(`# Comment 1
+x=3,y=2,rule=B23/S1
+o
+# Comment 2
+o
+`);
+  assertEquals(output.cells, [
+    { position: { x: 0, y: 0 }, state: 1 },
+    { position: { x: 1, y: 0 }, state: 1 },
+  ]);
+  assertEquals(output.comments, [
+    "# Comment 1",
+    "# Comment 2",
+  ]);
+});
+
 Deno.test("parseRLE 2o", () => {
   const output = parseRLE(`2o`);
   assertEquals(output.cells, [

@@ -1,5 +1,5 @@
 import type { CACell, RLE } from "./RLE.ts";
-import { getSizeOfCells } from "./getSizeOfCells.ts";
+import { getSizeOfCells } from "./lib/getSizeOfCells.ts";
 import { compressRLE } from "./stringifyRLE/compressRLE.ts";
 import { format } from "./stringifyRLE/format.ts";
 import { stateToString } from "./stringifyRLE/stateToString.ts";

@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { format } from "./format.ts";
 
 Deno.test("format", () => {
@@ -17,4 +17,18 @@ Deno.test("format", () => {
   assertEquals(format(["1", "2", "3", "4", "5", "6", "7"], 5), ["12345", "67"]);
 
   assertEquals(format(["1", "2", "3", "4", "56", "7"], 5), ["1234", "567"]);
+});
+
+Deno.test("format error", () => {
+  assertThrows(() => {
+    format([], 0);
+  });
+
+  assertThrows(() => {
+    format([], -1);
+  });
+
+  assertThrows(() => {
+    format([], 1.5);
+  });
 });
