@@ -6,18 +6,12 @@
  * - [Hensel notation | LifeWiki](https://conwaylife.com/wiki/Isotropic_non-totalistic_rule#Hensel_notation)
  */
 
-import { parseOuterTotalistic } from "./lib/outer-totalistic.ts";
+import {
+  type OuterTotalisticRule,
+  parseOuterTotalistic,
+} from "./lib/outer-totalistic.ts";
 
-/**
- * B/S notation
- */
-export type OuterTotalisticRule = {
-  type: "outer-totalistic";
-  transition: {
-    birth: number[];
-    survive: number[];
-  };
-};
+export type { OuterTotalisticRule };
 
 export type ParsedRule = OuterTotalisticRule;
 
