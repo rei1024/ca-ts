@@ -13,7 +13,7 @@ in Node.js and Deno.
 | [@ca-ts/plaintext](https://jsr.io/@ca-ts/plaintext) | [![JSR](https://jsr.io/badges/@ca-ts/plaintext)](https://jsr.io/@ca-ts/plaintext) | [Plaintext](https://conwaylife.com/wiki/Plaintext) file format                   |
 | [@ca-ts/apgcode](https://jsr.io/@ca-ts/apgcode)     | [![JSR](https://jsr.io/badges/@ca-ts/apgcode)](https://jsr.io/@ca-ts/apgcode)     | [apgcode](https://conwaylife.com/wiki/Apgcode)                                   |
 | [@ca-ts/algo](https://jsr.io/@ca-ts/algo)           | [![JSR](https://jsr.io/badges/@ca-ts/algo)](https://jsr.io/@ca-ts/algo)           | Algorithm for simulating cellular automaton                                      |
-| [@ca-ts/rule](https://jsr.io/@ca-ts/rule)           | [![JSR](https://jsr.io/badges/@ca-ts/rule)](https://jsr.io/@ca-ts/rule)           | Rulestring                                                                       |
+| [@ca-ts/rule](https://jsr.io/@ca-ts/rule)           | [![JSR](https://jsr.io/badges/@ca-ts/rule)](https://jsr.io/@ca-ts/rule)           | [Rulestring](https://conwaylife.com/wiki/Rulestring)                             |
 
 ## Development
 
