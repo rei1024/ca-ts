@@ -1,6 +1,19 @@
 /**
  * Rulestring
  *
+ * ### Example
+ * ```ts
+ * import { parseRule } from "@ca-ts/rule";
+ * const rule = parseRule("B3/S23");
+// rule = {
+//   type: "outer-totalistic",
+//   transition: {
+//     birth: [3],
+//     survive: [2, 3],
+//    },
+// }
+ * ```
+ *
  * ### Reference
  * - [Rulestring | LifeWiki](https://conwaylife.com/wiki/Rulestring)
  * - [QuickLife | Golly Help](https://golly.sourceforge.io/Help/Algorithms/QuickLife.html)
@@ -23,6 +36,18 @@ export type ParsedRule = OuterTotalisticRule;
 
 /**
  * Parse a rulestring.
+ * ### Example
+ * ```ts
+ * import { parseRule } from "@ca-ts/rule";
+ * const rule = parseRule("B3/S23");
+// rule = {
+//   type: "outer-totalistic",
+//   transition: {
+//     birth: [3],
+//     survive: [2, 3],
+//    },
+// }
+ * ```
  */
 export function parseRule(ruleString: string): ParsedRule {
   ruleString = ruleString.trim();
