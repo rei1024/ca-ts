@@ -10,7 +10,7 @@ function mod(i: number, j: number): number {
 }
 
 /**
- * Game of Life
+ * Outer-totalistic cellular automata.
  *
  * using bitwise operations
  */
@@ -20,6 +20,8 @@ export class BitWorld {
   private nextCell: typeof nextCellConway;
   /**
    * Create {@link BitWorld}
+   *
+   * Default transition is Conway's Game of Life.
    *
    * "B3/S23" → `{ transition: { birth: [3], survive: [2, 3] } }`
    */
@@ -60,6 +62,8 @@ export class BitWorld {
    * Create {@link BitWorld}
    *
    * width is rounded up to 32
+   *
+   * Default transition is Conway's Game of Life.
    *
    * "B3/S23" → `{ transition: { birth: [3], survive: [2, 3] } }`
    */
@@ -177,7 +181,7 @@ export class BitWorld {
   }
 
   /**
-   * Population
+   * Get current population
    */
   getPopulation(): number {
     return this.bitGrid.getPopulation();
