@@ -1,5 +1,8 @@
 import { BitGrid } from "./BitGrid.ts";
-import { nextCell } from "./internal/bitwise.ts";
+import {
+  createTotalisticNextCell,
+  nextCellConway,
+} from "./internal/bitwise.ts";
 
 function mod(i: number, j: number): number {
   const k = i % j;
@@ -7,35 +10,75 @@ function mod(i: number, j: number): number {
 }
 
 /**
- * Game of Life
+ * Outer-totalistic cellular automata.
  *
  * using bitwise operations
  */
 export class BitWorld {
   public bitGrid: BitGrid;
   private tempArray: Uint32Array;
-
-  constructor(bitGrid: BitGrid) {
+  private nextCell: typeof nextCellConway;
+  /**
+   * Create {@link BitWorld}
+   *
+   * Default transition is Conway's Game of Life.
+   *
+   * "B3/S23" → `{ transition: { birth: [3], survive: [2, 3] } }`
+   */
+  constructor(
+    bitGrid: BitGrid,
+    private options: { transition?: { birth: number[]; survive: number[] } } =
+      {},
+  ) {
     this.bitGrid = bitGrid;
     this.tempArray = new Uint32Array(
       this.bitGrid.asInternalUint32Array().length,
     );
+
+    const transition = this.options.transition;
+
+    function sortUnique(a: number[]) {
+      return [...new Set(a.slice().sort((a, b) => a - b))];
+    }
+
+    const normalizedBirth = transition ? sortUnique(transition.birth) : null;
+
+    const normalizedSurvive = transition
+      ? sortUnique(transition.survive)
+      : null;
+
+    const isConway = transition == null ||
+      (normalizedBirth && normalizedBirth.length === 1 &&
+        normalizedBirth[0] === 3 &&
+        normalizedSurvive && normalizedSurvive.length === 2 &&
+        normalizedSurvive[0] === 2 && normalizedSurvive[1] === 3);
+
+    this.nextCell = isConway
+      ? nextCellConway
+      : createTotalisticNextCell(transition);
   }
 
   /**
    * Create {@link BitWorld}
    *
    * width is rounded up to 32
+   *
+   * Default transition is Conway's Game of Life.
+   *
+   * "B3/S23" → `{ transition: { birth: [3], survive: [2, 3] } }`
    */
-  static make({ width, height }: {
-    /**
-     * Actual width is ceil(width / 32) * 32
-     * @example 32
-     */
-    width: number;
-    height: number;
-  }): BitWorld {
-    return new BitWorld(BitGrid.make({ width, height }));
+  static make(
+    { width, height }: {
+      /**
+       * Actual width is ceil(width / 32) * 32
+       * @example 32
+       */
+      width: number;
+      height: number;
+    },
+    options: { transition?: { birth: number[]; survive: number[] } } = {},
+  ): BitWorld {
+    return new BitWorld(BitGrid.make({ width, height }), options);
   }
 
   getWidth(): number {
@@ -46,6 +89,9 @@ export class BitWorld {
     return this.bitGrid.getHeight();
   }
 
+  /**
+   * Clear world.
+   */
   clear() {
     this.bitGrid.clear();
   }
@@ -90,6 +136,8 @@ export class BitWorld {
     const width = this.bitGrid.getWidth32();
     const height = this.bitGrid.getHeight();
     const array = this.bitGrid.asInternalUint32Array();
+    const next = this.nextCell;
+
     const tempArray = this.tempArray;
     for (let i = 0; i < height; i++) {
       const up = mod(i - 1, height) * width;
@@ -108,7 +156,7 @@ export class BitWorld {
         const se = array[down + left]!;
         const middleOffset = middle + j;
         const center = array[middleOffset]!;
-        tempArray[middleOffset] = nextCell(center, ne, n, nw, e, w, se, s, sw);
+        tempArray[middleOffset] = next(center, ne, n, nw, e, w, se, s, sw);
       }
     }
 
@@ -123,7 +171,7 @@ export class BitWorld {
   }
 
   /**
-   * Population
+   * Get current population
    */
   getPopulation(): number {
     return this.bitGrid.getPopulation();
