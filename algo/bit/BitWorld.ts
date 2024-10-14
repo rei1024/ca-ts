@@ -35,8 +35,14 @@ export class BitWorld {
       this.bitGrid.asInternalUint32Array().length,
     );
 
-    const transition = this.options.transition;
+    this.nextCell = nextCellConway;
+    this.setRule(this.options.transition ?? null);
+  }
 
+  /**
+   * Set rule
+   */
+  setRule(transition: { birth: number[]; survive: number[] } | null) {
     function sortUnique(a: number[]) {
       return [...new Set(a.slice().sort((a, b) => a - b))];
     }
