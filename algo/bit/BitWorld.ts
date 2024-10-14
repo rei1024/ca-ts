@@ -156,17 +156,7 @@ export class BitWorld {
         const se = array[down + left]!;
         const middleOffset = middle + j;
         const center = array[middleOffset]!;
-        tempArray[middleOffset] = next(
-          center,
-          ne,
-          n,
-          nw,
-          e,
-          w,
-          se,
-          s,
-          sw,
-        );
+        tempArray[middleOffset] = next(center, ne, n, nw, e, w, se, s, sw);
       }
     }
 
