@@ -1,5 +1,8 @@
 import { BitGrid } from "./BitGrid.ts";
-import { nextCell } from "./internal/bitwise.ts";
+import {
+  createTotalisticNextCell,
+  nextCellConway,
+} from "./internal/bitwise.ts";
 
 function mod(i: number, j: number): number {
   const k = i % j;
@@ -14,12 +17,30 @@ function mod(i: number, j: number): number {
 export class BitWorld {
   public bitGrid: BitGrid;
   private tempArray: Uint32Array;
-
-  constructor(bitGrid: BitGrid) {
+  private nextCell: typeof nextCellConway;
+  /**
+   * Create {@link BitWorld}
+   *
+   * "B3/S23" → `{ transition: { birth: [3], survive: [2, 3] } }`
+   */
+  constructor(
+    bitGrid: BitGrid,
+    private options: { transition?: { birth: number[]; survive: number[] } } =
+      {},
+  ) {
     this.bitGrid = bitGrid;
     this.tempArray = new Uint32Array(
       this.bitGrid.asInternalUint32Array().length,
     );
+
+    const transition = this.options.transition;
+
+    this.nextCell = transition == null ||
+        (transition.birth.length === 0 &&
+          transition.birth[0] === 3 &&
+          transition.survive.every((x) => x === 2 || x === 3))
+      ? nextCellConway
+      : createTotalisticNextCell(transition);
   }
 
   /**
@@ -27,15 +48,18 @@ export class BitWorld {
    *
    * width is rounded up to 32
    */
-  static make({ width, height }: {
-    /**
-     * Actual width is ceil(width / 32) * 32
-     * @example 32
-     */
-    width: number;
-    height: number;
-  }): BitWorld {
-    return new BitWorld(BitGrid.make({ width, height }));
+  static make(
+    { width, height }: {
+      /**
+       * Actual width is ceil(width / 32) * 32
+       * @example 32
+       */
+      width: number;
+      height: number;
+    },
+    options: { transition?: { birth: number[]; survive: number[] } } = {},
+  ): BitWorld {
+    return new BitWorld(BitGrid.make({ width, height }), options);
   }
 
   getWidth(): number {
@@ -90,6 +114,8 @@ export class BitWorld {
     const width = this.bitGrid.getWidth32();
     const height = this.bitGrid.getHeight();
     const array = this.bitGrid.asInternalUint32Array();
+    const next = this.nextCell;
+
     const tempArray = this.tempArray;
     for (let i = 0; i < height; i++) {
       const up = mod(i - 1, height) * width;
@@ -108,7 +134,17 @@ export class BitWorld {
         const se = array[down + left]!;
         const middleOffset = middle + j;
         const center = array[middleOffset]!;
-        tempArray[middleOffset] = nextCell(center, ne, n, nw, e, w, se, s, sw);
+        tempArray[middleOffset] = next(
+          center,
+          ne,
+          n,
+          nw,
+          e,
+          w,
+          se,
+          s,
+          sw,
+        );
       }
     }
 
