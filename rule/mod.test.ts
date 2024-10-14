@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { parseRule } from "./mod.ts";
 
 Deno.test("parseRule B3/S23", () => {
@@ -8,5 +8,19 @@ Deno.test("parseRule B3/S23", () => {
       birth: [3],
       survive: [2, 3],
     },
+  });
+});
+
+Deno.test("parseRule Life", () => {
+  assertEquals(parseRule("Life"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3],
+      survive: [2, 3],
+    },
+  });
+
+  assertThrows(() => {
+    parseRule("NoLife");
   });
 });
