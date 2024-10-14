@@ -35,10 +35,23 @@ export class BitWorld {
 
     const transition = this.options.transition;
 
-    this.nextCell = transition == null ||
-        (transition.birth.length === 0 &&
-          transition.birth[0] === 3 &&
-          transition.survive.every((x) => x === 2 || x === 3))
+    function sortUnique(a: number[]) {
+      return [...new Set(a.slice().sort((a, b) => a - b))];
+    }
+
+    const normalizedBirth = transition ? sortUnique(transition.birth) : null;
+
+    const normalizedSurvive = transition
+      ? sortUnique(transition.survive)
+      : null;
+
+    const isConway = transition == null ||
+      (normalizedBirth && normalizedBirth.length === 1 &&
+        normalizedBirth[0] === 3 &&
+        normalizedSurvive && normalizedSurvive.length === 2 &&
+        normalizedSurvive[0] === 2 && normalizedSurvive[1] === 3);
+
+    this.nextCell = isConway
       ? nextCellConway
       : createTotalisticNextCell(transition);
   }
@@ -47,6 +60,8 @@ export class BitWorld {
    * Create {@link BitWorld}
    *
    * width is rounded up to 32
+   *
+   * "B3/S23" → `{ transition: { birth: [3], survive: [2, 3] } }`
    */
   static make(
     { width, height }: {
@@ -70,6 +85,9 @@ export class BitWorld {
     return this.bitGrid.getHeight();
   }
 
+  /**
+   * Clear world.
+   */
   clear() {
     this.bitGrid.clear();
   }

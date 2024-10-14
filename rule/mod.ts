@@ -36,6 +36,18 @@ export type ParsedRule = OuterTotalisticRule;
 
 /**
  * Parse a rulestring.
+ * ### Example
+ * ```ts
+ * import { parseRule } from "@ca-ts/rule";
+ * const rule = parseRule("B3/S23");
+// rule = {
+//   type: "outer-totalistic",
+//   transition: {
+//     birth: [3],
+//     survive: [2, 3],
+//    },
+// }
+ * ```
  */
 export function parseRule(ruleString: string): ParsedRule {
   ruleString = ruleString.trim();

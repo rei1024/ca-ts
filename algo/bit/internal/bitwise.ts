@@ -1,4 +1,4 @@
-// https://jix.one/proving-50-year-old-sorting-networks-optimal-part-1/
+// [Proving 50-Year-Old Sorting Networks Optimal: Part 1 - Jannis](https://jix.one/proving-50-year-old-sorting-networks-optimal-part-1/)
 // [Conway’s Game of Life in Logic Gates - Dietrich Epp](https://www.moria.us/old/3/programs/life/)
 
 /*
@@ -175,9 +175,9 @@ function createTotalisticNextCellCount(
     const p3 = o3 & o4;
     const p4 = o3 | o4;
 
-    // alive neighbour count is less than or equal to 1
+    // alive neighbour count is less than or equal to zero
     const sort1 = m7;
-    // alive neighbour count is less than or equal to 2
+    // alive neighbour count is less than or equal to one
     const sort2 = n6;
     const sort3 = o5;
     const sort4 = p4;
