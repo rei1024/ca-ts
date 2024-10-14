@@ -22,6 +22,7 @@
  * @module
  */
 
+import { alias } from "./lib/alias.ts";
 import {
   type OuterTotalisticRule,
   parseOuterTotalistic,
@@ -51,6 +52,8 @@ export type ParsedRule = OuterTotalisticRule;
  */
 export function parseRule(ruleString: string): ParsedRule {
   ruleString = ruleString.trim();
+
+  ruleString = alias(ruleString);
 
   try {
     const outerTotalistic = parseOuterTotalistic(ruleString);
