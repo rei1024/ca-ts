@@ -27,13 +27,15 @@ import {
   type OuterTotalisticRule,
   parseOuterTotalistic,
 } from "./lib/outer-totalistic.ts";
+import { type INTRule, parseIntRule } from "./lib/int.ts";
 
 export type { OuterTotalisticRule };
+export type { INTRule };
 
 /**
  * Rule of a cellular automaton.
  */
-export type ParsedRule = OuterTotalisticRule;
+export type ParsedRule = OuterTotalisticRule | INTRule;
 
 /**
  * Parse a rulestring.
@@ -58,6 +60,13 @@ export function parseRule(ruleString: string): ParsedRule {
   try {
     const outerTotalistic = parseOuterTotalistic(ruleString);
     return outerTotalistic;
+  } catch {
+    // nop
+  }
+
+  try {
+    const int = parseIntRule(ruleString);
+    return int;
   } catch {
     // nop
   }
