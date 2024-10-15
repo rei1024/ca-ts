@@ -2,6 +2,7 @@
   "name": "@ca-ts/rule",
   "version": "0.2.0",
   "exports": {
-    ".": "./mod.ts"
+    ".": "./mod.ts",
+    "./int": "./int.ts"
   }
 }

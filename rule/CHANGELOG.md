@@ -1,3 +1,9 @@
+## [unreleased]
+
+### Added
+
+- Add INT (isotropic non-totalistic) rule. (#22)
+
 ## [0.2.0] 2024-10-14
 
 ### Added

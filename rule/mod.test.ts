@@ -24,3 +24,13 @@ Deno.test("parseRule Life", () => {
     parseRule("NoLife");
   });
 });
+
+Deno.test("parseRule B3k/S4i", () => {
+  assertEquals(parseRule("B3k/S4i"), {
+    type: "int",
+    transition: {
+      birth: ["3k"],
+      survive: ["4i"],
+    },
+  });
+});
