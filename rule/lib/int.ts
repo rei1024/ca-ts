@@ -106,13 +106,14 @@ function toCondition(str: string): INTCondition[] {
     }
 
     // Get all possible letters for this number from the `intConditions` mapping
-    const possibleLetters = intModifiers[num as keyof typeof intModifiers];
+    const possibleLetters =
+      intModifiers[num as keyof typeof intModifiers] as readonly string[];
 
     // Check if there's a modifier (letter) for this number (e.g., "e", "c")
     const letters: string[] = [];
 
     // TODO: more strict check
-    while (i < str.length && /[cekainyqjrtwz]/.test(str[i] ?? "")) {
+    while (i < str.length && possibleLetters.includes(str[i] ?? "")) {
       letters.push(str[i] ?? error());
       i++;
     }

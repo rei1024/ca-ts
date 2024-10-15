@@ -165,6 +165,30 @@ Deno.test("parseIntRule error B9/S", () => {
   });
 });
 
+Deno.test("parseIntRule error B0c/S", () => {
+  assertThrows(() => {
+    parseIntRule("B0c/S");
+  });
+});
+
+Deno.test("parseIntRule error B1k/S", () => {
+  assertThrows(() => {
+    parseIntRule("B1k/S");
+  });
+});
+
+Deno.test("parseIntRule error B2y/S", () => {
+  assertThrows(() => {
+    parseIntRule("B2y/S");
+  });
+});
+
+Deno.test("parseIntRule error B3t/S", () => {
+  assertThrows(() => {
+    parseIntRule("B3t/S");
+  });
+});
+
 Deno.test("intConditionArray.length", () => {
   assertEquals(intConditionArray.length, 256);
 });
