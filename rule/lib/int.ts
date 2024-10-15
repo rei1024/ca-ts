@@ -61,7 +61,6 @@ export function parseIntRule(
       const b = match.groups?.birth;
       const s = match.groups?.survive;
       if (b !== undefined && s !== undefined) {
-        console.log(match);
         return {
           type: "int",
           transition: bsToTransition(b, s),
