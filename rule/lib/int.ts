@@ -112,7 +112,6 @@ function toCondition(str: string): INTCondition[] {
     // Check if there's a modifier (letter) for this number (e.g., "e", "c")
     const letters: string[] = [];
 
-    // TODO: more strict check
     while (i < str.length && possibleLetters.includes(str[i] ?? "")) {
       letters.push(str[i] ?? error());
       i++;

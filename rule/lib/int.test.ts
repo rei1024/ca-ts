@@ -153,6 +153,16 @@ Deno.test("parseIntRule B/S", () => {
   });
 });
 
+Deno.test("parseIntRule B/S", () => {
+  assertEquals(parseIntRule("B1-ce/S"), {
+    type: "int",
+    transition: {
+      birth: [],
+      survive: [],
+    },
+  });
+});
+
 Deno.test("parseIntRule error B-/S", () => {
   assertThrows(() => {
     parseIntRule("B-/S");
