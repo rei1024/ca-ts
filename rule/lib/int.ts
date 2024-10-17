@@ -55,7 +55,7 @@ export function parseIntRule(
   // B/S
   {
     const bsRegex =
-      /^B(?<birth>(\d|[cekainyqjrtwz-])*)\/S(?<survive>(\d|[cekainyqjrtwz-])*)$/;
+      /^(B|b)(?<birth>(\d|[cekainyqjrtwz-])*)\/(S|s)(?<survive>(\d|[cekainyqjrtwz-])*)$/;
     const match = ruleString.match(bsRegex);
     if (match) {
       const b = match.groups?.birth;

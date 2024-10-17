@@ -30,10 +30,11 @@ export function parseOuterTotalistic(
 
   // B/S
   {
-    const bsRegex = /^B(\d*)\/S(\d*)$/;
+    const bsRegex = /^(B|b)(?<birth>\d*)\/(S|s)(?<survive>\d*)$/;
     const match = ruleString.match(bsRegex);
     if (match) {
-      const [_, b, s] = match;
+      const b = match.groups?.birth;
+      const s = match.groups?.survive;
       if (b !== undefined && s !== undefined) {
         return {
           type: "outer-totalistic",
