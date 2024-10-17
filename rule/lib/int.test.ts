@@ -143,6 +143,16 @@ Deno.test("parseIntRule B3k/S4i", () => {
   });
 });
 
+Deno.test("parseIntRule b3k/s4i lower case", () => {
+  assertEquals(parseIntRule("b3k/s4i"), {
+    type: "int",
+    transition: {
+      birth: ["3k"],
+      survive: ["4i"],
+    },
+  });
+});
+
 Deno.test("parseIntRule B/S", () => {
   assertEquals(parseIntRule("B/S"), {
     type: "int",

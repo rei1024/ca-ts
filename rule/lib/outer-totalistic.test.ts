@@ -11,6 +11,16 @@ Deno.test("parseOuterTotalistic B3/S23", () => {
   });
 });
 
+Deno.test("parseOuterTotalistic b3/s23 lower case", () => {
+  assertEquals(parseOuterTotalistic("b3/s23"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3],
+      survive: [2, 3],
+    },
+  });
+});
+
 Deno.test("parseOuterTotalistic 23/3", () => {
   assertEquals(parseOuterTotalistic("23/3"), {
     type: "outer-totalistic",

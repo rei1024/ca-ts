@@ -27,10 +27,10 @@ import {
   type OuterTotalisticRule,
   parseOuterTotalistic,
 } from "./lib/outer-totalistic.ts";
-import { type INTRule, parseIntRule } from "./lib/int.ts";
+import { type INTCondition, type INTRule, parseIntRule } from "./lib/int.ts";
 
 export type { OuterTotalisticRule };
-export type { INTRule };
+export type { INTCondition, INTRule };
 
 /**
  * Rule of a cellular automaton.
@@ -40,6 +40,7 @@ export type ParsedRule = OuterTotalisticRule | INTRule;
 /**
  * Parse a rulestring.
  * ### Example
+ * Outer totalistic rule
  * ```ts
  * import { parseRule } from "@ca-ts/rule";
  * const rule = parseRule("B3/S23");
@@ -49,6 +50,19 @@ export type ParsedRule = OuterTotalisticRule | INTRule;
 //     birth: [3],
 //     survive: [2, 3],
 //    },
+// }
+ * ```
+ *
+ * Isotropic non-totalistic rule
+ * ```ts
+ * import { parseRule } from "@ca-ts/rule";
+ * const rule = parseRule("B3k/S4i");
+// rule = {
+//   type: "int",
+//   transition: {
+//     birth: ["3k"],
+//     survive: ["4i"],
+//   },
 // }
  * ```
  */
