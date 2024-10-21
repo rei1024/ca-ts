@@ -14,6 +14,8 @@ Deno.test("BitGrid", () => {
   assertEquals(grid.getPopulation(), 1);
   {
     const array = grid.getArray();
+    assertEquals(array.length, 32);
+    assertEquals(array.every((row) => row.length === 32), true);
     assertEquals(array.slice(0, 2).map((x) => x.slice(0, 2)), [[1, 0], [0, 0]]);
   }
 

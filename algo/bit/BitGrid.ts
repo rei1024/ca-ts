@@ -92,12 +92,19 @@ export class BitGrid {
   }
 
   getArray(): (0 | 1)[][] {
-    const a: (0 | 1)[][] = [];
-    this.forEach((x, y, alive) => {
-      a[y] ??= [];
-      a[y][x] = alive;
+    const array: (0 | 1)[][] = Array(this.getHeight())
+      .fill(0)
+      .map(() =>
+        Array(this.getWidth())
+          .fill(0)
+          .map(() => 0)
+      );
+
+    this.forEachAlive((x, y) => {
+      array[y]![x] = 1;
     });
-    return a;
+
+    return array;
   }
 
   forEach(fn: (x: number, y: number, alive: 0 | 1) => void) {
