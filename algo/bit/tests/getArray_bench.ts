@@ -1,7 +1,7 @@
 import { BitGrid } from "../mod.ts";
 
-const N = 10;
-const M = 500;
+const N = 5;
+const M = 50;
 
 const width = 32 * 4;
 const height = 32 * 4;

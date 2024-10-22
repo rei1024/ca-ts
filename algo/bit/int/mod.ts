@@ -38,7 +38,7 @@ export function crateINTNextCell(
     ) {
       return 0;
     }
-    return createINTNextCellCount(transition)(
+    return createINTNextCellNormalized(transition)(
       nw1,
       n,
       ne1,
@@ -57,7 +57,7 @@ const intConditionArray: string[] =
     .trim()
     .split(/\s+/);
 
-function createINTNextCellCount(
+function createINTNextCellNormalized(
   transition: { birth: string[]; survive: string[] },
 ) {
   const birth = transition.birth;
@@ -88,18 +88,19 @@ function createINTNextCellCount(
   ) {
     let result = 0;
     for (let u = 0; u < 32; u++) {
-      const mask = 1 << (31 - u);
-      const a_ = (a & mask) !== 0 ? 1 : 0;
-      const b_ = (b & mask) !== 0 ? 2 : 0;
-      const c_ = (c & mask) !== 0 ? 4 : 0;
-      const d_ = (d & mask) !== 0 ? 8 : 0;
-      const e_ = (e & mask) !== 0 ? 16 : 0;
-      const f_ = (f & mask) !== 0 ? 32 : 0;
-      const g_ = (g & mask) !== 0 ? 64 : 0;
-      const h_ = (h & mask) !== 0 ? 128 : 0;
-      const center_ = (prevCenter & mask) !== 0 ? 1 : 0;
+      const shift = 31 - u;
+      const mask = 1 << shift;
+      const a_ = (a & mask) >>> shift;
+      const b_ = ((b & mask) >>> shift) << 1;
+      const c_ = ((c & mask) >>> shift) << 2;
+      const d_ = ((d & mask) >>> shift) << 3;
+      const e_ = ((e & mask) >>> shift) << 4;
+      const f_ = ((f & mask) >>> shift) << 5;
+      const g_ = ((g & mask) >>> shift) << 6;
+      const h_ = ((h & mask) >>> shift) << 7;
+      const center_ = (prevCenter & mask) !== 0;
       result = result << 1 |
-        ((center_ === 0 ? lookupTableBirth : lookupTableSurvive)[
+        ((center_ ? lookupTableSurvive : lookupTableBirth)[
             a_ + b_ + c_ + d_ + e_ + f_ + g_ + h_
           ]
           ? 1
