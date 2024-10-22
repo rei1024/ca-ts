@@ -98,7 +98,9 @@ export class BitWorld {
       width: number;
       height: number;
     },
-    options: { transition?: { birth: number[]; survive: number[] } } = {},
+    options: { transition?: { birth: number[]; survive: number[] } } | {
+      intTransition?: { birth: string[]; survive: string[] };
+    } = {},
   ): BitWorld {
     return new BitWorld(BitGrid.make({ width, height }), options);
   }
