@@ -1,3 +1,9 @@
+## [0.6.0] - 2024-10-23
+
+### Changed
+
+- Isotropic non-totalistic rule (INT) support for `BitWorld`.
+
 ## [0.5.0] - 2024-10-22
 
 ### Changed
