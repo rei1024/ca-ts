@@ -1,4 +1,5 @@
 import { BitGrid } from "./BitGrid.ts";
+import { crateINTNextCell } from "./int/mod.ts";
 import {
   createTotalisticNextCell,
   nextCellConway,
@@ -27,8 +28,9 @@ export class BitWorld {
    */
   constructor(
     bitGrid: BitGrid,
-    private options: { transition?: { birth: number[]; survive: number[] } } =
-      {},
+    private options: { transition?: { birth: number[]; survive: number[] } } | {
+      intTransition?: { birth: string[]; survive: string[] };
+    } = {},
   ) {
     this.bitGrid = bitGrid;
     this.tempArray = new Uint32Array(
@@ -36,7 +38,14 @@ export class BitWorld {
     );
 
     this.nextCell = nextCellConway;
-    this.setRule(this.options.transition ?? null);
+    if ("transition" in this.options && this.options.transition !== undefined) {
+      this.setRule(this.options.transition ?? null);
+    } else if (
+      "intTransition" in this.options &&
+      this.options.intTransition !== undefined
+    ) {
+      this.setINTRule(this.options.intTransition);
+    }
   }
 
   /**
@@ -65,6 +74,13 @@ export class BitWorld {
   }
 
   /**
+   * Set isotropic non-totalistic rule
+   */
+  setINTRule(intTransition: { birth: string[]; survive: string[] }) {
+    this.nextCell = crateINTNextCell(intTransition);
+  }
+
+  /**
    * Create {@link BitWorld}
    *
    * width is rounded up to 32
@@ -82,7 +98,9 @@ export class BitWorld {
       width: number;
       height: number;
     },
-    options: { transition?: { birth: number[]; survive: number[] } } = {},
+    options: { transition?: { birth: number[]; survive: number[] } } | {
+      intTransition?: { birth: string[]; survive: string[] };
+    } = {},
   ): BitWorld {
     return new BitWorld(BitGrid.make({ width, height }), options);
   }
