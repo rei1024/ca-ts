@@ -3,6 +3,7 @@
   "version": "0.6.0",
   "exports": {
     "./bit": "./bit/mod.ts",
+    "./int": "./int/mod.ts",
     "./common": "./common.ts"
   }
 }

@@ -60,6 +60,7 @@ export class World {
   }
 
   /**
+   * Set live cell at (x, y)
    * @param x
    * @param y
    */
@@ -67,15 +68,23 @@ export class World {
     this.array[y * this.width + x] = 1;
   }
 
+  /**
+   * Get cell at (x, y)
+   */
+  get(x: number, y: number): 0 | 1 {
+    return this.array[y * this.width + x] as 0 | 1;
+  }
+
   random({ liveRatio }: { liveRatio?: number } = {}) {
     const array = this.array;
+    liveRatio = liveRatio ?? 0.5;
     array.forEach((_, i) => {
-      array[i] = Math.random() < (liveRatio ?? 0.5) ? 0 : 1;
+      array[i] = Math.random() < liveRatio ? 0 : 1;
     });
   }
 
-  getArray() {
-    const a: boolean[][] = [];
+  getArray(): (0 | 1)[][] {
+    const a: (0 | 1)[][] = [];
     this.forEach((x, y, alive) => {
       a[y] ??= [];
       a[y][x] = alive;
@@ -83,14 +92,14 @@ export class World {
     return a;
   }
 
-  forEach(fn: (x: number, y: number, alive: boolean) => void) {
+  forEach(fn: (x: number, y: number, alive: 0 | 1) => void) {
     const width = this.width;
     const height = this.height;
     const array = this.array;
     for (let i = 0; i < height; i++) {
       const middle = i * width;
       for (let j = 0; j < width; j++) {
-        fn(j, i, array[middle + j] ? true : false);
+        fn(j, i, array[middle + j] as 0 | 1);
       }
     }
   }
