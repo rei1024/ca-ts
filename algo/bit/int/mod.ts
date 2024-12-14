@@ -68,11 +68,11 @@ function createINTNextCellNormalized(
   }
 
   const lookupTableBirth = Array(256).fill(0).map((_, i) =>
-    birth.includes(intConditionArray[i] ?? "")
+    birth.includes(intConditionArray[i] ?? "") ? 1 : 0
   );
 
   const lookupTableSurvive = Array(256).fill(0).map((_, i) =>
-    transition.survive.includes(intConditionArray[i] ?? "")
+    transition.survive.includes(intConditionArray[i] ?? "") ? 1 : 0
   );
 
   return function nextCell(
@@ -101,10 +101,8 @@ function createINTNextCellNormalized(
       const center_ = (prevCenter & mask) !== 0;
       result = result << 1 |
         ((center_ ? lookupTableSurvive : lookupTableBirth)[
-            a_ + b_ + c_ + d_ + e_ + f_ + g_ + h_
-          ]
-          ? 1
-          : 0);
+          a_ | b_ | c_ | d_ | e_ | f_ | g_ | h_
+        ]!);
     }
     return result;
   };
