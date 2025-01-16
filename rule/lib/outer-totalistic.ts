@@ -9,6 +9,10 @@ export type OuterTotalisticRule = {
     birth: number[];
     survive: number[];
   };
+  /**
+   * [Generations](https://conwaylife.com/wiki/Generations)
+   */
+  generations?: number;
 };
 
 /**
@@ -30,15 +34,20 @@ export function parseOuterTotalistic(
 
   // B/S
   {
-    const bsRegex = /^(B|b)(?<birth>\d*)\/(S|s)(?<survive>\d*)$/;
+    const bsRegex =
+      /^(B|b)(?<birth>\d*)\/(S|s)(?<survive>\d*)(|\/(?<generations>\d+))$/;
     const match = ruleString.match(bsRegex);
     if (match) {
       const b = match.groups?.birth;
       const s = match.groups?.survive;
+      const generations = match.groups?.generations;
       if (b !== undefined && s !== undefined) {
         return {
           type: "outer-totalistic",
           transition: bsToTransition(b, s),
+          ...generations == null ? {} : {
+            generations: Number(generations),
+          },
         };
       }
     }
@@ -46,14 +55,18 @@ export function parseOuterTotalistic(
 
   // S/B
   {
-    const bsRegex = /^(\d*)\/(\d*)$/;
+    const bsRegex = /^(\d*)\/(\d*)(|\/(?<generations>\d+))$/;
     const match = ruleString.match(bsRegex);
     if (match) {
       const [_, s, b] = match;
+      const generations = match.groups?.generations;
       if (b !== undefined && s !== undefined) {
         return {
           type: "outer-totalistic",
           transition: bsToTransition(b, s),
+          ...generations == null ? {} : {
+            generations: Number(generations),
+          },
         };
       }
     }
