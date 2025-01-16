@@ -1,3 +1,9 @@
+## [0.5.0] - 2025-01-16
+
+### Changed
+
+- Add Generations to outer-totalistic and INT.
+
 ## [0.4.0] - 2024-10-17
 
 ### Changed

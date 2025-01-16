@@ -42,6 +42,10 @@ export type INTRule = {
     birth: INTCondition[];
     survive: INTCondition[];
   };
+  /**
+   * [Generations](https://conwaylife.com/wiki/Generations)
+   */
+  generations?: number;
 };
 
 /**
@@ -55,15 +59,19 @@ export function parseIntRule(
   // B/S
   {
     const bsRegex =
-      /^(B|b)(?<birth>(\d|[cekainyqjrtwz-])*)\/(S|s)(?<survive>(\d|[cekainyqjrtwz-])*)$/;
+      /^(B|b)(?<birth>(\d|[cekainyqjrtwz-])*)\/(S|s)(?<survive>(\d|[cekainyqjrtwz-])*)(|\/(?<generations>\d+))$/;
     const match = ruleString.match(bsRegex);
     if (match) {
       const b = match.groups?.birth;
       const s = match.groups?.survive;
+      const generations = match.groups?.generations;
       if (b !== undefined && s !== undefined) {
         return {
           type: "int",
           transition: bsToTransition(b, s),
+          ...generations == null ? {} : {
+            generations: Number(generations),
+          },
         };
       }
     }

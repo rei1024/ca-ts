@@ -72,3 +72,48 @@ Deno.test("parseOuterTotalistic B/S9", () => {
     parseOuterTotalistic("B/S9");
   });
 });
+
+Deno.test("parseOuterTotalistic Generations B2/S23/8", () => {
+  assertEquals(parseOuterTotalistic("B2/S23/8"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [2],
+      survive: [2, 3],
+    },
+    generations: 8,
+  });
+});
+
+Deno.test("parseOuterTotalistic Generations 23/2/8", () => {
+  assertEquals(parseOuterTotalistic("23/2/8"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [2],
+      survive: [2, 3],
+    },
+    generations: 8,
+  });
+});
+
+Deno.test("parseOuterTotalistic Generations /2/3", () => {
+  assertEquals(parseOuterTotalistic("/2/3"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [2],
+      survive: [],
+    },
+    generations: 3,
+  });
+});
+
+Deno.test("parseOuterTotalistic Generations error B2/S23/", () => {
+  assertThrows(() => {
+    parseOuterTotalistic("B2/S23/");
+  });
+});
+
+Deno.test("parseOuterTotalistic Generations error 23/2/", () => {
+  assertThrows(() => {
+    parseOuterTotalistic("23/2/");
+  });
+});
