@@ -21,6 +21,7 @@
   "publish": {
     "exclude": ["docs", ".vscode"]
   },
+  "license": "MIT",
   "lint": {
     "rules": {
       "include": [
