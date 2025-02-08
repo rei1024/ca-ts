@@ -2,33 +2,27 @@ import { assertEquals, assertThrows } from "@std/assert";
 import { parseOuterTotalistic } from "./outer-totalistic.ts";
 
 Deno.test("parseOuterTotalistic B3/S23", () => {
-  assertEquals(parseOuterTotalistic("B3/S23"), {
-    type: "outer-totalistic",
-    transition: {
-      birth: [3],
-      survive: [2, 3],
-    },
-  });
-});
+  const items = [
+    "B3/S23",
+    "b3/s23",
+    "B3/s23",
+    "23/3",
+  ];
 
-Deno.test("parseOuterTotalistic b3/s23 lower case", () => {
-  assertEquals(parseOuterTotalistic("b3/s23"), {
+  const expected = {
     type: "outer-totalistic",
     transition: {
       birth: [3],
       survive: [2, 3],
     },
-  });
-});
+  };
 
-Deno.test("parseOuterTotalistic 23/3", () => {
-  assertEquals(parseOuterTotalistic("23/3"), {
-    type: "outer-totalistic",
-    transition: {
-      birth: [3],
-      survive: [2, 3],
-    },
-  });
+  for (const item of items) {
+    assertEquals({ item, rule: parseOuterTotalistic(item) }, {
+      item,
+      rule: expected,
+    });
+  }
 });
 
 Deno.test("parseOuterTotalistic B/S", () => {
@@ -73,25 +67,38 @@ Deno.test("parseOuterTotalistic B/S9", () => {
   });
 });
 
-Deno.test("parseOuterTotalistic Generations B2/S23/8", () => {
-  assertEquals(parseOuterTotalistic("B2/S23/8"), {
+Deno.test("parseOuterTotalistic Generations", () => {
+  const items = [
+    "B2/S23/8",
+    "B2/S23/G8",
+    "b2/s23/g8",
+    "B2/S23/C8",
+    "b2/s23/c8",
+    "G8/B2/S23",
+    "C8/B2/S23",
+    "23/2/8",
+  ];
+
+  const expected = {
     type: "outer-totalistic",
     transition: {
       birth: [2],
       survive: [2, 3],
     },
     generations: 8,
-  });
+  };
+
+  for (const item of items) {
+    assertEquals({ item, rule: parseOuterTotalistic(item) }, {
+      item,
+      rule: expected,
+    });
+  }
 });
 
-Deno.test("parseOuterTotalistic Generations 23/2/8", () => {
-  assertEquals(parseOuterTotalistic("23/2/8"), {
-    type: "outer-totalistic",
-    transition: {
-      birth: [2],
-      survive: [2, 3],
-    },
-    generations: 8,
+Deno.test("parseOuterTotalistic Generations error 8/B2/S23", () => {
+  assertThrows(() => {
+    parseOuterTotalistic("8/B2/S23");
   });
 });
 

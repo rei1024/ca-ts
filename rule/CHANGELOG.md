@@ -1,3 +1,10 @@
+## [0.6.0] - 2025-02-08
+
+### Changed
+
+- Add support for generations prefix/postfix.
+  - Example: `B3/S23/G8`, `G8/B3/S23`, `B3/S23/C8`, `C8/B3/S23`,
+
 ## [0.5.0] - 2025-01-16
 
 ### Changed

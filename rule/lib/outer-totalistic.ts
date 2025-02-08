@@ -33,42 +33,28 @@ export function parseOuterTotalistic(
   ruleString = ruleString.trim();
 
   // B/S
-  {
-    const bsRegex =
-      /^(B|b)(?<birth>\d*)\/(S|s)(?<survive>\d*)(|\/(?<generations>\d+))$/;
-    const match = ruleString.match(bsRegex);
-    if (match) {
-      const b = match.groups?.birth;
-      const s = match.groups?.survive;
-      const generations = match.groups?.generations;
-      if (b !== undefined && s !== undefined) {
-        return {
-          type: "outer-totalistic",
-          transition: bsToTransition(b, s),
-          ...generations == null ? {} : {
-            generations: Number(generations),
-          },
-        };
-      }
-    }
-  }
-
+  const bsRegex =
+    /^(B|b)(?<birth>\d*)\/(S|s)(?<survive>\d*)(|\/(G|g|C|c)?(?<generations>\d+))$/;
   // S/B
-  {
-    const bsRegex = /^(\d*)\/(\d*)(|\/(?<generations>\d+))$/;
-    const match = ruleString.match(bsRegex);
-    if (match) {
-      const [_, s, b] = match;
-      const generations = match.groups?.generations;
-      if (b !== undefined && s !== undefined) {
-        return {
-          type: "outer-totalistic",
-          transition: bsToTransition(b, s),
-          ...generations == null ? {} : {
-            generations: Number(generations),
-          },
-        };
-      }
+  const sbRegex = /^(?<survive>\d*)\/(?<birth>\d*)(|\/(?<generations>\d+))$/;
+  // G/B/S
+  const gbsRegex =
+    /^(G|g|C|c)(?<generations>\d+)\/(B|b)(?<birth>\d*)\/(S|s)(?<survive>\d*)$/;
+  const match = (ruleString.match(bsRegex) ?? ruleString.match(sbRegex)) ??
+    ruleString.match(gbsRegex);
+
+  if (match) {
+    const b = match.groups?.birth;
+    const s = match.groups?.survive;
+    const generations = match.groups?.generations;
+    if (b !== undefined && s !== undefined) {
+      return {
+        type: "outer-totalistic",
+        transition: bsToTransition(b, s),
+        ...generations == null ? {} : {
+          generations: Number(generations),
+        },
+      };
     }
   }
 
