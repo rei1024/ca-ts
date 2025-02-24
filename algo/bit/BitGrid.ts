@@ -9,6 +9,9 @@ const getOffset = (width32: number, iHeight: number, jWidth: number) => {
   return iHeight * width32 + jWidth;
 };
 
+// compat TS 5.7
+export type _Uint32Array = ReturnType<typeof Uint32Array.prototype.slice>;
+
 /**
  * 2D bit array
  */
@@ -16,7 +19,7 @@ export class BitGrid {
   constructor(
     private readonly width32: number,
     private readonly height: number,
-    private readonly uint32array: Uint32Array,
+    private readonly uint32array: _Uint32Array,
   ) {}
 
   static make({ width, height }: { width: number; height: number }): BitGrid {
@@ -44,7 +47,7 @@ export class BitGrid {
     this.uint32array.fill(0);
   }
 
-  asInternalUint32Array(): Uint32Array {
+  asInternalUint32Array(): _Uint32Array {
     return this.uint32array;
   }
 

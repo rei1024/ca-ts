@@ -34,7 +34,7 @@ export type INTCondition =
 /**
  * Isotropic non-totalistic rule
  *
- * Hensel notation
+ * [Isotropic non-totalistic rule | LifeWiki](https://conwaylife.com/wiki/Isotropic_non-totalistic_rule)
  */
 export type INTRule = {
   type: "int";
@@ -43,13 +43,13 @@ export type INTRule = {
     survive: INTCondition[];
   };
   /**
-   * [Generations](https://conwaylife.com/wiki/Generations)
+   * [Generations | LifeWiki](https://conwaylife.com/wiki/Generations)
    */
   generations?: number;
 };
 
 /**
- * Parse {@link INTRule}
+ * Parse {@link INTRule} as [Hensel notation](https://conwaylife.com/wiki/Isotropic_non-totalistic_rule)
  */
 export function parseIntRule(
   ruleString: string,

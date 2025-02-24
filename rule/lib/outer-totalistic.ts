@@ -10,7 +10,7 @@ export type OuterTotalisticRule = {
     survive: number[];
   };
   /**
-   * [Generations](https://conwaylife.com/wiki/Generations)
+   * [Generations | LifeWiki](https://conwaylife.com/wiki/Generations)
    */
   generations?: number;
 };

@@ -50,6 +50,11 @@ export class BitWorld {
 
   /**
    * Set rule
+   *
+   * Example: (B3/S23)
+   * ```
+   * bitWorld.setRule({ birth: [3], survive: [2, 3] });
+   * ```
    */
   setRule(transition: { birth: number[]; survive: number[] } | null) {
     function sortUnique(a: number[]) {
