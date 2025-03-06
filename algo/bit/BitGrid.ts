@@ -122,9 +122,10 @@ export class BitGrid {
         const offset = rowIndex + j;
         const value = array[offset]!;
         const BITS_J = j * BITS;
+        let bitMask = 1 << BITS_MINUS_1;
         for (let u = 0; u < BITS; u++) {
-          const alive = (value & (1 << (BITS_MINUS_1 - u))) !== 0 ? 1 : 0;
-          fn(BITS_J + u, i, alive);
+          fn(BITS_J + u, i, ((value & bitMask) !== 0) ? 1 : 0);
+          bitMask >>>= 1;
         }
       }
     }
@@ -142,12 +143,13 @@ export class BitGrid {
         const offset = rowIndex + j;
         const value = array[offset]!;
         if (value !== 0) {
+          let bitMask = 1 << BITS_MINUS_1;
           const BITS_J = j * BITS;
           for (let u = 0; u < BITS; u++) {
-            const alive = (value & (1 << (BITS_MINUS_1 - u))) !== 0;
-            if (alive) {
+            if ((value & bitMask) !== 0) {
               fn(BITS_J + u, i);
             }
+            bitMask >>>= 1;
           }
         }
       }

@@ -74,6 +74,29 @@ Deno.test("BitGrid outerIsAlive", () => {
   grid.clear();
 });
 
+Deno.test("BitGrid forEachAlive", () => {
+  const grid = BitGrid.make({ width: 64, height: 64 });
+  let count = 0;
+  grid.forEachAlive(() => {
+    count++;
+  });
+  assertEquals(count, 0);
+  grid.set(0, 0);
+  grid.forEachAlive(() => {
+    count++;
+  });
+  assertEquals(count, 1);
+});
+
+Deno.test("BitGrid forEach", () => {
+  const grid = BitGrid.make({ width: 64, height: 64 });
+  let count = 0;
+  grid.forEach(() => {
+    count++;
+  });
+  assertEquals(count, 64 * 64);
+});
+
 Deno.test("BitGrid make", () => {
   const grid = BitGrid.make({ width: 48, height: 32 });
   assertEquals(grid.getWidth(), 64);

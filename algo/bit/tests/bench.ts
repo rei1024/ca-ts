@@ -117,3 +117,35 @@ Deno.bench({ name: "World", group: "algo" }, () => {
     }
   }
 });
+
+let value = 0;
+let sum = false;
+
+Deno.bench({ name: "bit op expr", group: "bit op" }, () => {
+  const BITS = 32;
+  const BITS_MINUS_1 = BITS - 1;
+
+  value = value === 1 ? 0 : 1;
+
+  for (let j = 0; j < BITS; j++) {
+    const alive = (1 << (BITS_MINUS_1 - j)) !== 0;
+    if (alive) {
+      sum = sum || alive;
+    }
+  }
+});
+
+Deno.bench({ name: "bit op mut", group: "bit op" }, () => {
+  const BITS = 32;
+  const BITS_MINUS_1 = BITS - 1;
+
+  value = value === 1 ? 0 : 1;
+
+  let bitMask = 1 << BITS_MINUS_1;
+  for (let u = 0; u < BITS; u++) {
+    if ((value & bitMask) !== 0) {
+      sum = sum || true;
+    }
+    bitMask >>>= 1;
+  }
+});
