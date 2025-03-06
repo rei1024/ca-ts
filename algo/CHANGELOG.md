@@ -1,3 +1,9 @@
+## [0.6.1] - 2025-03-06
+
+### Changed
+
+- Improved performance for `BitWorld.forEach`
+
 ## [0.6.0] - 2024-10-23
 
 ### Changed
