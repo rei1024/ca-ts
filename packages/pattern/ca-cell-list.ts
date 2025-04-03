@@ -10,13 +10,17 @@ import type { CACell } from "./mod.ts";
  * @example
  * ```ts
  * import { CACellList } from "@ca-ts/pattern";
+ * import { assertEquals } from "@std/assert";
+ *
  * const cells = [
  *   { position: { x: 0, y: 0 }, state: 1 },
  *   { position: { x: 1, y: 0 }, state: 2 },
  *   { position: { x: 2, y: 0 }, state: 3 },
  * ]
  * const cellList = CACellList.fromCells(cells);
- * console.log(cellList.getCells());
+ *
+ * assertEquals(cellList.boundingRect?.width, 3);
+ * assertEquals(cellList.boundingRect?.height, 1);
  * ```
  */
 export class CACellList {
