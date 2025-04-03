@@ -28,7 +28,7 @@ export class BoundingRect {
     return this.maxY - this.minY + 1;
   }
 
-  get size() {
+  get size(): { width: number; height: number } {
     return {
       width: this.width,
       height: this.height,
