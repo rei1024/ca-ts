@@ -1,3 +1,6 @@
+import type { CACell } from "@ca-ts/pattern";
+export type { CACell };
+
 /**
  * Run Length Encoded file format
  *
@@ -73,29 +76,4 @@ export type RLE = {
      */
     generation: string | null;
   } | null;
-};
-
-/**
- * A cell of cellular automaton
- */
-export type CACell = {
-  /** Position of the cell */
-  position: {
-    /**
-     * x coordinate
-     * `>= 0`
-     */
-    x: number;
-    /**
-     * y coordinate
-     * `>= 0`
-     */
-    y: number;
-  };
-  /**
-   * State of the cell (non zero)
-   *
-   * 1..255 (inclusive)
-   */
-  state: number;
 };
