@@ -34,6 +34,7 @@
     }
   },
   "workspace": [
+    "./packages/pattern",
     "./packages/rle",
     "./packages/plaintext",
     "./packages/apgcode",
