@@ -34,10 +34,10 @@
     }
   },
   "workspace": [
-    "./rle",
-    "./plaintext",
-    "./apgcode",
-    "./algo",
-    "./rule"
+    "./packages/rle",
+    "./packages/plaintext",
+    "./packages/apgcode",
+    "./packages/algo",
+    "./packages/rule"
   ]
 }
