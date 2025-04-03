@@ -2,7 +2,6 @@
   "compilerOptions": {
     "strict": true,
     "exactOptionalPropertyTypes": true,
-    "useUnknownInCatchVariables": true,
     "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true
   },
