@@ -2,8 +2,8 @@
   "version": "0.2",
   "language": "en",
   "ignorePaths": [
-    "./rle/test-data/mod.ts",
-    "apgcode/parseApgcode.test.ts",
+    "./packages/rle/test-data/mod.ts",
+    "packages/apgcode/parseApgcode.test.ts",
     "deno.lock"
   ],
   "words": [
@@ -37,6 +37,7 @@
     "Hensel",
     "caplayer",
     "Eron",
-    "neighbour"
+    "neighbour",
+    "Jannis"
   ]
 }
