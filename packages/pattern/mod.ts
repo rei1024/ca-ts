@@ -18,12 +18,12 @@
  *     [1, 2, 3],
  *   ],
  *   size: { width: 3, height: 1 },
- *   offset: { x: 0, y: 0 },
+ *   offset: { dx: 0, dy: 0 },
  * });
  * ```
  *
  * @module
  */
-export type { CACell } from "./types.ts";
+export type { CACell, Position } from "./types.ts";
 export { CACellList } from "./ca-cell-list.ts";
 export { BoundingRect } from "./bounding-rect.ts";

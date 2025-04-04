@@ -70,5 +70,6 @@
  */
 
 export type { CACell, RLE } from "./RLE.ts";
+export type { Position } from "@ca-ts/pattern";
 export { parseRLE } from "./parseRLE.ts";
 export { stringifyRLE, type StringifyRLEOptions } from "./stringifyRLE.ts";
