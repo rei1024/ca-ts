@@ -38,6 +38,15 @@ export class BoundingRect {
   get area(): number {
     return this.width * this.height;
   }
+
+  union(other: BoundingRect): BoundingRect {
+    return new BoundingRect(
+      Math.min(this.minX, other.minX),
+      Math.min(this.minY, other.minY),
+      Math.max(this.maxX, other.maxX),
+      Math.max(this.maxY, other.maxY),
+    );
+  }
 }
 
 export function rectFromCells(cells: readonly CACell[]): BoundingRect | null {
