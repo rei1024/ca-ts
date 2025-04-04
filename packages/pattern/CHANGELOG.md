@@ -2,6 +2,8 @@
 
 ### Changed
 
+- Change type of `CACellList.prototype.to2dArray().offset` to
+  `{ dx: number, dy: number }`
 - Add `CACellList.prototype.translate`
 - Add `CACellList.from2dArray`
 - Add `BoundingRect.prototype.union`
