@@ -9,17 +9,17 @@ import { stateToString } from "./stringifyRLE/stateToString.ts";
  */
 export type StringifyRLEOptions = {
   /** Use "." and "A" for two states cells if true */
-  forceMultiState?: boolean;
+  readonly forceMultiState?: boolean;
   /**
    * Max character count for a line. default is 70.
    * @default 70
    */
-  maxLineChars?: number;
+  readonly maxLineChars?: number;
   /**
    * Accept unordered cells. default is false.
    * @default false
    */
-  acceptUnorderedCells?: boolean;
+  readonly acceptUnorderedCells?: boolean;
 };
 
 /**

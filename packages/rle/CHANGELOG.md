@@ -2,6 +2,7 @@
 
 ### Changed
 
+- Add `readonly` to properties of `StringifyRLEOptions`
 - Update dependencies.
 
 ## [0.9.0] - 2025-04-04

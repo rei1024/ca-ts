@@ -1,7 +1,7 @@
 import type { CACell } from "../mod.ts";
 
 export function getSizeOfCells(
-  cells: CACell[],
+  cells: readonly CACell[],
 ): { width: number; height: number } {
   if (cells.length === 0) {
     return { width: 0, height: 0 };
