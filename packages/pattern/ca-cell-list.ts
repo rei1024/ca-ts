@@ -87,7 +87,7 @@ export class CACellList {
   ): {
     array: number[][];
     size: { width: number; height: number };
-    offset: { x: number; y: number };
+    offset: { dx: number; dy: number };
   } | null {
     const cells = this.getCells();
     if (cells.length === 0) {
@@ -115,7 +115,7 @@ export class CACellList {
     return {
       array,
       size: boundingRect.size,
-      offset: { x: minX, y: minY },
+      offset: { dx: minX, dy: minY },
     };
   }
 
@@ -127,12 +127,12 @@ export class CACellList {
    */
   static from2dArray(
     array: number[][],
-    offset?: { x: number; y: number },
+    offset?: { dx: number; dy: number },
   ): CACellList {
     const cells: CACell[] = [];
     const height = array.length;
-    const yOffset = offset?.y ?? 0;
-    const xOffset = offset?.x ?? 0;
+    const yOffset = offset?.dy ?? 0;
+    const xOffset = offset?.dx ?? 0;
     for (let y = 0; y < height; y++) {
       const row = array[y]!;
       for (let x = 0; x < row.length; x++) {

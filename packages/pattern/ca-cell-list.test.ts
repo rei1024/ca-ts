@@ -84,7 +84,7 @@ Deno.test("CACellList to2dArray 2x2", () => {
       [3, 4],
     ],
     size: { width: 2, height: 2 },
-    offset: { x: 0, y: 0 },
+    offset: { dx: 0, dy: 0 },
   });
 });
 
@@ -106,7 +106,7 @@ Deno.test("CACellList to2dArray 2x3", () => {
       [3, 4, 6],
     ],
     size: { width: 3, height: 2 },
-    offset: { x: 0, y: 0 },
+    offset: { dx: 0, dy: 0 },
   });
 });
 
@@ -124,7 +124,7 @@ Deno.test("CACellList to2dArray negative", () => {
       [0, 1],
     ],
     size: { width: 2, height: 2 },
-    offset: { x: 0, y: -1 },
+    offset: { dx: 0, dy: -1 },
   });
   assertEquals(cellList.boundingRect?.maxX, 1);
   assertEquals(cellList.boundingRect?.maxY, 0);
@@ -141,7 +141,7 @@ const glider = [
 Deno.test("CACellList to2dArray glider", () => {
   assertEquals(CACellList.fromCells(glider).to2dArray(), {
     size: { width: 3, height: 3 },
-    offset: { x: 0, y: 0 },
+    offset: { dx: 0, dy: 0 },
     array: [
       [0, 1, 0],
       [0, 0, 1],
@@ -153,7 +153,7 @@ Deno.test("CACellList to2dArray glider", () => {
 Deno.test("CACellList to2dArray glider backgroundState", () => {
   assertEquals(CACellList.fromCells(glider).to2dArray({ backgroundState: 2 }), {
     size: { width: 3, height: 3 },
-    offset: { x: 0, y: 0 },
+    offset: { dx: 0, dy: 0 },
     array: [
       [2, 1, 2],
       [2, 2, 1],
@@ -198,7 +198,7 @@ Deno.test("CACellList translate", () => {
   assertEquals(translatedCellList.getCells(), expectedCells);
   assertEquals(translatedCellList.to2dArray(), {
     size: { width: 3, height: 3 },
-    offset: { x: 1, y: 2 },
+    offset: { dx: 1, dy: 2 },
     array: [
       [0, 1, 0],
       [0, 0, 1],

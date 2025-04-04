@@ -18,7 +18,7 @@
  *     [1, 2, 3],
  *   ],
  *   size: { width: 3, height: 1 },
- *   offset: { x: 0, y: 0 },
+ *   offset: { dx: 0, dy: 0 },
  * });
  * ```
  *
