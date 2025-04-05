@@ -8,12 +8,12 @@ for (let i = 0; i < 256; i++) {
 }
 
 export function stateToString(state: number, isMultiState: boolean): string {
-  if (!Number.isInteger(state)) throw new Error("invalid state");
-  if (state < 0) throw new Error("invalid state");
+  if (!Number.isInteger(state)) throw new Error("invalid state " + state);
+  if (state < 0) throw new Error("invalid state " + state);
 
   if (!isMultiState) return state === 1 ? "o" : "b";
 
-  if (state > 255) throw new Error("invalid state");
+  if (state > 255) throw new Error("invalid state " + state);
 
   return states[state] ?? (() => {
     throw new Error("internal error");

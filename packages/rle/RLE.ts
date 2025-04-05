@@ -2,7 +2,7 @@ import type { CACell } from "@ca-ts/pattern";
 export type { CACell };
 
 /**
- * Run Length Encoded file format
+ * Run Length Encoded (RLE) file format
  *
  * ## Reference
  * - [Run Length Encoded | LifeWiki](https://conwaylife.com/wiki/Run_Length_Encoded)
@@ -12,31 +12,13 @@ export type RLE = {
   /**
    * Cells
    *
-   * Must be sorted lexicographically on (y, x)
+   * Must be sorted lexicographically by (y, x).
    *
    * Example: `[{ position: { x: 2, y: 0 }, state: 1 }]`
    */
   cells: CACell[];
   /**
-   * Comments in the RLE file
-   *
-   * Each comment line includes '#'
-   *
-   * May contain spaces before '#'
-   *
-   * Example: `['#C Comment', '   #C Comment 2']`
-   */
-  comments: string[];
-  /**
-   * Trailing comment after '!'
-   *
-   * May include "\n"
-   *
-   * Example: `"This is a trailing comment\n"`
-   */
-  trailingComment: string;
-  /**
-   * Rule string specifying the rules of the cellular automaton
+   * Rule string specifying the rules of the cellular automaton.
    *
    * Example: `'B3/S23'`
    */
@@ -44,24 +26,24 @@ export type RLE = {
   /**
    * Size of the grid
    *
-   * Format: "x = ..., y = ..."
+   * Format: "x = ..., y = ...".
    *
    * Example: `{ width: 10, height: 20 }`
    */
   size: {
-    /** Width of the grid (x) */
+    /** Width of the grid (x). */
     width: number;
-    /** Height of the grid (y) */
+    /** Height of the grid (y). */
     height: number;
   } | null;
   /**
-   * Extended RLE Format
+   * Extended RLE Format extra information
    *
    * Example: "#CXRLE Pos=0,-1377 Gen=34801"
    */
   XRLE: {
     /**
-     * Position in the extended RLE format
+     * absolute position of the upper left cell (which may be on or off)
      *
      * Example: `{ x: 0, y: -1377 }`
      */
@@ -76,4 +58,22 @@ export type RLE = {
      */
     generation: string | null;
   } | null;
+  /**
+   * Comments in the RLE file
+   *
+   * Each comment line starts with '#'.
+   *
+   * May include spaces before the '#'.
+   *
+   * Example: `['#C Comment', '   #C Comment 2']`
+   */
+  comments: string[];
+  /**
+   * Trailing comment after '!'
+   *
+   * May include "\n".
+   *
+   * Example: `"This is a trailing comment\n"`
+   */
+  trailingComment: string;
 };

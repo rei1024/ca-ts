@@ -1,5 +1,5 @@
 import type { CACell, RLE } from "./RLE.ts";
-import { getSizeOfCells } from "./lib/getSizeOfCells.ts";
+import { makeOffsetZero } from "./lib/internal.ts";
 import { compressRLE } from "./stringifyRLE/compressRLE.ts";
 import { format } from "./stringifyRLE/format.ts";
 import { stateToString } from "./stringifyRLE/stateToString.ts";
@@ -60,6 +60,48 @@ export function stringifyRLE(
     ? true
     : cells.some((cell) => cell.state > 1);
 
+  const offsetZeroPattern = makeOffsetZero(cells);
+  cells = offsetZeroPattern.cells;
+
+  const items = cellsToItems(cells, isMultiState);
+
+  const parts = compressRLE(items).map((x) =>
+    (x.count === 1 ? "" : x.count.toString()) + x.value
+  );
+
+  if (parts.length === 0) {
+    parts.push("!");
+  } else {
+    parts[parts.length - 1] += "!";
+  }
+
+  const cxrleComment = rle.comments?.every((x) => !x.startsWith("#CXRLE")) &&
+      (offsetZeroPattern.offset.dx !== 0 ||
+        offsetZeroPattern.offset.dy !== 0)
+    ? [
+      `#CXRLE Pos=${offsetZeroPattern.offset.dx},${offsetZeroPattern.offset.dy}`,
+    ]
+    : [];
+
+  const size = rle.size != null
+    ? `x = ${rle.size.width}, y = ${rle.size.height}`
+    : `x = ${offsetZeroPattern.size.width}, y = ${offsetZeroPattern.size.height}`;
+
+  return [
+    ...cxrleComment,
+    ...rle.comments ?? [],
+    size + `, rule = ${rle.ruleString ?? "B3/S23"}`,
+    ...format(parts, MAX_CHAR),
+  ].join(
+    "\n",
+  ) + (rle.trailingComment ?? "") +
+    "\n";
+}
+
+function cellsToItems(
+  cells: CACell[],
+  isMultiState: boolean,
+): { count: number; value: string }[] {
   const emptyCellChar = isMultiState ? "." : "b";
 
   const items: { count: number; value: string }[] = [];
@@ -70,7 +112,7 @@ export function stringifyRLE(
     const currentY = cell.position.y;
 
     if (currentX < 0 || currentY < 0) {
-      throw new Error("Negative position is not supported");
+      throw new Error("Internal error: makeOffsetZero failed");
     }
 
     const prevY = prevCell?.position.y ?? 0;
@@ -104,27 +146,5 @@ export function stringifyRLE(
     prevCell = cell;
   }
 
-  const parts = compressRLE(items).map((x) =>
-    (x.count === 1 ? "" : x.count.toString()) + x.value
-  );
-
-  if (parts.length === 0) {
-    parts.push("!");
-  } else {
-    parts[parts.length - 1] += "!";
-  }
-
-  return [
-    ...rle.comments ?? [],
-    (rle.size != null
-      ? `x = ${rle.size.width}, y = ${rle.size.height}, `
-      : (() => {
-        const { width, height } = getSizeOfCells(rle.cells ?? []);
-        return `x = ${width}, y = ${height}, `;
-      })()) + `rule = ${rle.ruleString ?? "B3/S23"}`,
-    ...format(parts, MAX_CHAR),
-  ].join(
-    "\n",
-  ) + (rle.trailingComment ?? "") +
-    "\n";
+  return items;
 }
