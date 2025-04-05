@@ -11,12 +11,9 @@
   "tasks": {
     "t": "deno test --doc",
     "w": "deno test --watch",
-    "ok": "deno lint && deno task t && deno fmt --check",
-    "spell": "npx cspell ."
+    "spell": "deno run --allow-env --allow-read --allow-sys npm:cspell@8.18.1 . --no-progress",
+    "ok": "deno lint && deno task t && deno fmt --check && deno task spell"
   },
-  "exclude": [
-    ".git"
-  ],
   "publish": {
     "exclude": ["docs", ".vscode"]
   },
