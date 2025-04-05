@@ -373,6 +373,12 @@ obo$35b3o3b3o29bo$36bo5bo30b2o2$35b2o5b2o$35b2o5b2o!\n`);
   });
 
   assertBack("#CXRLE Pos=-1,-2\nx = 1, y = 8, rule = B3/S23\no7$o!\n");
+
+  assertBack([
+    `#CXRLE Pos=-11,-9`,
+    `x = 10, y = 7, rule = B3/S23`,
+    `4b6o$3bo5bo$b2o5b2o$2o2bo3b2o$o3bo$ob2o$3o!`,
+  ].join("\n"));
 });
 
 Deno.test("stringifyRLE 1..255", () => {
@@ -393,26 +399,4 @@ Deno.test("stringifyRLE 1..255", () => {
   });
   const rle = parseRLE(str);
   assertEquals(rle.cells, cells);
-});
-
-Deno.test("stringifyRLE XRLE", () => {
-  const rleSource = [
-    `#CXRLE Pos=-11,-9`,
-    `x = 10, y = 7, rule = B3/S23`,
-    `4b6o$3bo5bo$b2o5b2o$2o2bo3b2o$o3bo$ob2o$3o!`,
-  ].join("\n");
-  const rle = parseRLE(rleSource);
-  const str = stringifyRLE(rle);
-  assertEquals(str.trim(), rleSource.trim());
-});
-
-Deno.test("stringifyRLE XRLE without size", () => {
-  const rleSource = [
-    `#CXRLE Pos=-11,-9`,
-    `x = 10, y = 7, rule = B3/S23`,
-    `4b6o$3bo5bo$b2o5b2o$2o2bo3b2o$o3bo$ob2o$3o!`,
-  ].join("\n");
-  const rle = parseRLE(rleSource);
-  const str = stringifyRLE({ ...rle, size: null });
-  assertEquals(str.trim(), rleSource.trim());
 });
