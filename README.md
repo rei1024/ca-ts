@@ -9,6 +9,7 @@ in Node.js and Deno.
 
 | Package                                             | Latest version                                                                    | Description                                                                      |
 | --------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| [@ca-ts/pattern](https://jsr.io/@ca-ts/pattern)     | [![JSR](https://jsr.io/badges/@ca-ts/pattern)](https://jsr.io/@ca-ts/pattern)     | Pattern                                                                          |
 | [@ca-ts/rle](https://jsr.io/@ca-ts/rle)             | [![JSR](https://jsr.io/badges/@ca-ts/rle)](https://jsr.io/@ca-ts/rle)             | [Run Length Encoded](https://conwaylife.com/wiki/Run_Length_Encoded) file format |
 | [@ca-ts/plaintext](https://jsr.io/@ca-ts/plaintext) | [![JSR](https://jsr.io/badges/@ca-ts/plaintext)](https://jsr.io/@ca-ts/plaintext) | [Plaintext](https://conwaylife.com/wiki/Plaintext) file format                   |
 | [@ca-ts/apgcode](https://jsr.io/@ca-ts/apgcode)     | [![JSR](https://jsr.io/badges/@ca-ts/apgcode)](https://jsr.io/@ca-ts/apgcode)     | [apgcode](https://conwaylife.com/wiki/Apgcode)                                   |
