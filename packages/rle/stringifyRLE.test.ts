@@ -312,13 +312,13 @@ Deno.test("stringifyRLE negative position", () => {
 Deno.test("stringifyRLE parseRLE", () => {
   function assertBack(
     str: string,
-    { checkMetaRecevery = true } = {},
+    { checkMetaRecovery = true } = {},
   ) {
     const parsed = parseRLE(str);
 
     assertEquals(stringifyRLE(parsed).trim(), str.trim());
 
-    if (checkMetaRecevery) {
+    if (checkMetaRecovery) {
       assertEquals(
         stringifyRLE({ ...parsed, size: null, XRLE: null }).trim(),
         str.trim(),
@@ -328,7 +328,7 @@ Deno.test("stringifyRLE parseRLE", () => {
 
   assertBack(`x = 0, y = 0, rule = B3/S23\n!\n`);
 
-  assertBack(`x = 3, y = 3, rule = B3/S23\no!\n`, { checkMetaRecevery: false });
+  assertBack(`x = 3, y = 3, rule = B3/S23\no!\n`, { checkMetaRecovery: false });
 
   assertBack(`x = 3, y = 3, rule = B3/S23\nbo$2bo$3o!\n`);
 
@@ -361,15 +361,15 @@ obo$35b3o3b3o29bo$36bo5bo30b2o2$35b2o5b2o$35b2o5b2o!\n`);
   assertBack("x = 1, y = 8, rule = B3/S23\no7$o!\n");
 
   assertBack(`#CXRLE Gen=0 Pos=0,0\nx = 2, y = 3, rule = B3/S23\no!`, {
-    checkMetaRecevery: false,
+    checkMetaRecovery: false,
   });
 
   // with offset
   assertBack(`#CXRLE Gen=0 Pos=1,2\nx = 2, y = 3, rule = B3/S23\no!`, {
-    checkMetaRecevery: false,
+    checkMetaRecovery: false,
   });
   assertBack(`#CXRLE Gen=0 Pos=-1,-2\nx = 2, y = 3, rule = B3/S23\no!`, {
-    checkMetaRecevery: false,
+    checkMetaRecovery: false,
   });
 
   assertBack("#CXRLE Pos=-1,-2\nx = 1, y = 8, rule = B3/S23\no7$o!\n");
