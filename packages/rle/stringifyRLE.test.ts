@@ -143,14 +143,7 @@ Deno.test("stringifyRLE not sorted", () => {
     () => {
       stringifyRLE({
         cells: makeCells([{ x: 1, y: 0 }, { x: 0, y: 0 }]),
-        comments: [],
-        trailingComment: "",
         ruleString: "B3/S23",
-        size: {
-          width: 0,
-          height: 0,
-        },
-        XRLE: null,
       });
     },
     Error,
@@ -161,14 +154,7 @@ Deno.test("stringifyRLE not sorted", () => {
     () => {
       stringifyRLE({
         cells: makeCells([{ x: 0, y: 1 }, { x: 0, y: 0 }]),
-        comments: [],
-        trailingComment: "",
         ruleString: "B3/S23",
-        size: {
-          width: 0,
-          height: 0,
-        },
-        XRLE: null,
       });
     },
     Error,
@@ -179,14 +165,7 @@ Deno.test("stringifyRLE not sorted", () => {
 Deno.test("stringifyRLE acceptUnorderedCells", () => {
   stringifyRLE({
     cells: makeCells([{ x: 1, y: 0 }, { x: 0, y: 0 }]),
-    comments: [],
-    trailingComment: "",
     ruleString: "B3/S23",
-    size: {
-      width: 0,
-      height: 0,
-    },
-    XRLE: null,
   }, { acceptUnorderedCells: true });
 
   {
@@ -194,93 +173,54 @@ Deno.test("stringifyRLE acceptUnorderedCells", () => {
     const clone = structuredClone(input);
     stringifyRLE({
       cells: input,
-      comments: [],
-      trailingComment: "",
       ruleString: "B3/S23",
-      size: {
-        width: 0,
-        height: 0,
-      },
-      XRLE: null,
     }, { acceptUnorderedCells: true });
     assertEquals(input, clone, "no mutation");
   }
 
   stringifyRLE({
-    cells: makeCells([{ x: 1, y: 2 }, { x: 2, y: 0 }, { x: 1, y: 1 }, {
-      x: 0,
-      y: 1,
-    }, {
-      x: 0,
-      y: 0,
-    }]),
-    comments: [],
-    trailingComment: "",
+    cells: makeCells([
+      { x: 1, y: 2 },
+      { x: 2, y: 0 },
+      { x: 1, y: 1 },
+      { x: 0, y: 1 },
+      { x: 0, y: 0 },
+    ]),
     ruleString: "B3/S23",
-    size: {
-      width: 0,
-      height: 0,
-    },
-    XRLE: null,
   }, { acceptUnorderedCells: true });
 });
 
 Deno.test("stringifyRLE invalid state", () => {
-  assertThrows(() => {
-    stringifyRLE({
-      cells: [{ position: { x: 1, y: 0 }, state: 256 }],
-      comments: [],
-      trailingComment: "",
-      ruleString: "B3/S23",
-      size: {
-        width: 0,
-        height: 0,
-      },
-      XRLE: null,
-    });
-  });
+  const errorStates = [
+    -2,
+    -1,
+    256,
+    0.5,
+    1.5,
+    NaN,
+    Infinity,
+    -Infinity,
+  ];
 
-  assertThrows(() => {
-    stringifyRLE({
-      cells: [{ position: { x: 1, y: 0 }, state: -1 }],
-      comments: [],
-      trailingComment: "",
-      ruleString: "B3/S23",
-      size: {
-        width: 0,
-        height: 0,
+  for (const state of errorStates) {
+    assertThrows(
+      () => {
+        stringifyRLE({
+          cells: [{ position: { x: 1, y: 0 }, state }],
+          comments: [],
+          trailingComment: "",
+          ruleString: "B3/S23",
+          size: {
+            width: 0,
+            height: 0,
+          },
+          XRLE: null,
+        });
       },
-      XRLE: null,
-    });
-  });
-
-  assertThrows(() => {
-    stringifyRLE({
-      cells: [{ position: { x: 1, y: 0 }, state: 0.5 }],
-      comments: [],
-      trailingComment: "",
-      ruleString: "B3/S23",
-      size: {
-        width: 0,
-        height: 0,
-      },
-      XRLE: null,
-    });
-  });
-
-  assertThrows(() => {
-    stringifyRLE({
-      cells: [{ position: { x: 1, y: 0 }, state: NaN }],
-      comments: [],
-      trailingComment: "",
-      ruleString: "B3/S23",
-      size: {
-        width: 0,
-        height: 0,
-      },
-      XRLE: null,
-    });
-  });
+      Error,
+      `invalid state ${state}`,
+    );
+  }
 });
 
 Deno.test("stringifyRLE negative position", () => {
