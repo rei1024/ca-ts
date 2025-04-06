@@ -1,5 +1,5 @@
 import { BitGrid } from "./BitGrid.ts";
-import { crateINTNextCell } from "./int/mod.ts";
+import { createINTNextCell } from "./int/mod.ts";
 import {
   createTotalisticNextCell,
   nextCellConway,
@@ -82,7 +82,7 @@ export class BitWorld {
    * Set isotropic non-totalistic rule
    */
   setINTRule(intTransition: { birth: string[]; survive: string[] }) {
-    this.nextCell = crateINTNextCell(intTransition);
+    this.nextCell = createINTNextCell(intTransition);
   }
 
   /**

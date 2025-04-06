@@ -5,6 +5,7 @@ import { BitWorld } from "../BitWorld.ts";
 import { World } from "./world.ts";
 import { parseRule } from "../../../rule/mod.ts";
 import { parseRLE } from "../../../rle/mod.ts";
+import { parseIntRule } from "../../../rule/lib/int.ts";
 
 function d(a: BitWorld) {
   return a.getArray().slice(0, 4).map((r) => r.slice(0, 4).join(""));
@@ -84,7 +85,7 @@ Deno.test("BitWorld is correct intTransition", () => {
 
   const rule = parseRule(`B3-cnqy5cek/S2-ci3-ay4ceinrtz5-aiqy6-ak7c8`);
   if (rule.type !== "int") {
-    throw new Error("errro");
+    throw new Error("expected int rule");
   }
 
   world.setINTRule(rule.transition);
@@ -96,4 +97,13 @@ Deno.test("BitWorld is correct intTransition", () => {
   if (!world.bitGrid.equal(initialGrid)) {
     throw new Error(`not a oscillator`);
   }
+});
+
+Deno.test("BitWorld is correct intTransition cgol", () => {
+  const cgolAsINT = parseIntRule("B3/S23");
+  const bitWorld = BitWorld.make({ width: 32 * 2, height: 32 }, {
+    intTransition: cgolAsINT.transition,
+  });
+  const world = new World(32 * 2, 32);
+  randomCheck(bitWorld, world, 20);
 });

@@ -1,4 +1,7 @@
-export function crateINTNextCell(
+/**
+ * Isotropic non-totalistic rule
+ */
+export function createINTNextCell(
   transition: { birth: string[]; survive: string[] },
 ): (
   center: number,
@@ -11,6 +14,7 @@ export function crateINTNextCell(
   s: number,
   sw: number,
 ) => number {
+  const nextCellNormalized = createINTNextCellNormalized(transition);
   return function nextCell(
     center: number,
     ne: number,
@@ -38,7 +42,7 @@ export function crateINTNextCell(
     ) {
       return 0;
     }
-    return createINTNextCellNormalized(transition)(
+    return nextCellNormalized(
       nw1,
       n,
       ne1,
@@ -61,19 +65,21 @@ function createINTNextCellNormalized(
   transition: { birth: string[]; survive: string[] },
 ) {
   const birth = transition.birth;
+  const survive = transition.survive;
   const birth0 = birth.includes("0") ? 0xffffffff : 0;
 
   if (birth0 !== 0) {
     throw new Error("B0 rule");
   }
 
-  const lookupTableBirth = Array(256).fill(0).map((_, i) =>
-    birth.includes(intConditionArray[i] ?? "") ? 1 : 0
-  );
+  const lookupTableBirth = new Uint8Array(256);
+  const lookupTableSurvive = new Uint8Array(256);
 
-  const lookupTableSurvive = Array(256).fill(0).map((_, i) =>
-    transition.survive.includes(intConditionArray[i] ?? "") ? 1 : 0
-  );
+  for (let i = 0; i < 256; i++) {
+    const condition = intConditionArray[i] ?? "";
+    lookupTableBirth[i] = birth.includes(condition) ? 1 : 0;
+    lookupTableSurvive[i] = survive.includes(condition) ? 1 : 0;
+  }
 
   return function nextCell(
     a: number,

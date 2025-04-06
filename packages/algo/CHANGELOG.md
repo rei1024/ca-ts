@@ -1,3 +1,9 @@
+## [0.6.2] - 2025-04-06
+
+### Changed
+
+- Improved performance for INT rule of `BitWorld`
+
 ## [0.6.1] - 2025-03-06
 
 ### Changed
