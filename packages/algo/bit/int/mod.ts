@@ -1,7 +1,7 @@
 /**
  * Isotropic non-totalistic rule
  */
-export function crateINTNextCell(
+export function createINTNextCell(
   transition: { birth: string[]; survive: string[] },
 ): (
   center: number,
