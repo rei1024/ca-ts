@@ -1,3 +1,5 @@
+/* cSpell:disable */
+
 import { assertEquals } from "@std/assert";
 import { BitWorld } from "../BitWorld.ts";
 import { World } from "./world.ts";

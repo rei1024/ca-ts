@@ -1,3 +1,9 @@
+## [0.11.0] - 2025-04-06
+
+### Changed
+
+- `stringifyRLE` handles negative coordinates
+
 ## [0.10.0] - 2025-04-05
 
 ### Changed
