@@ -2,9 +2,18 @@
  * Outer-totalistic CA
  *
  * B/S notation
+ *
+ * ### Reference
+ * - [Life-like cellular automaton | LifeWiki](https://conwaylife.com/wiki/Life-like_cellular_automaton)
  */
 export type OuterTotalisticRule = {
+  /**
+   * Rule type
+   */
   type: "outer-totalistic";
+  /**
+   * `B3/S23` -> `{ birth: [3], survive: [2, 3] }`
+   */
   transition: {
     birth: number[];
     survive: number[];
@@ -46,7 +55,13 @@ export function parseOuterTotalistic(
   if (match) {
     const b = match.groups?.birth;
     const s = match.groups?.survive;
-    const generations = match.groups?.generations;
+    const generationsString = match.groups?.generations;
+    const generations = generationsString == null
+      ? undefined
+      : Number(generationsString);
+    if (generations != null && generations < 2) {
+      throw new Error("Generations should be greater than or equal to 2");
+    }
     if (b !== undefined && s !== undefined) {
       return {
         type: "outer-totalistic",
@@ -75,4 +90,23 @@ function bsToTransition(b: string, s: string): {
     birth: bs,
     survive: ss,
   };
+}
+
+export function stringifyOuterTotalistic(
+  rule: OuterTotalisticRule,
+): string {
+  const birth = rule.transition.birth;
+  const survive = rule.transition.survive;
+  if (birth.some((x) => !Number.isInteger(x) || x < 0 || x > 8)) {
+    throw new Error("birth should be 0-9");
+  }
+
+  if (survive.some((x) => !Number.isInteger(x) || x < 0 || x > 8)) {
+    throw new Error("survive should be 0-9");
+  }
+
+  const b = birth.slice().sort((a, b) => a - b).join("");
+  const s = survive.slice().sort((a, b) => a - b).join("");
+  const generations = rule.generations == null ? "" : `/${rule.generations}`;
+  return `B${b}/S${s}${generations}`;
 }

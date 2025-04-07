@@ -1,5 +1,8 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { parseOuterTotalistic } from "./outer-totalistic.ts";
+import {
+  parseOuterTotalistic,
+  stringifyOuterTotalistic,
+} from "./outer-totalistic.ts";
 
 Deno.test("parseOuterTotalistic B3/S23", () => {
   const items = [
@@ -96,6 +99,18 @@ Deno.test("parseOuterTotalistic Generations", () => {
   }
 });
 
+Deno.test("parseOuterTotalistic Generations error less than 2: 1", () => {
+  assertThrows(() => {
+    parseOuterTotalistic("B2/S23/1");
+  });
+});
+
+Deno.test("parseOuterTotalistic Generations error less than 2: 0", () => {
+  assertThrows(() => {
+    parseOuterTotalistic("B2/S23/0");
+  });
+});
+
 Deno.test("parseOuterTotalistic Generations error 8/B2/S23", () => {
   assertThrows(() => {
     parseOuterTotalistic("8/B2/S23");
@@ -123,4 +138,53 @@ Deno.test("parseOuterTotalistic Generations error 23/2/", () => {
   assertThrows(() => {
     parseOuterTotalistic("23/2/");
   });
+});
+
+Deno.test("parseOuterTotalistic stringifyOuterTotalistic", () => {
+  function assertBack(rule: string) {
+    const parsedRule = parseOuterTotalistic(rule);
+    assertEquals(stringifyOuterTotalistic(parsedRule), rule);
+  }
+
+  const items = [
+    "B3/S23",
+    "B3/S23/8",
+  ];
+
+  for (const item of items) {
+    assertBack(item);
+  }
+});
+
+Deno.test("stringifyOuterTotalistic sort", () => {
+  const rule = stringifyOuterTotalistic({
+    type: "outer-totalistic",
+    transition: {
+      birth: [6, 2],
+      survive: [4, 1],
+    },
+  });
+  assertEquals(rule, "B26/S14");
+});
+
+Deno.test("stringifyOuterTotalistic error", () => {
+  const items = [
+    { birth: [9], survive: [] },
+    { birth: [], survive: [9] },
+    { birth: [9], survive: [9] },
+    { birth: [-1], survive: [] },
+    { birth: [], survive: [-1] },
+    { birth: [-1], survive: [-1] },
+    { birth: [1.5], survive: [] },
+    { birth: [], survive: [1.5] },
+  ];
+
+  for (const item of items) {
+    assertThrows(() => {
+      stringifyOuterTotalistic({
+        type: "outer-totalistic",
+        transition: item,
+      });
+    });
+  }
 });

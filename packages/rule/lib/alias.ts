@@ -1,5 +1,5 @@
 /**
- * https://github.com/rowett/lifeviewer/blob/ce0569da56d9f3d5f3b42f97c212bb99a6dc1aa1/js/alias.js#L133
+ * https://github.com/rowett/lifeviewer/blob/4d5d2fbe96a9c9722b6966a5133d975124efbedb/js/alias.js
  */
 const map = new Map([
   ["", "B3/S23"],

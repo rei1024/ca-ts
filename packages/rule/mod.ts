@@ -26,6 +26,7 @@ import { alias } from "./lib/alias.ts";
 import {
   type OuterTotalisticRule,
   parseOuterTotalistic,
+  stringifyOuterTotalistic,
 } from "./lib/outer-totalistic.ts";
 import { type INTCondition, type INTRule, parseIntRule } from "./lib/int.ts";
 
@@ -86,4 +87,24 @@ export function parseRule(ruleString: string): ParsedRule {
   }
 
   throw new Error("Parse error");
+}
+
+/**
+ * Stringify a rule.
+ * ### Example
+ * ```ts
+ * import { stringifyRule } from "@ca-ts/rule";
+ * const rule = {
+ *   type: "outer-totalistic" as const,
+ *   transition: {
+ *     birth: [3],
+ *     survive: [2, 3],
+ *   },
+ * };
+ * const ruleString = stringifyRule(rule);
+ * // ruleString = "B3/S23"
+ * ```
+ */
+export function stringifyRule(rule: OuterTotalisticRule): string {
+  return stringifyOuterTotalistic(rule);
 }

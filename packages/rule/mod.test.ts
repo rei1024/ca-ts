@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { parseRule } from "./mod.ts";
+import { parseRule, stringifyRule } from "./mod.ts";
 
 Deno.test("parseRule B3/S23", () => {
   assertEquals(parseRule("B3/S23"), {
@@ -33,4 +33,17 @@ Deno.test("parseRule B3k/S4i", () => {
       survive: ["4i"],
     },
   });
+});
+
+Deno.test("stringifyRule B3/S23", () => {
+  assertEquals(
+    stringifyRule({
+      type: "outer-totalistic",
+      transition: {
+        birth: [3],
+        survive: [2, 3],
+      },
+    }),
+    "B3/S23",
+  );
 });

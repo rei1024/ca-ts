@@ -11,7 +11,7 @@ function mod(i: number, j: number): number {
 }
 
 /**
- * Outer-totalistic cellular automata.
+ * Outer-totalistic and isotropic non-totalistic cellular automata.
  *
  * using bitwise operations
  */

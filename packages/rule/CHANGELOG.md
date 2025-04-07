@@ -1,3 +1,10 @@
+## [0.7.0] - 2025-04-07
+
+### Changed
+
+- Fixed `parseRule`: Generations should be greater than or equal to 2.
+- Add `stringifyRule`.
+
 ## [0.6.0] - 2025-02-08
 
 ### Changed
