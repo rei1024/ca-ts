@@ -10,7 +10,7 @@ export type { CACell };
  */
 export type RLE = {
   /**
-   * Cells
+   * Cells in the pattern without background state
    *
    * Must be sorted lexicographically by (y, x).
    *
@@ -24,16 +24,16 @@ export type RLE = {
    */
   ruleString: string;
   /**
-   * Size of the grid
+   * Size of the pattern
    *
    * Format: "x = ..., y = ...".
    *
    * Example: `{ width: 10, height: 20 }`
    */
   size: {
-    /** Width of the grid (x). */
+    /** Width of the pattern. */
     width: number;
-    /** Height of the grid (y). */
+    /** Height of the pattern. */
     height: number;
   } | null;
   /**

@@ -99,6 +99,10 @@ export class CACellList {
     const minX = boundingRect.minX;
     const minY = boundingRect.minY;
 
+    if (!Number.isInteger(minX) || !Number.isInteger(minY)) {
+      throw new Error("invalid position");
+    }
+
     const width = boundingRect.width;
     const height = boundingRect.height;
 

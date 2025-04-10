@@ -67,7 +67,9 @@ class VisitState {
    * @returns `"end"` for `"!"` line
    */
   private readLine(line: string, lineNum: number): "continue" | "end" {
-    if (line.trimStart().startsWith("#")) {
+    // leading whitespace is ignored
+    line = line.trimStart();
+    if (line.startsWith("#")) {
       this.readComment(line);
       return "continue";
     } else if (
@@ -78,18 +80,24 @@ class VisitState {
       return "continue";
     }
 
-    let n = 0;
+    let n: number | null = null;
     const len = line.length;
     const visitor = this.visitor;
     for (let i = 0; i < len; i++) {
       const c = line[i];
+      if (n != null && c === " ") {
+        throw new RLEParseError("Illegal whitespace after count", {
+          line: lineNum,
+        });
+      }
+
       if (c === undefined) {
         throw new Error("internal error");
       }
       if ("0" <= c && c <= "9") {
-        n = n * 10 + c.charCodeAt(0) - ZERO_CODE;
+        n = (n === null ? 0 : n) * 10 + c.charCodeAt(0) - ZERO_CODE;
       } else {
-        if (n === 0) {
+        if (n === null) {
           n = 1;
         }
         if (c === "b" || c === ".") {
@@ -132,15 +140,22 @@ class VisitState {
           }
           this.x += n;
         }
-        n = 0;
+        n = null;
       }
     } /* for */
+
+    if (n !== null) {
+      throw new RLEParseError("Illegal whitespace after count", {
+        line: lineNum,
+      });
+    }
     return "continue";
   }
 
   private readComment(line: string) {
     const RULE_COMMENT_HEADER = "#r";
-    if (line.startsWith(RULE_COMMENT_HEADER)) {
+    // A "#r" rule definition is ignored if a rule is already defined.
+    if (!this.sawRule && line.startsWith(RULE_COMMENT_HEADER)) {
       this.sawRule = true;
       this.visitor.visitRule(
         line.slice(RULE_COMMENT_HEADER.length).trim(),
@@ -183,5 +198,5 @@ class VisitState {
 
 export function visitRLE(visitor: IRLEVisitor, source: string): void {
   const visitState = new VisitState(visitor);
-  visitState.read(source.split(/\n|\r\n/g));
+  visitState.read(source.split(/\n|\r\n|\r/g));
 }

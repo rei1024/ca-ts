@@ -45,11 +45,13 @@ export function stringifyRLE(
 
   if (rle.XRLE?.position) {
     const offset = rle.XRLE.position;
+    const offsetX = offset.x;
+    const offsetY = offset.y;
     cells = cells.map((c) => {
       return {
         position: {
-          x: c.position.x - offset.x,
-          y: c.position.y - offset.y,
+          x: c.position.x - offsetX,
+          y: c.position.y - offsetY,
         },
         state: c.state,
       };
@@ -116,21 +118,24 @@ function cellsToItems(
     }
 
     const prevY = prevCell?.position.y ?? 0;
+
     // -1 is new line
-    let prevX = prevCell?.position.x ?? -1;
+    const NEW_LINE_MARKER = -1;
+
+    let prevX = prevCell?.position.x ?? NEW_LINE_MARKER;
 
     if (currentY !== prevY) {
       items.push(
         { count: currentY - prevY, value: "$" },
       );
-      prevX = -1;
+      prevX = NEW_LINE_MARKER;
     }
 
-    if (prevY > currentY || (prevX !== -1 && prevX > currentX)) {
+    if (prevY > currentY || (prevX !== NEW_LINE_MARKER && prevX > currentX)) {
       throw new Error("cells must be sorted");
     }
 
-    if (prevX === -1) {
+    if (prevX === NEW_LINE_MARKER) {
       if (currentX !== 0) {
         items.push({ count: currentX, value: emptyCellChar });
       }

@@ -1,3 +1,12 @@
+## [0.11.1] - 2025-04-10
+
+### Changed
+
+- `parseRLE` ignores `#r` if rule is present
+- `parseRLE` strict rle count
+- `parseRLE` accept CR line ending
+- `parseRLE` ignores leading whitespace
+
 ## [0.11.0] - 2025-04-06
 
 ### Changed

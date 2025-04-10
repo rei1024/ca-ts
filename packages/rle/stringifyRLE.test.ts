@@ -8,6 +8,12 @@ function makeCells(list: { x: number; y: number }[]): CACell[] {
   return list.map((p) => ({ position: p, state: 1 }));
 }
 
+const blinkerCells = makeCells([
+  { x: 0, y: 0 },
+  { x: 1, y: 0 },
+  { x: 2, y: 0 },
+]);
+
 Deno.test("stringifyRLE", () => {
   assertEquals(
     stringifyRLE({}),
@@ -74,11 +80,7 @@ Deno.test("stringifyRLE", () => {
 
   assertEquals(
     stringifyRLE({
-      cells: makeCells([
-        { x: 0, y: 0 },
-        { x: 1, y: 0 },
-        { x: 2, y: 0 },
-      ]),
+      cells: blinkerCells,
       comments: [],
       trailingComment: "",
       ruleString: "B3/S23",
@@ -91,11 +93,7 @@ Deno.test("stringifyRLE", () => {
   // partial
   assertEquals(
     stringifyRLE({
-      cells: makeCells([
-        { x: 0, y: 0 },
-        { x: 1, y: 0 },
-        { x: 2, y: 0 },
-      ]),
+      cells: blinkerCells,
     }),
     "x = 3, y = 1, rule = B3/S23\n3o!\n",
   );
@@ -117,11 +115,7 @@ Deno.test("stringifyRLE", () => {
 
   assertEquals(
     stringifyRLE({
-      cells: makeCells([
-        { x: 0, y: 0 },
-        { x: 1, y: 0 },
-        { x: 2, y: 0 },
-      ]),
+      cells: blinkerCells,
       comments: ["#N Blinker"],
       trailingComment: "",
       ruleString: "B3/S23",
@@ -249,6 +243,13 @@ Deno.test("stringifyRLE negative position", () => {
   );
 });
 
+Deno.test("stringifyRLE chacha", () => {
+  const parsedRLE = parseRLE(RLE_TEST_DATA.chacha);
+  const str = stringifyRLE(parsedRLE);
+  const parseRLETwice = parseRLE(str);
+  assertEquals(parsedRLE, { ...parseRLETwice, trailingComment: "" });
+});
+
 Deno.test("stringifyRLE parseRLE", () => {
   function assertBack(
     str: string,
@@ -328,14 +329,11 @@ Deno.test("stringifyRLE 1..255", () => {
 
   const str = stringifyRLE({
     cells: cells,
-    comments: [],
-    trailingComment: "",
     ruleString: "255",
     size: {
       width: 0,
       height: 0,
     },
-    XRLE: null,
   });
   const rle = parseRLE(str);
   assertEquals(rle.cells, cells);

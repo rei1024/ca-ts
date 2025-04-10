@@ -14,6 +14,7 @@
  *   `bob$2bo$3o!`
  * ].join("\n");
  *
+ * // Parse RLE
  * const rle: RLE = parseRLE(source);
  * assertEquals(
  *   rle,
@@ -38,6 +39,7 @@
  *   },
  * );
  *
+ * // Convert to a string
  * assertEquals(
  *   stringifyRLE({
  *     cells: [

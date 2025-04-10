@@ -73,6 +73,14 @@ Deno.test("parseRLE header #r rule", () => {
   assertEquals(output.cells, []);
 });
 
+Deno.test("parseRLE header #r rule with whitespace", () => {
+  const output = parseRLE(`   #r 23/3\nx=3,y=2`);
+  assertEquals(output.size?.width, 3);
+  assertEquals(output.size?.height, 2);
+  assertEquals(output.ruleString, "23/3");
+  assertEquals(output.cells, []);
+});
+
 Deno.test("parseRLE header #r is ignored if rule is present", () => {
   const output = parseRLE(`#r 23/3\nx=3,y=2,rule=B23/S1`);
   assertEquals(output.size?.width, 3);
@@ -81,9 +89,18 @@ Deno.test("parseRLE header #r is ignored if rule is present", () => {
   assertEquals(output.cells, []);
 });
 
+Deno.test("parseRLE header #r is ignored if rule is present after", () => {
+  const output = parseRLE(`x=3,y=2,rule=B23/S1\n#r 23/3`);
+  assertEquals(output.size?.width, 3);
+  assertEquals(output.size?.height, 2);
+  assertEquals(output.ruleString, "B23/S1");
+  assertEquals(output.cells, []);
+});
+
 Deno.test("parseRLE comment space prefix", () => {
   const output = parseRLE(`#C Comment 1\n  #C Comment 2\nx=3,y=2,rule=B23/S1`);
-  assertEquals(output.comments, ["#C Comment 1", "  #C Comment 2"]);
+  // leading space is deleted
+  assertEquals(output.comments, ["#C Comment 1", "#C Comment 2"]);
 });
 
 Deno.test("parseRLE header without rule", () => {
@@ -135,6 +152,32 @@ o
     { position: { x: 2, y: 0 }, state: 1 },
     { position: { x: 3, y: 0 }, state: 1 },
   ]);
+});
+
+Deno.test("parseRLE DOS newline", () => {
+  const output = parseRLE(`x=3,y=2,rule=B23/S1\r\no`);
+  assertEquals(output.cells, [
+    { position: { x: 0, y: 0 }, state: 1 },
+  ]);
+});
+
+Deno.test("parseRLE old Mac newline", () => {
+  const output = parseRLE(`x=3,y=2,rule=B23/S1\ro`);
+  assertEquals(output.cells, [
+    { position: { x: 0, y: 0 }, state: 1 },
+  ]);
+});
+
+Deno.test("parseRLE error count end line", () => {
+  assertThrows(() => {
+    parseRLE(`2\no`);
+  }, "Illegal whitespace after count");
+});
+
+Deno.test("parseRLE error whitespace between count and state", () => {
+  assertThrows(() => {
+    parseRLE(`2 o`);
+  }, "Illegal whitespace after count");
 });
 
 Deno.test("parseRLE comment between", () => {
@@ -275,6 +318,20 @@ Deno.test("parseRLE CXRLE", () => {
 
   // convertible to JSON
   JSON.stringify(output);
+});
+
+Deno.test("parseRLE size with leading whitespace", () => {
+  const output = parseRLE(
+    `   x = 2, y = 3, rule = B3/S23\no`,
+  );
+  assertEquals(output.size, { width: 2, height: 3 });
+});
+
+Deno.test("parseRLE size with leading whitespace with comment", () => {
+  const output = parseRLE(
+    `# Comment\n   x = 2, y = 3, rule = B3/S23\no`,
+  );
+  assertEquals(output.size, { width: 2, height: 3 });
 });
 
 Deno.test("parseRLE CXRLE with rule", () => {

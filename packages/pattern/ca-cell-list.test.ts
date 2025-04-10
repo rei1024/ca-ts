@@ -1,5 +1,5 @@
 import { CACellList } from "./mod.ts";
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 
 Deno.test("CACellList getCells", () => {
   const cells = [
@@ -171,6 +171,16 @@ Deno.test("CACellList from2dArray", () => {
   assertEquals(cellList.getCells(), [
     { position: { x: 1, y: 1 }, state: 5 },
   ]);
+});
+
+Deno.test("CACellList to2dArray throws", () => {
+  const cellList = CACellList.fromCells([{
+    state: 1,
+    position: { x: Infinity, y: Infinity },
+  }]);
+  assertThrows(() => {
+    cellList.to2dArray();
+  }, "invalid position");
 });
 
 Deno.test("CACellList to2dArray from2dArray", () => {
