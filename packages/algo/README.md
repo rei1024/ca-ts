@@ -4,9 +4,13 @@
 
 ```ts ignore
 import { BitWorld } from "@ca-ts/algo/bit";
+
 // Simulate Conway's Game of Life
 const world = BitWorld.make({ width: 32, height: 32 });
+
+// Fill random state
 world.random();
+
 setInterval(() => {
   console.clear();
   console.log("__".repeat(32));
@@ -16,6 +20,7 @@ setInterval(() => {
     )
       .join("\n"),
   );
+  // Next generation
   world.next();
 }, 100);
 ```
@@ -24,6 +29,7 @@ setInterval(() => {
 
 ```ts ignore
 import { BitWorld } from "@ca-ts/algo/bit";
+
 const world = BitWorld.make(
   { width: 32, height: 32 },
   // B36/S23 HighLife
@@ -47,6 +53,7 @@ setInterval(() => {
 
 ```ts ignore
 import { BitWorld } from "@ca-ts/algo/bit";
+
 import { parseRule } from "@ca-ts/rule";
 const rule = parseRule("B2-a/S12"); // Just friends;
 if (rule.type !== "int") throw new Error();

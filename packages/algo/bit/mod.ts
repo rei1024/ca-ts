@@ -1,9 +1,11 @@
 /**
- * Conway's Game of Life simulation by bitwise operations.
+ * Cellular automaton simulation by bitwise operations.
  *
  * @example
  * ```ts
 import { BitWorld } from "@ca-ts/algo/bit";
+
+// Default rule is Conway's Game of Life
 const world = BitWorld.make({ width: 32, height: 32 });
 world.random();
 setInterval(() => {

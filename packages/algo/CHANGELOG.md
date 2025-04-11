@@ -1,3 +1,10 @@
+## [0.7.0] - 2025-04-11
+
+### Changed
+
+- **BREAKING** Removed `/common` module
+- Improved documentation
+
 ## [0.6.2] - 2025-04-06
 
 ### Changed
