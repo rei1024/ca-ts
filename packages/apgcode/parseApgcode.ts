@@ -1,4 +1,5 @@
 import type { Apgcode } from "./Apgcode.ts";
+import { charToNum, charToNumForY } from "./internal/charToNum.ts";
 
 /**
  * Thrown by {@link parseApgcode}
@@ -155,7 +156,7 @@ export function parseExtendedWechslerFormat(
     } else {
       for (let i = 0; i < 5; i++) {
         if ((num & (1 << i)) !== 0) {
-          row[i]?.push({
+          row[i]!.push({
             x,
             y: y + i,
           });
@@ -167,35 +168,4 @@ export function parseExtendedWechslerFormat(
 
   push();
   return cells;
-}
-
-const ZERO_CODE = "0".charCodeAt(0);
-const LOWER_A_CODE = "a".charCodeAt(0);
-
-/**
- * @param char length is 1
- */
-function charToNum(char: string): number | null {
-  if ("0" <= char && char <= "9") {
-    return char.charCodeAt(0) - ZERO_CODE;
-  }
-  if ("a" <= char && char <= "v") {
-    return char.charCodeAt(0) - LOWER_A_CODE + 10;
-  }
-
-  return null;
-}
-
-/**
- * @param char length is 1
- */
-function charToNumForY(char: string): number | null {
-  if ("0" <= char && char <= "9") {
-    return char.charCodeAt(0) - ZERO_CODE + 4;
-  }
-  if ("a" <= char && char <= "z") {
-    return char.charCodeAt(0) - LOWER_A_CODE + 4 + 10;
-  }
-
-  return null;
 }

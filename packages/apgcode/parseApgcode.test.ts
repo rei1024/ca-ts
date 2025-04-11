@@ -16,6 +16,12 @@ Deno.test("parseApgcode block", () => {
   if (parsedCode.type === "still-life") {
     assertEquals(parsedCode.population, 4);
     assertEquals(parsedCode.cells.length, 4);
+    assertEquals(parsedCode.cells, [
+      { x: 0, y: 0 },
+      { x: 1, y: 0 },
+      { x: 0, y: 1 },
+      { x: 1, y: 1 },
+    ]);
   }
   // convertible to JSON
   JSON.stringify(parseApgcode);
@@ -112,8 +118,8 @@ Deno.test("parseApgcode period error", () => {
   }, ApgcodeParseError);
 });
 
-Deno.test("parseExtendedWechslerFormat Error", () => {
+Deno.test("parseExtendedWechslerFormat Error space", () => {
   assertThrows(() => {
-    parseExtendedWechslerFormat("!");
+    parseExtendedWechslerFormat("3 3");
   }, ApgcodeParseError);
 });
