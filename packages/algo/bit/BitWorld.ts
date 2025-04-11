@@ -12,8 +12,6 @@ function mod(i: number, j: number): number {
 
 /**
  * Outer-totalistic and isotropic non-totalistic cellular automata.
- *
- * using bitwise operations
  */
 export class BitWorld {
   public bitGrid: BitGrid;
@@ -49,7 +47,7 @@ export class BitWorld {
   }
 
   /**
-   * Set rule
+   * Set a outer-totalistic rule.
    *
    * Example: (B3/S23)
    * ```
@@ -79,7 +77,12 @@ export class BitWorld {
   }
 
   /**
-   * Set isotropic non-totalistic rule
+   * Set a isotropic non-totalistic rule.
+   *
+   * Example: (B3k/S4i)
+   * ```
+   * bitWorld.setRule({ birth: ["3k"], survive: ["4i"] });
+   * ```
    */
   setINTRule(intTransition: { birth: string[]; survive: string[] }) {
     this.nextCell = createINTNextCell(intTransition);
@@ -90,7 +93,7 @@ export class BitWorld {
    *
    * width is rounded up to 32
    *
-   * Default transition is Conway's Game of Life.
+   * Default rule is Conway's Game of Life.
    *
    * "B3/S23" → `{ transition: { birth: [3], survive: [2, 3] } }`
    */
@@ -137,14 +140,24 @@ export class BitWorld {
     this.bitGrid.set(x, y);
   }
 
+  /**
+   * Returns the entire grid as a 2D array of 0s and 1s.
+   */
   getArray(): (0 | 1)[][] {
     return this.bitGrid.getArray();
   }
 
+  /**
+   * Iterates over all cells in the grid, calling the provided function for each cell.
+   */
   forEach(fn: (x: number, y: number, alive: 0 | 1) => void) {
     this.bitGrid.forEach(fn);
   }
 
+  /**
+   * Iterates over only the "alive" cells in the grid, calling the provided function
+   * for each alive cell.  This is more efficient than `forEach` if the grid is sparse.
+   */
   forEachAlive(fn: (x: number, y: number) => void) {
     this.bitGrid.forEachAlive(fn);
   }
@@ -159,7 +172,7 @@ export class BitWorld {
   }
 
   /**
-   * update to next generation
+   * Update to next generation
    */
   next() {
     const width = this.bitGrid.getWidth32();
@@ -193,14 +206,14 @@ export class BitWorld {
   }
 
   /**
-   * has live cell at border
+   * Checks if there are any live cells at the border of the grid.
    */
   hasAliveCellAtBorder(): boolean {
     return this.bitGrid.hasAliveCellAtBorder();
   }
 
   /**
-   * Get current population
+   * Gets the population (number of live cells) in the grid.
    */
   getPopulation(): number {
     return this.bitGrid.getPopulation();

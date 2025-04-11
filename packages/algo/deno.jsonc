@@ -1,8 +1,7 @@
 {
   "name": "@ca-ts/algo",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "exports": {
-    "./bit": "./bit/mod.ts",
-    "./common": "./common.ts"
+    "./bit": "./bit/mod.ts"
   }
 }

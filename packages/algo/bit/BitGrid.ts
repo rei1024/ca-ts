@@ -1,4 +1,3 @@
-import type { Rect } from "../common.ts";
 import {
   bitAndUint32Array,
   bitCountArrayBuffer,
@@ -16,11 +15,18 @@ export type _Uint32Array = ReturnType<typeof Uint32Array.prototype.slice>;
  * 2D bit array
  */
 export class BitGrid {
+  /**
+   * Precondition: `width32 * height = uint32array.length`
+   */
   constructor(
     private readonly width32: number,
     private readonly height: number,
     private readonly uint32array: _Uint32Array,
-  ) {}
+  ) {
+    if (width32 * height !== uint32array.length) {
+      throw new Error("Error");
+    }
+  }
 
   static make({ width, height }: { width: number; height: number }): BitGrid {
     const width32 = Math.ceil(width / 32);
@@ -28,10 +34,16 @@ export class BitGrid {
     return new BitGrid(width32, height, new Uint32Array(len));
   }
 
+  /**
+   * Creates a deep copy of the BitGrid.
+   */
   clone(): BitGrid {
     return new BitGrid(this.width32, this.height, this.uint32array.slice());
   }
 
+  /**
+   * Fills the grid with random bit values
+   */
   random() {
     const array = this.uint32array;
     if (crypto.getRandomValues) {
@@ -43,10 +55,16 @@ export class BitGrid {
     }
   }
 
+  /**
+   * Clears all bits in the grid, setting all cell values to 0.
+   */
   clear() {
     this.uint32array.fill(0);
   }
 
+  /**
+   * Returns the internal Uint32Array representing the grid data.
+   */
   asInternalUint32Array(): _Uint32Array {
     return this.uint32array;
   }
@@ -64,7 +82,7 @@ export class BitGrid {
   }
 
   /**
-   * set alive at (x, y)
+   * Sets the cell at the specified coordinates (x, y) to "alive" (1).
    */
   set(x: number, y: number) {
     const offset = x >>> 5; // = Math.floor(x / 32)
@@ -79,7 +97,7 @@ export class BitGrid {
   }
 
   /**
-   * get (x, y) cell
+   * Gets the state of the cell at the specified coordinates (x, y).
    */
   get(x: number, y: number): 0 | 1 {
     const offset = x >>> 5; // = Math.floor(x / 32)
@@ -94,6 +112,9 @@ export class BitGrid {
     return (array[index]! & (1 << (31 - (x % 32)))) === 0 ? 0 : 1;
   }
 
+  /**
+   * Returns the entire grid as a 2D array of 0s and 1s.
+   */
   getArray(): (0 | 1)[][] {
     const array: (0 | 1)[][] = Array(this.getHeight())
       .fill(0)
@@ -110,6 +131,9 @@ export class BitGrid {
     return array;
   }
 
+  /**
+   * Iterates over all cells in the grid, calling the provided function for each cell.
+   */
   forEach(fn: (x: number, y: number, alive: 0 | 1) => void) {
     const width = this.width32;
     const height = this.height;
@@ -131,6 +155,10 @@ export class BitGrid {
     }
   }
 
+  /**
+   * Iterates over only the "alive" cells in the grid, calling the provided function
+   * for each alive cell.  This is more efficient than `forEach` if the grid is sparse.
+   */
   forEachAlive(fn: (x: number, y: number) => void) {
     const width = this.width32;
     const height = this.height;
@@ -157,7 +185,7 @@ export class BitGrid {
   }
 
   /**
-   * has live cell at border
+   * Checks if there are any live cells at the border of the grid.
    */
   hasAliveCellAtBorder(): boolean {
     const width = this.width32;
@@ -191,11 +219,22 @@ export class BitGrid {
     return false;
   }
 
+  /**
+   * Gets the population (number of live cells) in the grid.
+   */
   getPopulation(): number {
     return bitCountArrayBuffer(this.uint32array.buffer);
   }
 
-  getBoundingBox(): Rect {
+  /**
+   * Gets the bounding box of the live cells in the grid.
+   */
+  getBoundingBox(): {
+    minX: number;
+    minY: number;
+    maxX: number;
+    maxY: number;
+  } {
     let maxX = 0;
     let minX = 0;
     let maxY = 0;
@@ -257,7 +296,10 @@ export class BitGrid {
   }
 
   /**
-   * @throws not same size
+   * Checks if this BitGrid is equal to another BitGrid.  Two BitGrids are considered
+   * equal if they have the same dimensions and the same cell values.
+   *
+   * @throws {TypeError} If the dimensions of the two BitGrids are different.
    */
   equal(otherBitGrid: BitGrid): boolean {
     this.assertSameSize("BitGrid.equal", otherBitGrid);
