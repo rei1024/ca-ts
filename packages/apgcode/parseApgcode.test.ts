@@ -118,6 +118,12 @@ Deno.test("parseApgcode period error", () => {
   }, ApgcodeParseError);
 });
 
+Deno.test("parseExtendedWechslerFormat Error", () => {
+  assertThrows(() => {
+    parseExtendedWechslerFormat("!");
+  }, ApgcodeParseError);
+});
+
 Deno.test("parseExtendedWechslerFormat Error space", () => {
   assertThrows(() => {
     parseExtendedWechslerFormat("3 3");
