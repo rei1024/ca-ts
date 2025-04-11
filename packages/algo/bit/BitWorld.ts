@@ -47,7 +47,7 @@ export class BitWorld {
   }
 
   /**
-   * Set a outer-tatalistic rule.
+   * Set a outer-totalistic rule.
    *
    * Example: (B3/S23)
    * ```
