@@ -1,3 +1,9 @@
+## [0.8.0] - 2025-04-12
+
+### Changed
+
+- `stringifyRule` accept `INTRule`
+
 ## [0.7.0] - 2025-04-07
 
 ### Changed

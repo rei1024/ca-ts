@@ -30,6 +30,7 @@ import {
   stringifyOuterTotalistic,
 } from "./lib/outer-totalistic.ts";
 import { type INTCondition, type INTRule, parseIntRule } from "./lib/int.ts";
+import { stringifyINT } from "./lib/int/stringify-int.ts";
 
 export type { OuterTotalisticRule };
 export type { INTCondition, INTRule };
@@ -106,6 +107,9 @@ export function parseRule(ruleString: string): ParsedRule {
  * // ruleString = "B3/S23"
  * ```
  */
-export function stringifyRule(rule: OuterTotalisticRule): string {
+export function stringifyRule(rule: ParsedRule): string {
+  if (rule.type === "int") {
+    return stringifyINT(rule);
+  }
   return stringifyOuterTotalistic(rule);
 }
