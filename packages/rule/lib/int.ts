@@ -65,7 +65,10 @@ export function parseIntRule(
     const bsRegex =
       // cspell:disable-next-line
       /^(B|b)(?<birth>(\d|[cekainyqjrtwz-])*)\/(S|s)(?<survive>(\d|[cekainyqjrtwz-])*)(|\/(?<generations>\d+))$/;
-    const match = ruleString.match(bsRegex);
+    const sbRegex =
+      // cspell:disable-next-line
+      /^(?<survive>(\d|[cekainyqjrtwz-])*)\/(?<birth>(\d|[cekainyqjrtwz-])*)(|\/(?<generations>\d+))$/;
+    const match = ruleString.match(bsRegex) ?? ruleString.match(sbRegex);
     if (match) {
       const b = match.groups?.birth;
       const s = match.groups?.survive;

@@ -143,6 +143,27 @@ Deno.test("parseIntRule B3k/S4i", () => {
   });
 });
 
+Deno.test("parseIntRule S/B 3k/4i", () => {
+  assertEquals(parseIntRule("3k/4i"), {
+    type: "int",
+    transition: {
+      birth: ["4i"],
+      survive: ["3k"],
+    },
+  });
+});
+
+Deno.test("parseIntRule S/B 3k/4i/5", () => {
+  assertEquals(parseIntRule("3k/4i/5"), {
+    type: "int",
+    transition: {
+      birth: ["4i"],
+      survive: ["3k"],
+    },
+    generations: 5,
+  });
+});
+
 Deno.test("parseIntRule Generations B3k/S4i/5", () => {
   assertEquals(parseIntRule("B3k/S4i/5"), {
     type: "int",

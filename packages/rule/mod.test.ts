@@ -47,3 +47,16 @@ Deno.test("stringifyRule B3/S23", () => {
     "B3/S23",
   );
 });
+
+Deno.test("stringifyRule INT", () => {
+  assertEquals(
+    stringifyRule({
+      type: "int",
+      transition: {
+        birth: ["2a", "4a"],
+        survive: [],
+      },
+    }),
+    "B2a4a/S",
+  );
+});

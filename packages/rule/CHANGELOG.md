@@ -1,3 +1,10 @@
+## [0.8.0] - 2025-04-12
+
+### Changed
+
+- `parseRule` accept S/B notation for INT rule.
+- `stringifyRule` accept `INTRule`.
+
 ## [0.7.0] - 2025-04-07
 
 ### Changed
