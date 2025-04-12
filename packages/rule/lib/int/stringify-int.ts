@@ -55,18 +55,18 @@ export function stringifyINT(rule: INTRule): string {
 function encodeConditions(cs: INTCondition[]): string {
   // Alphabetical order is generally seen
   cs = cs.slice().sort();
-  const conditionParCount = new Map<number, string[]>();
+  const countToConditionLetters = new Map<number, string[]>();
   for (const c of cs) {
     const count = Number(c[0]);
-    if (conditionParCount.get(count) === undefined) {
-      conditionParCount.set(count, []);
+    if (countToConditionLetters.get(count) === undefined) {
+      countToConditionLetters.set(count, []);
     }
-    conditionParCount.get(count)?.push(c[1] ?? "");
+    countToConditionLetters.get(count)?.push(c[1] ?? "");
   }
 
   let conditionString = "";
 
-  for (const [count, conditions] of conditionParCount.entries()) {
+  for (const [count, conditions] of countToConditionLetters.entries()) {
     if (count === 0 || count === 8) {
       conditionString += count.toString();
       continue;
