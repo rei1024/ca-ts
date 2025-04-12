@@ -88,8 +88,8 @@ function encodeConditions(cs: INTCondition[]): string {
       // all conditions
       // empty
       finalConditions = [];
-      // Minimize letter count TODO
     } else if (negatedLettersLength < conditions.length) {
+      // Minimize letter count
       conditionString += "-";
       finalConditions = possibleLetters.slice().sort().filter((c) =>
         !conditions.includes(c)
