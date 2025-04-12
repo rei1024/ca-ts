@@ -173,7 +173,7 @@ export class CACellList {
   }
 
   /**
-   * reates a new `CACellList` by applying a provided function to each `CACell`
+   * Creates a new `CACellList` by applying a provided function to each `CACell`
    * in the current list.
    */
   map(fn: (cell: CACell) => CACell): CACellList {
