@@ -53,8 +53,8 @@ setInterval(() => {
 
 ```ts ignore
 import { BitWorld } from "@ca-ts/algo/bit";
-
 import { parseRule } from "@ca-ts/rule";
+
 const rule = parseRule("B2-a/S12"); // Just friends;
 if (rule.type !== "int") throw new Error();
 const world = BitWorld.make(

@@ -17,7 +17,9 @@ export const intConditionArray: INTCondition[] =
     .split(/\s+/) as INTCondition[];
 
 /**
- * <https://conwaylife.com/wiki/Isotropic_non-totalistic_rule#Square_grid>
+ * A condition of the INT rule.
+ *
+ * [Isotropic non-totalistic rule > Square grid | LifeWiki](https://conwaylife.com/wiki/Isotropic_non-totalistic_rule#Square_grid)
  *
  * ```ts ignore
  * type INTCondition = "0" | "1c" | "1e" | "2c" | ... | "7e" | "7c" | "8"

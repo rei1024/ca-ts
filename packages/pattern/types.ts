@@ -1,3 +1,6 @@
+/**
+ * Position in the grid.
+ */
 export type Position = {
   /**
    * x coordinate

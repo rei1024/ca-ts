@@ -37,10 +37,16 @@ export class CACellList {
     this.isSortedUnique = isSortedUnique;
   }
 
+  /**
+   * Construct from list of cells.
+   */
   static fromCells(cells: readonly CACell[]): CACellList {
     return new CACellList(cells, false);
   }
 
+  /**
+   * Get list of cells.
+   */
   getCells(): readonly CACell[] {
     if (this.isSortedUnique) {
       return this.cells;
@@ -61,6 +67,9 @@ export class CACellList {
     return value;
   }
 
+  /**
+   * Gets the population (number of live cells).
+   */
   get population(): number {
     return this.getCells().length;
   }
@@ -163,14 +172,31 @@ export class CACellList {
     );
   }
 
+  /**
+   * reates a new `CACellList` by applying a provided function to each `CACell`
+   * in the current list.
+   */
   map(fn: (cell: CACell) => CACell): CACellList {
     return this.mapInternal(fn, false);
   }
 
   /**
    * Translate the cells by a given offset.
+   *
+   * @example
+   * ```ts
+   * import { CACellList } from "@ca-ts/pattern";
+   * import { assertEquals } from "@std/assert";
+   *
+   * const cellList = CACellList.fromCells([{ position: { x: 3, y: 2 }, state: 1 }])
+   * assertEquals(
+   *   cellList.translate({ dx: 1, dy: -1 }).getCells(),
+   *   [{ position: { x: 4, y: 1 }, state: 1 }]
+   * );
+   * ```
    */
-  translate({ dx, dy }: { dx: number; dy: number }): CACellList {
+  translate(offset: { dx: number; dy: number }): CACellList {
+    const { dx, dy } = offset;
     return this.mapInternal((cell) => ({
       ...cell,
       position: {

@@ -1,5 +1,8 @@
 import type { CACell } from "./types.ts";
 
+/**
+ * Bounding rectangle.
+ */
 export class BoundingRect {
   /**
    * @param minX minimum x coordinate
@@ -28,6 +31,9 @@ export class BoundingRect {
     return this.maxY - this.minY + 1;
   }
 
+  /**
+   * Get width and height.
+   */
   get size(): { width: number; height: number } {
     return {
       width: this.width,
@@ -35,10 +41,16 @@ export class BoundingRect {
     };
   }
 
+  /**
+   * Get area.
+   */
   get area(): number {
     return this.width * this.height;
   }
 
+  /**
+   * Return union on cells.
+   */
   union(other: BoundingRect): BoundingRect {
     return new BoundingRect(
       Math.min(this.minX, other.minX),

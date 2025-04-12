@@ -1,9 +1,10 @@
 /**
- * Rulestring
+ * Rulestring parser and writer.
  *
  * ### Example
  * ```ts
  * import { parseRule } from "@ca-ts/rule";
+ *
  * const rule = parseRule("B3/S23");
 // rule = {
 //   type: "outer-totalistic",
