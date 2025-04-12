@@ -43,9 +43,13 @@ export function stringifyINT(rule: INTRule): string {
     }
   }
 
-  return `B${encodeConditions(birth)}/S${encodeConditions(survive)}${
-    rule.generations != null ? rule.generations.toString() : ""
-  }`;
+  const generations = rule.generations != null
+    ? ("/" + rule.generations.toString())
+    : "";
+
+  return `B${encodeConditions(birth)}/S${
+    encodeConditions(survive)
+  }${generations}`;
 }
 
 function encodeConditions(cs: INTCondition[]): string {

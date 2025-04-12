@@ -38,6 +38,9 @@ Deno.test("stringifyINT parseIntRule", () => {
   );
   // LeapLife
   assertBack(`B2n3/S23-q`);
+
+  // with generations
+  assertBack(`B3/S23/7`);
 });
 
 Deno.test("stringifyINT condition error", () => {
