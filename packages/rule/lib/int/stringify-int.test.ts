@@ -34,6 +34,7 @@ Deno.test("stringifyINT parseIntRule", () => {
 
   // Banks-I
   assertBack(
+    // cspell:disable-next-line
     `B3e4ejr5cinqy6-ei78/S012-e3-ajk4-akqw5-ajk6-e78`,
   );
   // LeapLife
