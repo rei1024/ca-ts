@@ -1,3 +1,10 @@
+## Unreleased
+
+### Changed
+
+- `parseRule` and `stringifyRule` handles grid parameter.
+  - Example: `B3/S23:T20,30`
+
 ## [0.8.0] - 2025-04-12
 
 ### Changed

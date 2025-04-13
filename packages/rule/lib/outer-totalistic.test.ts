@@ -150,6 +150,23 @@ Deno.test("parseOuterTotalistic Generations error 23/2/", () => {
   });
 });
 
+Deno.test("parseOuterTotalistic gridParameter", () => {
+  assertEquals(parseOuterTotalistic("B3/S23:P30,20"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3],
+      survive: [2, 3],
+    },
+    gridParameter: {
+      size: {
+        width: 30,
+        height: 20,
+      },
+      topology: { type: "P" },
+    },
+  });
+});
+
 Deno.test("parseOuterTotalistic stringifyOuterTotalistic", () => {
   function assertBack(rule: string) {
     const parsedRule = parseOuterTotalistic(rule);
@@ -161,6 +178,8 @@ Deno.test("parseOuterTotalistic stringifyOuterTotalistic", () => {
     "B3/S23/8",
     "B/S",
     "B012345678/S012345678",
+    "B3/S23:T20,30",
+    "B3/S23/3:T20,40",
   ];
 
   for (const item of items) {

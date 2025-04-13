@@ -1,3 +1,4 @@
+import { type GridParameter, parseGridParameter } from "./grid/mod.ts";
 import { intModifiers } from "./int/int-condition.ts";
 
 // created by `createIndexed()`
@@ -50,6 +51,10 @@ export type INTRule = {
    * [Generations | LifeWiki](https://conwaylife.com/wiki/Generations)
    */
   generations?: number;
+  /**
+   * [Bounded grids | GollyHelp](https://golly.sourceforge.io/Help/bounded.html)
+   */
+  gridParameter?: GridParameter;
 };
 
 /**
@@ -59,6 +64,14 @@ export function parseIntRule(
   ruleString: string,
 ): INTRule {
   ruleString = ruleString.trim();
+
+  const colonIndex = ruleString.indexOf(":");
+  let gridParameter: GridParameter | null = null;
+  if (colonIndex !== -1) {
+    const gridParameterStr = ruleString.slice(colonIndex + 1); // +1 for ":"
+    ruleString = ruleString.slice(0, colonIndex);
+    gridParameter = parseGridParameter(gridParameterStr);
+  }
 
   // B/S
   {
@@ -79,6 +92,9 @@ export function parseIntRule(
           transition: bsToTransition(b, s),
           ...generations == null ? {} : {
             generations: Number(generations),
+          },
+          ...gridParameter == null ? {} : {
+            gridParameter,
           },
         };
       }

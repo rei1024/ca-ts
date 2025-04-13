@@ -62,6 +62,12 @@ Deno.test("stringifyINT parseIntRule", () => {
 
   // with generations
   assertBack(`B3/S23/7`);
+
+  // grid parameter
+  assertBack(`B3/S23:T20,40`);
+
+  // generations and grid parameter
+  assertBack(`B3/S23/3:T20,40`);
 });
 
 Deno.test("stringifyINT condition error", () => {
