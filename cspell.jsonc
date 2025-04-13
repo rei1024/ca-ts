@@ -2,13 +2,19 @@
   "version": "0.2",
   "language": "en",
   "ignorePaths": [
-    "./rle/test-data/mod.ts",
-    "apgcode/parseApgcode.test.ts",
+    "./packages/rle/test-data/mod.ts",
+    "packages/apgcode/parseApgcode.test.ts",
+    "packages/rule/lib/int/stringify-int.test.ts",
     "deno.lock"
   ],
   "words": [
+    // random
     "bobo",
     "bobobobo",
+    "deee",
+    "efgh",
+    // words
+    "cgol",
     "XRLE",
     "CXRLE",
     "chacha",
@@ -26,6 +32,14 @@
     "messless",
     "megasized",
     "deee",
-    "caplayer"
+    "caplayer",
+    "rulestring",
+    "Totalistic",
+    "Hensel",
+    "caplayer",
+    "Eron",
+    "neighbour",
+    "Jannis",
+    "tlife"
   ]
 }

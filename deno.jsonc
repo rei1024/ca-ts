@@ -2,7 +2,6 @@
   "compilerOptions": {
     "strict": true,
     "exactOptionalPropertyTypes": true,
-    "useUnknownInCatchVariables": true,
     "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true
   },
@@ -12,29 +11,31 @@
   "tasks": {
     "t": "deno test --doc",
     "w": "deno test --watch",
-    "ok": "deno lint && deno task t && deno fmt --check",
-    "spell": "npx cspell ."
+    "spell": "deno run --allow-env --allow-read --allow-sys npm:cspell@8.18.1 . --no-progress",
+    "ok": "deno lint && deno task t && deno fmt --check && deno task spell"
   },
-  "exclude": [
-    ".git"
-  ],
   "publish": {
     "exclude": ["docs", ".vscode"]
   },
+  "license": "MIT",
   "lint": {
     "rules": {
       "include": [
         "camelcase",
         "no-sync-fn-in-async-fn",
         "single-var-declarator",
-        "verbatim-module-syntax"
+        "verbatim-module-syntax",
+        "no-console"
       ],
       "exclude": ["no-unused-vars"]
     }
   },
   "workspace": [
-    "./rle",
-    "./plaintext",
-    "./apgcode"
+    "./packages/pattern",
+    "./packages/rle",
+    "./packages/plaintext",
+    "./packages/apgcode",
+    "./packages/algo",
+    "./packages/rule"
   ]
 }

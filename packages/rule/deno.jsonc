@@ -1,0 +1,8 @@
+{
+  "name": "@ca-ts/rule",
+  "version": "0.8.0",
+  "exports": {
+    ".": "./mod.ts",
+    "./int": "./int.ts"
+  }
+}
