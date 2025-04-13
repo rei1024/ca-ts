@@ -25,6 +25,17 @@ Deno.test("stringifyINT", () => {
     }),
     "B08/S01c3ai",
   );
+
+  assertEquals(
+    stringifyINT({
+      type: "int",
+      transition: {
+        birth: ["1c", "1e"],
+        survive: ["2a", "2c", "2i", "2k"],
+      },
+    }),
+    "B1/S2-en",
+  );
 });
 
 Deno.test("stringifyINT parseIntRule", () => {
@@ -32,13 +43,23 @@ Deno.test("stringifyINT parseIntRule", () => {
     assertEquals(stringifyINT(parseIntRule(rule)), rule);
   }
 
+  assertBack("B/S");
+  assertBack("B012345678/S012345678");
+
   // Banks-I
   assertBack(
     // cspell:disable-next-line
     `B3e4ejr5cinqy6-ei78/S012-e3-ajk4-akqw5-ajk6-e78`,
   );
+
   // LeapLife
   assertBack(`B2n3/S23-q`);
+
+  // tlife
+  assertBack(`B3/S2-i34q`);
+
+  // Snowflakes
+  assertBack(`B2ci3ai4c8/S02ae3eijkq4iz5ar6i7e`);
 
   // with generations
   assertBack(`B3/S23/7`);
@@ -51,7 +72,7 @@ Deno.test("stringifyINT condition error", () => {
       transition: {
         birth: ["3k"],
         // deno-lint-ignore no-explicit-any
-        survive: ["unknown" as any],
+        survive: ["1k" as any],
       },
     });
   });
@@ -61,7 +82,7 @@ Deno.test("stringifyINT condition error", () => {
       type: "int",
       transition: {
         // deno-lint-ignore no-explicit-any
-        birth: ["unknown" as any],
+        birth: ["1k" as any],
         survive: ["3k"],
       },
     });
@@ -91,36 +112,24 @@ Deno.test("stringifyINT condition duplicated error", () => {
 });
 
 Deno.test("stringifyINT generation error", () => {
-  assertThrows(() => {
-    stringifyINT({
-      type: "int",
-      transition: {
-        birth: ["3k"],
-        survive: ["3k"],
-      },
-      generations: 1,
+  const items = [
+    1,
+    0,
+    -1,
+    Infinity,
+    -Infinity,
+    NaN,
+  ];
+  for (const item of items) {
+    assertThrows(() => {
+      stringifyINT({
+        type: "int",
+        transition: {
+          birth: ["3k"],
+          survive: ["3k"],
+        },
+        generations: item,
+      });
     });
-  });
-
-  assertThrows(() => {
-    stringifyINT({
-      type: "int",
-      transition: {
-        birth: ["3k"],
-        survive: ["3k"],
-      },
-      generations: Infinity,
-    });
-  });
-
-  assertThrows(() => {
-    stringifyINT({
-      type: "int",
-      transition: {
-        birth: ["3k"],
-        survive: ["3k"],
-      },
-      generations: -1,
-    });
-  });
+  }
 });

@@ -22,6 +22,7 @@ const BACKGROUND_STATE = 0;
  * ]
  * const cellList = CACellList.fromCells(cells);
  *
+ * assertEquals(cellList.population, 3);
  * assertEquals(cellList.boundingRect?.width, 3);
  * assertEquals(cellList.boundingRect?.height, 1);
  * ```
@@ -115,6 +116,10 @@ export class CACellList {
     const width = boundingRect.width;
     const height = boundingRect.height;
 
+    if (!Number.isInteger(width) || !Number.isInteger(height)) {
+      throw new Error("invalid position");
+    }
+
     const backgroundState = options?.backgroundState ?? BACKGROUND_STATE;
     const array = Array.from(
       { length: height },
@@ -122,7 +127,8 @@ export class CACellList {
     );
 
     for (const cell of cells) {
-      array[cell.position.y - minY]![cell.position.x - minX] = cell.state;
+      const cellPosition = cell.position;
+      array[cellPosition.y - minY]![cellPosition.x - minX] = cell.state;
     }
 
     return {
@@ -237,10 +243,12 @@ export class CACellList {
 
 function sortCells(cells: readonly CACell[]): CACell[] {
   return cells.slice().sort((a, b) => {
-    const aY = a.position.y;
-    const bY = b.position.y;
+    const aPosition = a.position;
+    const bPosition = b.position;
+    const aY = aPosition.y;
+    const bY = bPosition.y;
     if (aY === bY) {
-      return a.position.x - b.position.x;
+      return aPosition.x - bPosition.x;
     } else {
       return aY - bY;
     }

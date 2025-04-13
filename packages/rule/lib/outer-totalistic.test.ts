@@ -7,9 +7,11 @@ import {
 Deno.test("parseOuterTotalistic B3/S23", () => {
   const items = [
     "B3/S23",
+    "B3/S32",
     "b3/s23",
     "B3/s23",
     "23/3",
+    "32/3",
   ];
 
   const expected = {
@@ -100,15 +102,23 @@ Deno.test("parseOuterTotalistic Generations", () => {
 });
 
 Deno.test("parseOuterTotalistic Generations error less than 2: 1", () => {
-  assertThrows(() => {
-    parseOuterTotalistic("B2/S23/1");
-  });
+  assertThrows(
+    () => {
+      parseOuterTotalistic("B2/S23/1");
+    },
+    Error,
+    "Generations should be greater than or equal to 2",
+  );
 });
 
 Deno.test("parseOuterTotalistic Generations error less than 2: 0", () => {
-  assertThrows(() => {
-    parseOuterTotalistic("B2/S23/0");
-  });
+  assertThrows(
+    () => {
+      parseOuterTotalistic("B2/S23/0");
+    },
+    Error,
+    "Generations should be greater than or equal to 2",
+  );
 });
 
 Deno.test("parseOuterTotalistic Generations error 8/B2/S23", () => {
@@ -149,6 +159,8 @@ Deno.test("parseOuterTotalistic stringifyOuterTotalistic", () => {
   const items = [
     "B3/S23",
     "B3/S23/8",
+    "B/S",
+    "B012345678/S012345678",
   ];
 
   for (const item of items) {

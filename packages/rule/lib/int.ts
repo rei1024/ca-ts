@@ -1,4 +1,4 @@
-import { intModifiers } from "./int/pattern.ts";
+import { intModifiers } from "./int/int-condition.ts";
 
 // created by `createIndexed()`
 /**

@@ -1,5 +1,5 @@
 import type { INTCondition, INTRule } from "../../mod.ts";
-import { intModifiers } from "./pattern.ts";
+import { intModifiers } from "./int-condition.ts";
 
 /**
  * Convert an INT rule to a string.
@@ -35,11 +35,11 @@ export function stringifyINT(rule: INTRule): string {
     }
 
     if (birth.length !== new Set(birth).size) {
-      throw new Error("Duplicated condition");
+      throw new Error("Duplicated condition in birth");
     }
 
     if (survive.length !== new Set(survive).size) {
-      throw new Error("Duplicated condition");
+      throw new Error("Duplicated condition in survive");
     }
   }
 
