@@ -14,3 +14,8 @@ Deno.test("stringifyMap parseMapRule", () => {
 Deno.test("stringifyMap gridParameter", () => {
   assertBack(TEST_MAP_CGOL + "==" + ":T30,20");
 });
+
+Deno.test("stringifyMap parseMapRule von", () => {
+  // cspell:disable-next-line
+  assertBack("MAPAAD//w" + "==");
+});
