@@ -12,6 +12,12 @@ export type MAPRule = {
   type: "map";
   /**
    * - Moore neighborhood: 512 bits
+   * ```txt
+   * 256 128 64
+   *  32  16  8
+   *   4   2  1
+   * ```
+   *
    * - Hexagonal neighborhood: 128 bits
    * - Von Neumann neighborhood: 32 bits
    */
