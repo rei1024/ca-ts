@@ -4,6 +4,7 @@
   "ignorePaths": [
     "./packages/rle/test-data/mod.ts",
     "packages/apgcode/parseApgcode.test.ts",
+    "packages/rule/lib/int/stringify-int.test.ts",
     "deno.lock"
   ],
   "words": [
@@ -38,6 +39,7 @@
     "caplayer",
     "Eron",
     "neighbour",
-    "Jannis"
+    "Jannis",
+    "tlife"
   ]
 }
