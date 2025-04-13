@@ -2,6 +2,16 @@ import { assertEquals } from "@std/assert/equals";
 import { parseGridParameter, stringifyGridParameter } from "./mod.ts";
 import { assertThrows } from "@std/assert/throws";
 
+Deno.test("parseGridParameter Plane", () => {
+  assertEquals(parseGridParameter("P20,30"), {
+    size: {
+      width: 20,
+      height: 30,
+    },
+    topology: { type: "P" },
+  });
+});
+
 Deno.test("parseGridParameter Sphere", () => {
   assertEquals(parseGridParameter("S30"), {
     size: {
@@ -126,6 +136,14 @@ Deno.test("parseGridParameter Klein bottle", () => {
       height: 3,
     },
     topology: { type: "K", twisted: "horizontal", shift: null },
+  });
+
+  assertEquals(parseGridParameter("K4*+1,3"), {
+    size: {
+      width: 4,
+      height: 3,
+    },
+    topology: { type: "K", twisted: "horizontal", shift: 1 },
   });
 
   const invalidItems = [
