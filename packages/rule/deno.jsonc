@@ -1,8 +1,11 @@
 {
   "name": "@ca-ts/rule",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "exports": {
     ".": "./mod.ts",
     "./int": "./int.ts"
+  },
+  "imports": {
+    "@std/encoding": "jsr:@std/encoding@^1.0.9"
   }
 }

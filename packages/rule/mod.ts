@@ -4,15 +4,31 @@
  * ### Example
  * ```ts
  * import { parseRule } from "@ca-ts/rule";
+ * import { assertEquals } from "@std/assert";
  *
+ * // Outer-totalistic rule
  * const rule = parseRule("B3/S23");
-// rule = {
-//   type: "outer-totalistic",
-//   transition: {
-//     birth: [3],
-//     survive: [2, 3],
-//    },
-// }
+ * assertEquals(rule, {
+ *   type: "outer-totalistic",
+ *   transition: {
+ *     birth: [3],
+ *     survive: [2, 3],
+ *    },
+ * });
+ *
+ * // Isotropic non-totalistic (INT) rule
+ * const intRule = parseRule("B3k/S2ce");
+ * assertEquals(intRule, {
+ *   type: "int",
+ *   transition: {
+ *     birth: ["3k"],
+ *     survive: ["2c", "2e"],
+ *    },
+ * });
+ *
+ * // Non-isotropic rule (MAP string)
+ * const mapRule = parseRule("MAPAAD//w");
+ * assertEquals(mapRule.type === 'map' ? mapRule.neighbors : '', "von-neumann");
  * ```
  *
  * ### Reference
@@ -20,6 +36,7 @@
  * - [QuickLife | Golly Help](https://golly.sourceforge.io/Help/Algorithms/QuickLife.html)
  * - [Bounded Grids | Golly Help](https://golly.sourceforge.io/Help/bounded.html)
  * - [Hensel notation | LifeWiki](https://conwaylife.com/wiki/Isotropic_non-totalistic_rule#Hensel_notation)
+ * - [Non-isotropic rule | LifeWiki](https://conwaylife.com/wiki/Non-isotropic_rule)
  * @module
  */
 
@@ -31,6 +48,9 @@ import {
 } from "./lib/outer-totalistic.ts";
 import { type INTCondition, type INTRule, parseIntRule } from "./lib/int.ts";
 import { stringifyINT } from "./lib/int/stringify-int.ts";
+import { parseMapRule } from "./lib/map/parse-map.ts";
+import type { MAPRule } from "./lib/map/core.ts";
+import { stringifyMap } from "./lib/map/stringify-map.ts";
 
 export type { OuterTotalisticRule };
 export type { INTCondition, INTRule };
@@ -38,7 +58,7 @@ export type { INTCondition, INTRule };
 /**
  * Rule of a cellular automaton.
  */
-export type ParsedRule = OuterTotalisticRule | INTRule;
+export type ParsedRule = OuterTotalisticRule | INTRule | MAPRule;
 
 /**
  * Parse a rulestring.
@@ -75,6 +95,13 @@ export function parseRule(ruleString: string): ParsedRule {
   ruleString = alias(ruleString);
 
   try {
+    const map = parseMapRule(ruleString);
+    return map;
+  } catch (error) {
+    // nop
+  }
+
+  try {
     const outerTotalistic = parseOuterTotalistic(ruleString);
     return outerTotalistic;
   } catch {
@@ -108,8 +135,15 @@ export function parseRule(ruleString: string): ParsedRule {
  * ```
  */
 export function stringifyRule(rule: ParsedRule): string {
-  if (rule.type === "int") {
-    return stringifyINT(rule);
+  switch (rule.type) {
+    case "int": {
+      return stringifyINT(rule);
+    }
+    case "map": {
+      return stringifyMap(rule);
+    }
+    case "outer-totalistic": {
+      return stringifyOuterTotalistic(rule);
+    }
   }
-  return stringifyOuterTotalistic(rule);
 }

@@ -2,6 +2,7 @@
   "version": "4",
   "specifiers": {
     "jsr:@std/assert@1": "1.0.0",
+    "jsr:@std/encoding@^1.0.9": "1.0.9",
     "jsr:@std/internal@^1.0.1": "1.0.1",
     "npm:cspell@8.18.1": "8.18.1"
   },
@@ -11,6 +12,9 @@
       "dependencies": [
         "jsr:@std/internal"
       ]
+    },
+    "@std/encoding@1.0.9": {
+      "integrity": "025b8f18eb1749bc30d1353bf48b77d1eb5e35610220fa226f5a046b9240c5d7"
     },
     "@std/internal@1.0.1": {
       "integrity": "6f8c7544d06a11dd256c8d6ba54b11ed870aac6c5aeafff499892662c57673e6"
@@ -599,6 +603,13 @@
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@1"
-    ]
+    ],
+    "members": {
+      "packages/rule": {
+        "dependencies": [
+          "jsr:@std/encoding@^1.0.9"
+        ]
+      }
+    }
   }
 }

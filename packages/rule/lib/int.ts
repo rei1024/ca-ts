@@ -52,7 +52,7 @@ export type INTRule = {
    */
   generations?: number;
   /**
-   * [Bounded grids | GollyHelp](https://golly.sourceforge.io/Help/bounded.html)
+   * [Bounded grids | Golly Help](https://golly.sourceforge.io/Help/bounded.html)
    */
   gridParameter?: GridParameter;
 };
@@ -73,7 +73,6 @@ export function parseIntRule(
     gridParameter = parseGridParameter(gridParameterStr);
   }
 
-  // B/S
   {
     const bsRegex =
       // cspell:disable-next-line
