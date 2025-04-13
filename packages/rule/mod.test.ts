@@ -62,7 +62,7 @@ Deno.test("stringifyRule INT", () => {
   );
 });
 
-Deno.test("stringifyRule ", () => {
+Deno.test("stringifyRule parseRule", () => {
   function assertBack(rule: string) {
     const parsedRule = parseRule(rule);
     assertEquals(stringifyRule(parsedRule), rule);

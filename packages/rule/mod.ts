@@ -4,15 +4,31 @@
  * ### Example
  * ```ts
  * import { parseRule } from "@ca-ts/rule";
+ * import { assertEquals } from "@std/assert";
  *
+ * // Outer-totalistic rule
  * const rule = parseRule("B3/S23");
-// rule = {
-//   type: "outer-totalistic",
-//   transition: {
-//     birth: [3],
-//     survive: [2, 3],
-//    },
-// }
+ * assertEquals(rule, {
+ *   type: "outer-totalistic",
+ *   transition: {
+ *     birth: [3],
+ *     survive: [2, 3],
+ *    },
+ * });
+ *
+ * // Isotropic non-totalistic (INT) rule
+ * const intRule = parseRule("B3k/S2ce");
+ * assertEquals(intRule, {
+ *   type: "int",
+ *   transition: {
+ *     birth: ["3k"],
+ *     survive: ["2c", "2e"],
+ *    },
+ * });
+ *
+ * // Non-isotropic rule (MAP string)
+ * const mapRule = parseRule("MAPAAD//w");
+ * assertEquals(mapRule.type === 'map' ? mapRule.neighbors : '', "von-neumann");
  * ```
  *
  * ### Reference
@@ -20,6 +36,7 @@
  * - [QuickLife | Golly Help](https://golly.sourceforge.io/Help/Algorithms/QuickLife.html)
  * - [Bounded Grids | Golly Help](https://golly.sourceforge.io/Help/bounded.html)
  * - [Hensel notation | LifeWiki](https://conwaylife.com/wiki/Isotropic_non-totalistic_rule#Hensel_notation)
+ * - [Non-isotropic rule | LifeWiki](https://conwaylife.com/wiki/Non-isotropic_rule)
  * @module
  */
 

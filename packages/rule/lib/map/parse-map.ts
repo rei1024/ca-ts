@@ -27,19 +27,6 @@ export function parseMapRule(ruleString: string): MAPRule {
     ruleString = ruleString.slice(0, -2);
   }
 
-  if (
-    ruleString.length !== MAP512LENGTH && ruleString.length !== MAP128LENGTH &&
-    ruleString.length !== MAP32LENGTH
-  ) {
-    throw new Error("invalid length for MAP string");
-  }
-
-  const decoded = decodeBase64(ruleString);
-
-  const data: (0 | 1)[] = [...decoded].flatMap((byte) =>
-    [7, 6, 5, 4, 3, 2, 1, 0].map((bit) => (byte >> bit) & 1) as (0 | 1)[]
-  );
-
   let neighbors: MAPRule["neighbors"];
   if (ruleString.length === MAP512LENGTH) {
     neighbors = "moore";
@@ -52,6 +39,12 @@ export function parseMapRule(ruleString: string): MAPRule {
       `Invalid MAP string length: ${ruleString.length}.`,
     );
   }
+
+  const decoded = decodeBase64(ruleString);
+
+  const data: (0 | 1)[] = [...decoded].flatMap((byte) =>
+    [7, 6, 5, 4, 3, 2, 1, 0].map((bit) => (byte >> bit) & 1) as (0 | 1)[]
+  );
 
   return {
     type: "map",

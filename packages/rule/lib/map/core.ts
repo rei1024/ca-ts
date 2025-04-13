@@ -20,7 +20,7 @@ export type MAPRule = {
    */
   neighbors: "moore" | "hexagonal" | "von-neumann";
   /**
-   * [Bounded grids | GollyHelp](https://golly.sourceforge.io/Help/bounded.html)
+   * [Bounded grids | Golly Help](https://golly.sourceforge.io/Help/bounded.html)
    */
   gridParameter?: GridParameter;
 };
