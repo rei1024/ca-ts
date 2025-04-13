@@ -1,5 +1,6 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { parseRule, stringifyRule } from "./mod.ts";
+import { TEST_MAP_CGOL } from "./lib/map/parse-map.test.ts";
 
 Deno.test("parseRule B3/S23", () => {
   assertEquals(parseRule("B3/S23"), {
@@ -59,4 +60,13 @@ Deno.test("stringifyRule INT", () => {
     }),
     "B2a4a/S",
   );
+});
+
+Deno.test("stringifyRule ", () => {
+  function assertBack(rule: string) {
+    const parsedRule = parseRule(rule);
+    assertEquals(stringifyRule(parsedRule), rule);
+  }
+  assertBack("B3/S23");
+  assertBack(TEST_MAP_CGOL + "==");
 });

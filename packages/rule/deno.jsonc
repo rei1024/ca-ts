@@ -4,5 +4,8 @@
   "exports": {
     ".": "./mod.ts",
     "./int": "./int.ts"
+  },
+  "imports": {
+    "@std/encoding": "jsr:@std/encoding@^1.0.9"
   }
 }

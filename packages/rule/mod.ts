@@ -31,6 +31,9 @@ import {
 } from "./lib/outer-totalistic.ts";
 import { type INTCondition, type INTRule, parseIntRule } from "./lib/int.ts";
 import { stringifyINT } from "./lib/int/stringify-int.ts";
+import { parseMapRule } from "./lib/map/parse-map.ts";
+import type { MAPRule } from "./lib/map/core.ts";
+import { stringifyMap } from "./lib/map/stringify-map.ts";
 
 export type { OuterTotalisticRule };
 export type { INTCondition, INTRule };
@@ -38,7 +41,7 @@ export type { INTCondition, INTRule };
 /**
  * Rule of a cellular automaton.
  */
-export type ParsedRule = OuterTotalisticRule | INTRule;
+export type ParsedRule = OuterTotalisticRule | INTRule | MAPRule;
 
 /**
  * Parse a rulestring.
@@ -75,6 +78,13 @@ export function parseRule(ruleString: string): ParsedRule {
   ruleString = alias(ruleString);
 
   try {
+    const map = parseMapRule(ruleString);
+    return map;
+  } catch (error) {
+    // nop
+  }
+
+  try {
     const outerTotalistic = parseOuterTotalistic(ruleString);
     return outerTotalistic;
   } catch {
@@ -108,8 +118,15 @@ export function parseRule(ruleString: string): ParsedRule {
  * ```
  */
 export function stringifyRule(rule: ParsedRule): string {
-  if (rule.type === "int") {
-    return stringifyINT(rule);
+  switch (rule.type) {
+    case "int": {
+      return stringifyINT(rule);
+    }
+    case "map": {
+      return stringifyMap(rule);
+    }
+    case "outer-totalistic": {
+      return stringifyOuterTotalistic(rule);
+    }
   }
-  return stringifyOuterTotalistic(rule);
 }

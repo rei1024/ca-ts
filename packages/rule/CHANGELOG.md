@@ -2,6 +2,7 @@
 
 ### Changed
 
+- Add MAP strings support.
 - `parseRule` and `stringifyRule` handles grid parameter.
   - Example: `B3/S23:T20,30`
 
