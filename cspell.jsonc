@@ -5,6 +5,7 @@
     "./packages/rle/test-data/mod.ts",
     "packages/apgcode/parseApgcode.test.ts",
     "packages/rule/lib/int/stringify-int.test.ts",
+    "packages/rule/mod.ts",
     "deno.lock"
   ],
   "words": [

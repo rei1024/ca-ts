@@ -3,9 +3,12 @@ import type { GridParameter } from "../grid/mod.ts";
 /**
  * MAP strings
  *
- * [Non-isotropic rule](https://conwaylife.com/wiki/Non-isotropic_rule)
+ * [Non-isotropic rule | LifeWiki](https://conwaylife.com/wiki/Non-isotropic_rule)
  */
 export type MAPRule = {
+  /**
+   * Non-isotropic rule
+   */
   type: "map";
   /**
    * - Moore neighborhood: 512 bits

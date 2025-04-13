@@ -533,11 +533,13 @@ Deno.test("parseMapRule cgol with padding", () => {
 });
 
 Deno.test("parseMapRule AllShips", () => {
+  // cspell:disable-next-line
   const rule = parseMapRule("MAPAAD//w");
   assertEquals(rule.neighbors, "von-neumann");
 });
 
 Deno.test("parseMapRule AllShips with padding", () => {
+  // cspell:disable-next-line
   const rule = parseMapRule("MAPAAD//w" + "==");
   assertEquals(rule.neighbors, "von-neumann");
 });
