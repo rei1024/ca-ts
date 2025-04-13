@@ -1,4 +1,5 @@
 import type { INTCondition, INTRule } from "../../mod.ts";
+import { stringifyGridParameterWithColon } from "../grid/mod.ts";
 import { intModifiers } from "./int-condition.ts";
 
 /**
@@ -49,7 +50,7 @@ export function stringifyINT(rule: INTRule): string {
 
   return `B${encodeConditions(birth)}/S${
     encodeConditions(survive)
-  }${generations}`;
+  }${generations}${stringifyGridParameterWithColon(rule.gridParameter)}`;
 }
 
 function encodeConditions(cs: INTCondition[]): string {

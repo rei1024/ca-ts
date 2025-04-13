@@ -1,3 +1,9 @@
+import {
+  type GridParameter,
+  parseGridParameter,
+  stringifyGridParameterWithColon,
+} from "./grid/mod.ts";
+
 /**
  * Outer-totalistic CA
  *
@@ -22,6 +28,10 @@ export type OuterTotalisticRule = {
    * [Generations | LifeWiki](https://conwaylife.com/wiki/Generations)
    */
   generations?: number;
+  /**
+   * [Bounded grids | GollyHelp](https://golly.sourceforge.io/Help/bounded.html)
+   */
+  gridParameter?: GridParameter;
 };
 
 /**
@@ -40,6 +50,14 @@ export function parseOuterTotalistic(
   ruleString: string,
 ): OuterTotalisticRule {
   ruleString = ruleString.trim();
+
+  const colonIndex = ruleString.indexOf(":");
+  let gridParameter: GridParameter | null = null;
+  if (colonIndex !== -1) {
+    const gridParameterStr = ruleString.slice(colonIndex + 1); // +1 for ":"
+    ruleString = ruleString.slice(0, colonIndex);
+    gridParameter = parseGridParameter(gridParameterStr);
+  }
 
   // B/S
   const bsRegex =
@@ -68,6 +86,9 @@ export function parseOuterTotalistic(
         transition: bsToTransition(b, s),
         ...generations == null ? {} : {
           generations: Number(generations),
+        },
+        ...gridParameter == null ? {} : {
+          gridParameter,
         },
       };
     }
@@ -108,5 +129,7 @@ export function stringifyOuterTotalistic(
   const b = birth.slice().sort((a, b) => a - b).join("");
   const s = survive.slice().sort((a, b) => a - b).join("");
   const generations = rule.generations == null ? "" : `/${rule.generations}`;
-  return `B${b}/S${s}${generations}`;
+  return `B${b}/S${s}${generations}${
+    stringifyGridParameterWithColon(rule.gridParameter)
+  }`;
 }

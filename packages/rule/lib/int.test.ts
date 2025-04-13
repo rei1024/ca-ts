@@ -164,6 +164,27 @@ Deno.test("parseIntRule S/B 3k/4i/5", () => {
   });
 });
 
+Deno.test("parseIntRule Grid parameter", () => {
+  assertEquals(parseIntRule("B3k/S4i:K30*,20"), {
+    type: "int",
+    transition: {
+      birth: ["3k"],
+      survive: ["4i"],
+    },
+    gridParameter: {
+      size: {
+        width: 30,
+        height: 20,
+      },
+      topology: {
+        type: "K",
+        twisted: "horizontal",
+        shift: null,
+      },
+    },
+  });
+});
+
 Deno.test("parseIntRule Generations B3k/S4i/5", () => {
   assertEquals(parseIntRule("B3k/S4i/5"), {
     type: "int",
