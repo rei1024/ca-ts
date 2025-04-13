@@ -34,7 +34,7 @@ export type GridParameter = {
      * Which edge is twisted.
      */
     twisted: "horizontal" | "vertical";
-    shift: -1 | 1 | null;
+    shift: 1 | null;
   } | {
     /**
      * - T: Torus
@@ -191,6 +191,16 @@ export function parseGridParameter(str: string): GridParameter | null {
       : null;
     const width = Number(match.groups?.w);
     const height = Number(match.groups?.h);
+    if (shiftAmount != null) {
+      if (hTwisted && width % 2 !== 0) {
+        throw new Error("width must be even");
+      }
+
+      if (vTwisted && height % 2 !== 0) {
+        throw new Error("height must be even");
+      }
+    }
+
     if (width === 0 || height === 0) {
       throw new Error("infinite size is disallowed for Klein bottle");
     }
@@ -202,7 +212,7 @@ export function parseGridParameter(str: string): GridParameter | null {
       topology: {
         type: topology,
         twisted: hTwisted != null ? "horizontal" : "vertical",
-        shift: shiftAmount != null ? (shiftAmount > 0 ? 1 : -1) : null,
+        shift: shiftAmount != null ? 1 : null,
       },
     };
   }

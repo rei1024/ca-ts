@@ -131,8 +131,10 @@ Deno.test("parseGridParameter Klein bottle", () => {
   const invalidItems = [
     "K4*,3*",
     "K4+1,3*",
-    "K4*,3+1",
+    "K4*,4+1",
     "K4*,0",
+    "K3*+1,4", // shift have to for even size
+    "K4,3*+1", // shift have to for even size
   ];
 
   for (const item of invalidItems) {
