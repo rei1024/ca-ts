@@ -2,6 +2,9 @@
  * [Bounded grids | Golly Help](https://golly.sourceforge.io/Help/bounded.html)
  */
 export type GridParameter = {
+  /**
+   * Size of the gird.
+   */
   size: {
     /**
      * 0 is infinite
@@ -12,6 +15,9 @@ export type GridParameter = {
      */
     height: number;
   };
+  /**
+   * Topology of the grid.
+   */
   topology: {
     /**
      * - P: Plane
@@ -24,6 +30,9 @@ export type GridParameter = {
      * - K: Klein bottle
      */
     type: "K";
+    /**
+     * Which edge is twisted.
+     */
     twisted: "horizontal" | "vertical";
     shift: -1 | 1 | null;
   } | {
