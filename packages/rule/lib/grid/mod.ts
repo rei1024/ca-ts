@@ -240,6 +240,14 @@ export function stringifyGridParameterWithColon(
 
 export function stringifyGridParameter(gridParameter: GridParameter): string {
   const size = gridParameter.size;
+  if (!Number.isInteger(size.width) || !Number.isInteger(size.height)) {
+    throw new Error("size is not a integer");
+  }
+
+  if (size.width < 0 || size.height < 0) {
+    throw new Error("size is less than 0");
+  }
+
   switch (gridParameter.topology.type) {
     case "P": {
       return `P${size.width},${size.height}`;
@@ -287,7 +295,11 @@ export function stringifyGridParameter(gridParameter: GridParameter): string {
 function encodeShift(amount: number | null | undefined) {
   if (amount == null) {
     return "";
-  } else if (amount >= 0) {
+  } else if (Number.isNaN(amount)) {
+    throw new Error("shift is NaN");
+  } else if (amount === 0) {
+    return "";
+  } else if (amount > 0) {
     return "+" + amount;
   } else {
     return "-" + (-amount);
