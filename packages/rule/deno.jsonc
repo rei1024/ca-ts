@@ -2,8 +2,7 @@
   "name": "@ca-ts/rule",
   "version": "0.10.0",
   "exports": {
-    ".": "./mod.ts",
-    "./int": "./int.ts"
+    ".": "./mod.ts"
   },
   "imports": {
     "@std/encoding": "jsr:@std/encoding@^1.0.9"
