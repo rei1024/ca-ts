@@ -42,13 +42,21 @@ export type INTCondition =
  * [Isotropic non-totalistic rule | LifeWiki](https://conwaylife.com/wiki/Isotropic_non-totalistic_rule)
  */
 export type INTRule = {
+  /**
+   * Isotropic non-totalistic rule
+   */
   type: "int";
+  /**
+   * Example: `B3k/S2ce` -> `{ birth: ["3k"], survive: ["2c", "2e"] }`
+   */
   transition: {
+    /** Conditions for birth. */
     birth: INTCondition[];
+    /** Conditions for survival. */
     survive: INTCondition[];
   };
   /**
-   * [Generations | LifeWiki](https://conwaylife.com/wiki/Generations)
+   * If provided, number of states for the [Generations](https://conwaylife.com/wiki/Generations) rule.
    */
   generations?: number;
   /**
@@ -73,31 +81,31 @@ export function parseIntRule(
     gridParameter = parseGridParameter(gridParameterStr);
   }
 
-  {
-    const bsRegex =
-      // cspell:disable-next-line
-      /^(B|b)(?<birth>(\d|[cekainyqjrtwz-])*)\/(S|s)(?<survive>(\d|[cekainyqjrtwz-])*)(|\/(?<generations>\d+))$/;
-    const sbRegex =
-      // cspell:disable-next-line
-      /^(?<survive>(\d|[cekainyqjrtwz-])*)\/(?<birth>(\d|[cekainyqjrtwz-])*)(|\/(?<generations>\d+))$/;
-    const match = ruleString.match(bsRegex) ?? ruleString.match(sbRegex);
-    if (match) {
-      const b = match.groups?.birth;
-      const s = match.groups?.survive;
-      const generations = match.groups?.generations;
-      if (b !== undefined && s !== undefined) {
-        return {
-          type: "int",
-          transition: bsToTransition(b, s),
-          ...generations == null ? {} : {
-            generations: Number(generations),
-          },
-          ...gridParameter == null ? {} : {
-            gridParameter,
-          },
-        };
-      }
-    }
+  const bsRegex =
+    // cspell:disable-next-line
+    /^(B|b)(?<birth>(\d|[cekainyqjrtwz-])*)\/(S|s)(?<survive>(\d|[cekainyqjrtwz-])*)(|\/(?<generations>\d+))$/;
+  const sbRegex =
+    // cspell:disable-next-line
+    /^(?<survive>(\d|[cekainyqjrtwz-])*)\/(?<birth>(\d|[cekainyqjrtwz-])*)(|\/(?<generations>\d+))$/;
+  const match = ruleString.match(bsRegex) ?? ruleString.match(sbRegex);
+  if (!match) {
+    throw new Error("Parse Error");
+  }
+
+  const b = match.groups?.birth;
+  const s = match.groups?.survive;
+  const generations = match.groups?.generations;
+  if (b !== undefined && s !== undefined) {
+    return {
+      type: "int",
+      transition: bsToTransition(b, s),
+      ...generations == null ? {} : {
+        generations: Number(generations),
+      },
+      ...gridParameter == null ? {} : {
+        gridParameter,
+      },
+    };
   }
 
   throw new Error("Parse Error");
@@ -149,8 +157,8 @@ function toCondition(str: string): INTCondition[] {
     }
 
     if (letters.length === 0) {
+      // If no letters follow, it's a basic condition (e.g., "3" means all configurations for 3 neighbors)
       if (c === "0" || c === "8") {
-        // If no letters follow, it's a basic condition (e.g., "3" means all configurations for 3 neighbors)
         conditions.push(c as INTCondition);
       } else {
         for (const letter of possibleLetters) {
@@ -169,7 +177,8 @@ function toCondition(str: string): INTCondition[] {
     }
   }
 
-  return conditions;
+  // sort to canonical order
+  return conditions.sort();
 }
 
 function error(): never {

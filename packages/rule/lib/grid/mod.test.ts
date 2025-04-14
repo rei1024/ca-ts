@@ -181,3 +181,38 @@ Deno.test("stringifyGridParameter parseGridParameter", () => {
     assertEquals(stringifyGridParameter(parseGridParameter(item)!), item);
   }
 });
+
+Deno.test("stringifyGridParameter offset 0", () => {
+  assertEquals(
+    stringifyGridParameter({
+      size: { width: 20, height: 30 },
+      topology: { type: "T", shift: { edge: "horizontal", amount: 0 } },
+    }),
+    "T20,30",
+  );
+});
+
+Deno.test("stringifyGridParameter width height NaN", () => {
+  assertThrows(() => {
+    stringifyGridParameter({
+      size: { width: NaN, height: 30 },
+      topology: { type: "T", shift: null },
+    });
+  });
+
+  assertThrows(() => {
+    stringifyGridParameter({
+      size: { width: 20, height: NaN },
+      topology: { type: "T", shift: null },
+    });
+  });
+});
+
+Deno.test("stringifyGridParameter offset NaN", () => {
+  assertThrows(() => {
+    stringifyGridParameter({
+      size: { width: 20, height: 30 },
+      topology: { type: "T", shift: { edge: "horizontal", amount: NaN } },
+    });
+  });
+});

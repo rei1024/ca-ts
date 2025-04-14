@@ -1,3 +1,13 @@
+## [0.10.0] - 2025-04-14
+
+### Changed
+
+- **BREAKING** Removed `/int` module.
+- **BREAKING** `parseRule` Do not parse empty string as "B3/S23".
+- Fix `stringifyRule` for 0 shift.
+- `INTRule.transitions` order of conditions are canonicalized.
+- Fix: Export `MAPRule`
+
 ## [0.9.0] - 2025-04-14
 
 ### Changed

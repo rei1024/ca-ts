@@ -20,10 +20,13 @@ function getSizeOfPattern(
   let minX = Infinity;
   let minY = Infinity;
   for (const cell of cells) {
-    maxX = Math.max(maxX, cell.position.x);
-    maxY = Math.max(maxY, cell.position.y);
-    minX = Math.min(minX, cell.position.x);
-    minY = Math.min(minY, cell.position.y);
+    const cellPosition = cell.position;
+    const x = cellPosition.x;
+    const y = cellPosition.y;
+    maxX = Math.max(maxX, x);
+    maxY = Math.max(maxY, y);
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
   }
 
   return {
@@ -55,12 +58,15 @@ export function makeOffsetZero(cells: CACell[]): {
     };
   }
 
+  const minX = rect.minX;
+  const minY = rect.minY;
+
   return {
     cells: cells.map((cell) => ({
       ...cell,
       position: {
-        x: cell.position.x - rect.minX,
-        y: cell.position.y - rect.minY,
+        x: cell.position.x - minX,
+        y: cell.position.y - minY,
       },
     })),
     offset: { dx: rect.minX, dy: rect.minY },
