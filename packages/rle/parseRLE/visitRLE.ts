@@ -76,7 +76,7 @@ class VisitState {
       line.startsWith("x") &&
       (line.startsWith("x ") || line.startsWith("x="))
     ) {
-      this.readRule(line, lineNum);
+      this.readHeader(line, lineNum);
       return "continue";
     }
 
@@ -85,15 +85,17 @@ class VisitState {
     const visitor = this.visitor;
     for (let i = 0; i < len; i++) {
       const c = line[i];
+
+      if (c === undefined) {
+        throw new Error("internal error");
+      }
+
       if (n != null && c === " ") {
         throw new RLEParseError("Illegal whitespace after count", {
           line: lineNum,
         });
       }
 
-      if (c === undefined) {
-        throw new Error("internal error");
-      }
       if ("0" <= c && c <= "9") {
         n = (n === null ? 0 : n) * 10 + c.charCodeAt(0) - ZERO_CODE;
       } else {
@@ -102,12 +104,6 @@ class VisitState {
         }
         if (c === "b" || c === ".") {
           this.x += n;
-        } else if (c === "$") {
-          this.x = 0;
-          this.y += n;
-        } else if (c === "!") {
-          visitor.visitTrailingComment(line.slice(i + 1));
-          return "end";
         } else if (
           ("o" <= c && c <= "y") || ("A" <= c && c <= "X")
         ) {
@@ -139,6 +135,12 @@ class VisitState {
             visitor.visitCell(x + j, y, state);
           }
           this.x += n;
+        } else if (c === "$") {
+          this.x = 0;
+          this.y += n;
+        } else if (c === "!") {
+          visitor.visitTrailingComment(line.slice(i + 1));
+          return "end";
         }
         n = null;
       }
@@ -173,7 +175,7 @@ class VisitState {
     this.visitor.visitComment(line);
   }
 
-  private readRule(line: string, lineNum: number) {
+  private readHeader(line: string, lineNum: number) {
     const reg = /x\s*=\s*(\d+)\s*,\s*y\s*=\s*(\d+)\s*(,\s*rule\s*=(.*))?/;
     const res = line.match(reg);
     if (res === null) {

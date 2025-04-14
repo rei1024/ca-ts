@@ -83,7 +83,7 @@ Deno.test("BitWorld is correct intTransition", () => {
     world.set(cell.position.x, cell.position.y);
   }
 
-  const rule = parseRule(`B3-cnqy5cek/S2-ci3-ay4ceinrtz5-aiqy6-ak7c8`);
+  const rule = parseRule(rle.ruleString);
   if (rule.type !== "int") {
     throw new Error("expected int rule");
   }

@@ -14,8 +14,7 @@ Deno.test("parseRLE cloverleaf", () => {
     "#C https://conwaylife.com/patterns/cloverleafinterchange.rle",
   ]);
   assertEquals(rle.trailingComment, "");
-  assertEquals(rle.size?.width, 13);
-  assertEquals(rle.size?.height, 13);
+  assertEquals(rle.size, { width: 13, height: 13 });
   assertEquals(rle.XRLE, null);
 });
 
@@ -51,48 +50,42 @@ Deno.test("parseRLE glider", () => {
 
 Deno.test("parseRLE header", () => {
   const output = parseRLE(`x=3,y=2,rule=B23/S1`);
-  assertEquals(output.size?.width, 3);
-  assertEquals(output.size?.height, 2);
+  assertEquals(output.size, { width: 3, height: 2 });
   assertEquals(output.ruleString, "B23/S1");
   assertEquals(output.cells, []);
 });
 
 Deno.test("parseRLE header without rule", () => {
   const output = parseRLE(`x=3,y=2`);
-  assertEquals(output.size?.width, 3);
-  assertEquals(output.size?.height, 2);
+  assertEquals(output.size, { width: 3, height: 2 });
   assertEquals(output.ruleString, "B3/S23"); // TBD: null?
   assertEquals(output.cells, []);
 });
 
 Deno.test("parseRLE header #r rule", () => {
   const output = parseRLE(`#r 23/3\nx=3,y=2`);
-  assertEquals(output.size?.width, 3);
-  assertEquals(output.size?.height, 2);
+  assertEquals(output.size, { width: 3, height: 2 });
   assertEquals(output.ruleString, "23/3");
   assertEquals(output.cells, []);
 });
 
 Deno.test("parseRLE header #r rule with whitespace", () => {
   const output = parseRLE(`   #r 23/3\nx=3,y=2`);
-  assertEquals(output.size?.width, 3);
-  assertEquals(output.size?.height, 2);
+  assertEquals(output.size, { width: 3, height: 2 });
   assertEquals(output.ruleString, "23/3");
   assertEquals(output.cells, []);
 });
 
 Deno.test("parseRLE header #r is ignored if rule is present", () => {
   const output = parseRLE(`#r 23/3\nx=3,y=2,rule=B23/S1`);
-  assertEquals(output.size?.width, 3);
-  assertEquals(output.size?.height, 2);
+  assertEquals(output.size, { width: 3, height: 2 });
   assertEquals(output.ruleString, "B23/S1");
   assertEquals(output.cells, []);
 });
 
 Deno.test("parseRLE header #r is ignored if rule is present after", () => {
   const output = parseRLE(`x=3,y=2,rule=B23/S1\n#r 23/3`);
-  assertEquals(output.size?.width, 3);
-  assertEquals(output.size?.height, 2);
+  assertEquals(output.size, { width: 3, height: 2 });
   assertEquals(output.ruleString, "B23/S1");
   assertEquals(output.cells, []);
 });
@@ -105,8 +98,7 @@ Deno.test("parseRLE comment space prefix", () => {
 
 Deno.test("parseRLE header without rule", () => {
   const output = parseRLE(`x=4,y=0`);
-  assertEquals(output.size?.width, 4);
-  assertEquals(output.size?.height, 0);
+  assertEquals(output.size, { width: 4, height: 0 });
   assertEquals(output.ruleString, "B3/S23");
 });
 

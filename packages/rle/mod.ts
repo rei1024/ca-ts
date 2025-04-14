@@ -48,13 +48,11 @@
  *       { position: { x: 2, y: 0 }, state: 1 },
  *     ],
  *     comments: ["#N Blinker"],
- *     trailingComment: "",
  *     ruleString: "B3/S23",
  *     size: {
  *       width: 3,
  *       height: 1,
  *     },
- *     XRLE: null,
  *   }),
  *   `#N Blinker
  * x = 3, y = 1, rule = B3/S23
