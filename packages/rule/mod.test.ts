@@ -70,3 +70,13 @@ Deno.test("stringifyRule parseRule", () => {
   assertBack("B3/S23");
   assertBack(TEST_MAP_CGOL + "==");
 });
+
+Deno.test("parseRule empty string", () => {
+  assertThrows(() => {
+    parseRule("");
+  });
+
+  assertThrows(() => {
+    parseRule(" ");
+  });
+});

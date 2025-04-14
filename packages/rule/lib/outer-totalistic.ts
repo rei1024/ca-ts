@@ -5,7 +5,7 @@ import {
 } from "./grid/mod.ts";
 
 /**
- * Outer-totalistic CA
+ * Outer-totalistic cellular automaton rule.
  *
  * B/S notation
  *
@@ -21,11 +21,19 @@ export type OuterTotalisticRule = {
    * `B3/S23` -> `{ birth: [3], survive: [2, 3] }`
    */
   transition: {
+    /**
+     * The `birth` array defines the number of living neighbors a dead cell
+     * must have for it to become alive in the next generation.
+     */
     birth: number[];
+    /**
+     * The `survive` array defines the number of living neighbors a living
+     * cell must have to remain alive in the next generation.
+     */
     survive: number[];
   };
   /**
-   * [Generations | LifeWiki](https://conwaylife.com/wiki/Generations)
+   * If provided, number of states for the [Generations](https://conwaylife.com/wiki/Generations) rule.
    */
   generations?: number;
   /**

@@ -1,3 +1,11 @@
+## [0.10.0] - 2025-04-14
+
+### Changed
+
+- **BREAKING** `parseRule` Do not parse empty string as "B3/S23".
+- `INTRule.transitions` order of conditions are canonicalized.
+- Fix: Export `MAPRule`
+
 ## [0.9.0] - 2025-04-14
 
 ### Changed

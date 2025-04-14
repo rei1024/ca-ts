@@ -1,7 +1,7 @@
 /**
  * Rulestring parser and writer.
  *
- * ### Example
+ * ### Parse a rulestring
  * ```ts
  * import { parseRule } from "@ca-ts/rule";
  * import { assertEquals } from "@std/assert";
@@ -31,6 +31,26 @@
  * assertEquals(mapRule.type === 'map' ? mapRule.neighbors : '', "von-neumann");
  * ```
  *
+ * ### With grid topology
+ * ```ts
+ * import { parseRule } from "@ca-ts/rule";
+ * import { assertEquals } from "@std/assert";
+ *
+ * // Torus with width 30 and height 20
+ * const rule = parseRule("B3/S23:T30,20");
+ * assertEquals(rule, {
+ *   type: "outer-totalistic",
+ *   transition: {
+ *     birth: [3],
+ *     survive: [2, 3],
+ *    },
+ *    gridParameter: {
+ *      topology: { type: 'T', shift: null },
+ *      size: { width: 30, height: 20 }
+ *    },
+ * });
+ * ```
+ *
  * ### Reference
  * - [Rulestring | LifeWiki](https://conwaylife.com/wiki/Rulestring)
  * - [QuickLife | Golly Help](https://golly.sourceforge.io/Help/Algorithms/QuickLife.html)
@@ -54,6 +74,7 @@ import { stringifyMap } from "./lib/map/stringify-map.ts";
 
 export type { OuterTotalisticRule };
 export type { INTCondition, INTRule };
+export type { MAPRule };
 
 /**
  * Rule of a cellular automaton.

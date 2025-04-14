@@ -7,11 +7,15 @@ export type GridParameter = {
    */
   size: {
     /**
-     * 0 is infinite
+     * Width of the grid.
+     *
+     * 0 represents infinite width.
      */
     width: number;
     /**
-     * 0 is infinite
+     * Height of the grid.
+     *
+     * 0 represents infinite height.
      */
     height: number;
   };
