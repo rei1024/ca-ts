@@ -23,10 +23,36 @@ export function stringifyApgcode(apgcode: Apgcode): string {
   }
 }
 
+type RowData = { y: number; data: { x: number; y: number }[] };
+
 export function stringifyExtendedWechslerFormat(
   cells: { x: number; y: number }[],
 ): string {
   validate(cells);
+
+  if (cells.length === 0) {
+    throw new Error("empty pattern");
+  }
+
+  const rows: RowData[] = [];
+  let tempRow: RowData = { y: cells[0]!.y, data: [] };
+  let prevCell = undefined;
+  for (const cell of cells) {
+    if (prevCell !== undefined && prevCell.y !== cell.y) {
+      rows.push(tempRow);
+      tempRow = { y: cell.y, data: [] };
+    }
+    tempRow.data.push(cell);
+    prevCell = cell;
+  }
+
+  if (tempRow.data.length !== 0) {
+    rows.push(tempRow);
+  }
+
+  const maxY = cells.reduce((acc, x) => Math.max(x.y, acc), 0);
+
+  // TODO
 }
 
 function validate(cells: { x: number; y: number }[]) {
