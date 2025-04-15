@@ -50,8 +50,8 @@ export function stringifyRLE(
     cells = cells.map((c) => {
       return {
         position: {
-          x: c.position.x - offsetX,
-          y: c.position.y - offsetY,
+          x: c.position.x + offsetX,
+          y: c.position.y + offsetY,
         },
         state: c.state,
       };
@@ -77,13 +77,16 @@ export function stringifyRLE(
     parts[parts.length - 1] += "!";
   }
 
-  const cxrleComment = rle.comments?.every((x) => !x.startsWith("#CXRLE")) &&
+  const cxrleComment =
+    (rle.comments?.every((x) => !x.startsWith("#CXRLE")) ?? true) &&
       (offsetZeroPattern.offset.dx !== 0 ||
-        offsetZeroPattern.offset.dy !== 0)
-    ? [
-      `#CXRLE Pos=${offsetZeroPattern.offset.dx},${offsetZeroPattern.offset.dy}`,
-    ]
-    : [];
+        offsetZeroPattern.offset.dy !== 0 || rle.XRLE?.generation != null)
+      ? [
+        `#CXRLE Pos=${offsetZeroPattern.offset.dx},${offsetZeroPattern.offset.dy}${
+          rle.XRLE?.generation != null ? (" Gen=" + rle.XRLE.generation) : ""
+        }`,
+      ]
+      : [];
 
   const size = rle.size != null
     ? `x = ${rle.size.width}, y = ${rle.size.height}`
@@ -96,8 +99,9 @@ export function stringifyRLE(
     ...format(parts, MAX_CHAR),
   ].join(
     "\n",
-  ) + (rle.trailingComment ?? "") +
-    "\n";
+  ) + (rle.trailingComment == null || rle.trailingComment === ""
+    ? "\n"
+    : rle.trailingComment);
 }
 
 function cellsToItems(

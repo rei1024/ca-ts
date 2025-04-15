@@ -1,3 +1,10 @@
+## [0.11.2] - 2025-04-15
+
+### Changed
+
+- `stringifyRLE` outputs correct CXRLE comment.
+- `stringifyRLE` outputs does not output duplicated line ending.
+
 ## [0.11.1] - 2025-04-10
 
 ### Changed
