@@ -49,7 +49,8 @@ export class BitGrid {
     if (crypto.getRandomValues) {
       crypto.getRandomValues(array);
     } else {
-      for (let i = 0; i < array.length; i++) {
+      const len = array.length;
+      for (let i = 0; i < len; i++) {
         array[i] = Math.floor(Math.random() * Math.pow(2, 32));
       }
     }

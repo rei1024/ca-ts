@@ -62,13 +62,16 @@ export function makeOffsetZero(cells: CACell[]): {
   const minY = rect.minY;
 
   return {
-    cells: cells.map((cell) => ({
-      ...cell,
-      position: {
-        x: cell.position.x - minX,
-        y: cell.position.y - minY,
-      },
-    })),
+    cells: cells.map((cell) => {
+      const position = cell.position;
+      return {
+        ...cell,
+        position: {
+          x: position.x - minX,
+          y: position.y - minY,
+        },
+      };
+    }),
     offset: { dx: rect.minX, dy: rect.minY },
     size: info.size,
   };

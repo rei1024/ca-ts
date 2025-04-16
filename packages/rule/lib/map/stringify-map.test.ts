@@ -9,16 +9,16 @@ function assertBack(rule: string) {
 }
 
 Deno.test("stringifyMap parseMapRule", () => {
-  assertBack(TEST_MAP_CGOL + "==");
+  assertBack(TEST_MAP_CGOL);
 });
 
 Deno.test("stringifyMap gridParameter", () => {
-  assertBack(TEST_MAP_CGOL + "==" + ":T30,20");
+  assertBack(TEST_MAP_CGOL + ":T30,20");
 });
 
 Deno.test("stringifyMap parseMapRule von", () => {
   // cspell:disable-next-line
-  assertBack("MAPAAD//w" + "==");
+  assertBack("MAPAAD//w");
 });
 
 Deno.test("stringifyMap error", () => {

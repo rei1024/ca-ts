@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { intConditionArray, parseIntRule } from "./int.ts";
+import { parseIntRule } from "./int.ts";
 
 Deno.test("parseIntRule B3/S23", () => {
   assertEquals(parseIntRule("B3/S23"), {
@@ -264,8 +264,4 @@ Deno.test("parseIntRule error B3t/S", () => {
   assertThrows(() => {
     parseIntRule("B3t/S");
   });
-});
-
-Deno.test("intConditionArray.length", () => {
-  assertEquals(intConditionArray.length, 256);
 });

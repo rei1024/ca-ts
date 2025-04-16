@@ -126,11 +126,11 @@ class VisitState {
               i--;
             }
           }
-          const x = this.offsetX + this.x;
-          const y = this.offsetY + this.y;
           if (state > 255) {
             throw new RLEParseError("invalid state", { line: lineNum });
           }
+          const x = this.offsetX + this.x;
+          const y = this.offsetY + this.y;
           for (let j = 0; j < n; j++) {
             visitor.visitCell(x + j, y, state);
           }
@@ -176,18 +176,19 @@ class VisitState {
   }
 
   private readHeader(line: string, lineNum: number) {
-    const reg = /x\s*=\s*(\d+)\s*,\s*y\s*=\s*(\d+)\s*(,\s*rule\s*=(.*))?/;
+    const reg =
+      /x\s*=\s*(?<width>\d+)\s*,\s*y\s*=\s*(?<height>\d+)\s*(,\s*rule\s*=(?<rule>.*))?/;
     const res = line.match(reg);
     if (res === null) {
       throw new RLEParseError("invalid header", { line: lineNum });
     }
-    const x = res[1];
-    const y = res[2];
+    const x = res.groups?.width;
+    const y = res.groups?.height;
     if (x === undefined || y === undefined) {
       throw new RLEParseError("invalid header", { line: lineNum });
     }
     this.visitor.visitSize({ x: Number(x), y: Number(y) });
-    const rule = res[4];
+    const rule = res.groups?.rule;
     if (rule !== undefined) {
       this.sawRule = true;
       this.visitor.visitRule(rule.trim());

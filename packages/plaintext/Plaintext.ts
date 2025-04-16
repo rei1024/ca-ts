@@ -23,7 +23,13 @@ export type Plaintext = {
    * Size of the pattern
    */
   size: {
+    /**
+     * Width of the pattern
+     */
     width: number;
+    /**
+     * Height of the pattern
+     */
     height: number;
   };
 };

@@ -40,6 +40,12 @@ export type OuterTotalisticRule = {
    * [Bounded grids | Golly Help](https://golly.sourceforge.io/Help/bounded.html)
    */
   gridParameter?: GridParameter;
+  /**
+   * Neighborhood
+   *
+   * `undefined` for Moore neighborhood.
+   */
+  neighborhood?: "von-neumann" | "hexagonal";
 };
 
 /**
@@ -67,6 +73,15 @@ export function parseOuterTotalistic(
     gridParameter = parseGridParameter(gridParameterStr);
   }
 
+  let neighborhood: OuterTotalisticRule["neighborhood"] | undefined;
+  if (ruleString.endsWith("V") || ruleString.endsWith("v")) {
+    neighborhood = "von-neumann";
+    ruleString = ruleString.slice(0, -1);
+  } else if (ruleString.endsWith("H") || ruleString.endsWith("h")) {
+    neighborhood = "hexagonal";
+    ruleString = ruleString.slice(0, -1);
+  }
+
   // B/S
   const bsRegex =
     /^(B|b)(?<birth>\d*)\/(S|s)(?<survive>\d*)(|\/(G|g|C|c)?(?<generations>\d+))$/;
@@ -91,9 +106,12 @@ export function parseOuterTotalistic(
     if (b !== undefined && s !== undefined) {
       return {
         type: "outer-totalistic",
-        transition: bsToTransition(b, s),
+        transition: bsToTransition(b, s, neighborhood),
         ...generations == null ? {} : {
           generations: Number(generations),
+        },
+        ...neighborhood == null ? {} : {
+          neighborhood,
         },
         ...gridParameter == null ? {} : {
           gridParameter,
@@ -105,14 +123,28 @@ export function parseOuterTotalistic(
   throw new Error("Parse Error");
 }
 
-function bsToTransition(b: string, s: string): {
+function bsToTransition(
+  b: string,
+  s: string,
+  neighborhood: OuterTotalisticRule["neighborhood"],
+): {
   birth: number[];
   survive: number[];
 } {
-  const bs = b.split("").map((x) => Number(x)).sort((a, b) => a - b);
-  const ss = s.split("").map((x) => Number(x)).sort((a, b) => a - b);
+  const bs = toList(b);
+  const ss = toList(s);
   if (bs.includes(9) || ss.includes(9)) {
     throw new Error("include 9");
+  }
+
+  if (neighborhood === "von-neumann") {
+    if (bs.concat(ss).some((x) => x > 4)) {
+      throw new Error("count is greater than 4 in von Neumann neighborhood");
+    }
+  } else if (neighborhood === "hexagonal") {
+    if (bs.concat(ss).some((x) => x > 6)) {
+      throw new Error("count is greater than 6 in hexagonal neighborhood");
+    }
   }
 
   return {
@@ -121,23 +153,36 @@ function bsToTransition(b: string, s: string): {
   };
 }
 
+function toList(numListString: string) {
+  return numListString.split("").map((x) => Number(x)).sort((a, b) => a - b);
+}
+
 export function stringifyOuterTotalistic(
   rule: OuterTotalisticRule,
 ): string {
   const birth = rule.transition.birth;
   const survive = rule.transition.survive;
-  if (birth.some((x) => !Number.isInteger(x) || x < 0 || x > 8)) {
-    throw new Error("birth should be 0-9");
+  const maxCount = rule.neighborhood === "von-neumann"
+    ? 4
+    : rule.neighborhood === "hexagonal"
+    ? 6
+    : 8;
+  if (birth.some((x) => !Number.isInteger(x) || x < 0 || x > maxCount)) {
+    throw new Error(`birth should be 0 to ${maxCount}`);
   }
 
-  if (survive.some((x) => !Number.isInteger(x) || x < 0 || x > 8)) {
-    throw new Error("survive should be 0-9");
+  if (survive.some((x) => !Number.isInteger(x) || x < 0 || x > maxCount)) {
+    throw new Error(`survive should be 0 to ${maxCount}`);
   }
 
   const b = birth.slice().sort((a, b) => a - b).join("");
   const s = survive.slice().sort((a, b) => a - b).join("");
   const generations = rule.generations == null ? "" : `/${rule.generations}`;
   return `B${b}/S${s}${generations}${
-    stringifyGridParameterWithColon(rule.gridParameter)
-  }`;
+    rule.neighborhood === "von-neumann"
+      ? "V"
+      : rule.neighborhood === "hexagonal"
+      ? "H"
+      : ""
+  }${stringifyGridParameterWithColon(rule.gridParameter)}`;
 }

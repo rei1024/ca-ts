@@ -258,7 +258,8 @@ function sortCells(cells: readonly CACell[]): CACell[] {
 function uniqueCells(sortedCells: readonly CACell[]): CACell[] {
   let prevCell: CACell | null = null;
   const cells: CACell[] = [];
-  for (let i = 0; i < sortedCells.length; i++) {
+  const len = sortedCells.length;
+  for (let i = 0; i < len; i++) {
     const cell = sortedCells[i]!;
     if (
       !(prevCell && prevCell.position.x === cell.position.x &&

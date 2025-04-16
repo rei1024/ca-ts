@@ -26,7 +26,7 @@ export class BitWorld {
    */
   constructor(
     bitGrid: BitGrid,
-    private options: { transition?: { birth: number[]; survive: number[] } } | {
+    options: { transition?: { birth: number[]; survive: number[] } } | {
       intTransition?: { birth: string[]; survive: string[] };
     } = {},
   ) {
@@ -36,13 +36,13 @@ export class BitWorld {
     );
 
     this.nextCell = nextCellConway;
-    if ("transition" in this.options && this.options.transition !== undefined) {
-      this.setRule(this.options.transition ?? null);
+    if ("transition" in options && options.transition !== undefined) {
+      this.setRule(options.transition ?? null);
     } else if (
-      "intTransition" in this.options &&
-      this.options.intTransition !== undefined
+      "intTransition" in options &&
+      options.intTransition !== undefined
     ) {
-      this.setINTRule(this.options.intTransition);
+      this.setINTRule(options.intTransition);
     }
   }
 

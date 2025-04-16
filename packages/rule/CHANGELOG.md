@@ -1,3 +1,10 @@
+## [0.11.0] - 2025-04-16
+
+### Changed
+
+- **BREAKING** `OuterTotalisticRule.neighborhood` is added.
+- **BREAKING** `stringifyRule` for MAP rules does not add padding.
+
 ## [0.10.0] - 2025-04-14
 
 ### Changed

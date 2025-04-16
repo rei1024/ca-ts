@@ -26,7 +26,8 @@ export function stringifyMap(rule: MAPRule): string {
   }
 
   const bytes: number[] = [];
-  for (let i = 0; i < data.length >> 3; i++) {
+  const bytesLength = data.length >> 3;
+  for (let i = 0; i < bytesLength; i++) {
     let byte = 0;
     for (let j = 0; j < 8; j++) {
       const offset = i * 8 + j;
@@ -38,7 +39,10 @@ export function stringifyMap(rule: MAPRule): string {
     bytes.push(byte);
   }
 
-  return `MAP${encodeBase64(new Uint8Array(bytes))}${
-    stringifyGridParameterWithColon(rule.gridParameter)
-  }`;
+  let encoded = encodeBase64(new Uint8Array(bytes));
+  if (encoded.endsWith("==")) {
+    encoded = encoded.slice(0, -2);
+  }
+
+  return `MAP${encoded}${stringifyGridParameterWithColon(rule.gridParameter)}`;
 }

@@ -175,9 +175,9 @@ function createTotalisticNextCellCount(
     const p3 = o3 & o4;
     const p4 = o3 | o4;
 
-    // alive neighbour count is less than or equal to zero
+    // alive neighbor count is less than or equal to zero
     const sort1 = m7;
-    // alive neighbour count is less than or equal to one
+    // alive neighbor count is less than or equal to one
     const sort2 = n6;
     const sort3 = o5;
     const sort4 = p4;
@@ -186,9 +186,9 @@ function createTotalisticNextCellCount(
     const sort7 = n1;
     const sort8 = m0;
 
-    // alive neighbour count is zero
+    // alive neighbor count is zero
     const count0 = ~sort1;
-    // alive neighbour count is one
+    // alive neighbor count is one
     const count1 = sort1 & (~sort2);
     const count2 = sort2 & (~sort3);
     const count3 = sort3 & (~sort4);

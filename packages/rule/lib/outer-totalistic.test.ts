@@ -50,6 +50,28 @@ Deno.test("parseOuterTotalistic B012345678/S012345678", () => {
   });
 });
 
+Deno.test("parseOuterTotalistic B3/S23V", () => {
+  assertEquals(parseOuterTotalistic("B3/S23V"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3],
+      survive: [2, 3],
+    },
+    neighborhood: "von-neumann",
+  });
+});
+
+Deno.test("parseOuterTotalistic B3/S23H", () => {
+  assertEquals(parseOuterTotalistic("B3/S23H"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3],
+      survive: [2, 3],
+    },
+    neighborhood: "hexagonal",
+  });
+});
+
 Deno.test("parseOuterTotalistic sort B62/S41", () => {
   assertEquals(parseOuterTotalistic("B62/S41"), {
     type: "outer-totalistic",
@@ -69,6 +91,18 @@ Deno.test("parseOuterTotalistic B9/S", () => {
 Deno.test("parseOuterTotalistic B/S9", () => {
   assertThrows(() => {
     parseOuterTotalistic("B/S9");
+  });
+});
+
+Deno.test("parseOuterTotalistic B3/S5V", () => {
+  assertThrows(() => {
+    parseOuterTotalistic("B3/S5V");
+  });
+});
+
+Deno.test("parseOuterTotalistic B3/S7H", () => {
+  assertThrows(() => {
+    parseOuterTotalistic("B3/S5V");
   });
 });
 
@@ -180,6 +214,9 @@ Deno.test("parseOuterTotalistic stringifyOuterTotalistic", () => {
     "B012345678/S012345678",
     "B3/S23:T20,30",
     "B3/S23/3:T20,40",
+    "B3/S23V",
+    "B3/S23V:T30+1,20",
+    "B3/S23H:K30,20*+1",
   ];
 
   for (const item of items) {

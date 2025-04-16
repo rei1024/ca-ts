@@ -6,7 +6,7 @@ function mod(i: number, j: number) {
 /**
  * Rule of Conway's Game of Life
  * @param cell state of center cell
- * @param count number of neighbour live cell
+ * @param count number of neighbor live cell
  * @returns next state of center cell
  */
 const updateCell = (cell: 0 | 1, count: number): 0 | 1 => {
