@@ -6,6 +6,8 @@ import { World } from "./world.ts";
 import { parseRule } from "../../../rule/mod.ts";
 import { parseRLE } from "../../../rle/mod.ts";
 import { parseIntRule } from "../../../rule/lib/int.ts";
+import { parseMapRule } from "../../../rule/lib/map/parse-map.ts";
+import { TEST_MAP_CGOL } from "../../../rule/lib/map/parse-map.test.ts";
 
 function d(a: BitWorld) {
   return a.getArray().slice(0, 4).map((r) => r.slice(0, 4).join(""));
@@ -49,7 +51,7 @@ Deno.test("BitWorld is correct transition", () => {
   randomCheck(bitWorld, world, 50);
 });
 
-function randomCheck(bitWorld: BitWorld, world: World, n: number) {
+function randomCheck(bitWorld: BitWorld, world: World, generations: number) {
   bitWorld.forEach((x, y) => {
     if (Math.random() > 0.5) {
       bitWorld.set(x, y);
@@ -57,7 +59,7 @@ function randomCheck(bitWorld: BitWorld, world: World, n: number) {
     }
   });
 
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < generations; i++) {
     assertEquals(
       bitWorld.getArray(),
       world.getArray().map((x) => x.map((y) => Number(y))),
@@ -101,9 +103,19 @@ Deno.test("BitWorld is correct intTransition", () => {
 
 Deno.test("BitWorld is correct intTransition cgol", () => {
   const cgolAsINT = parseIntRule("B3/S23");
-  const bitWorld = BitWorld.make({ width: 32 * 2, height: 32 }, {
+  const size = { width: 32 * 3, height: 32 };
+  const bitWorld = BitWorld.make(size, {
     intTransition: cgolAsINT.transition,
   });
-  const world = new World(32 * 2, 32);
+  const world = new World(size.width, size.height);
+  randomCheck(bitWorld, world, 20);
+});
+
+Deno.test("BitWorld is correct MAP cgol", () => {
+  const cgolAsMAP = parseMapRule(TEST_MAP_CGOL);
+  const size = { width: 32 * 3, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  bitWorld.setMAPRule(cgolAsMAP.data);
+  const world = new World(size.width, size.height);
   randomCheck(bitWorld, world, 20);
 });

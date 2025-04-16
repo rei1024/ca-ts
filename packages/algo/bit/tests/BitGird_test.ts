@@ -8,9 +8,21 @@ Deno.test("BitGrid", () => {
   assertEquals(grid.getHeight(), 32);
   assertEquals(grid.getPopulation(), 0);
   assertEquals(grid.hasAliveCellAtBorder(), false);
+  assertEquals(grid.borderAlive(), {
+    left: false,
+    right: false,
+    top: false,
+    bottom: false,
+  });
 
   grid.set(0, 0);
   assertEquals(grid.hasAliveCellAtBorder(), true);
+  assertEquals(grid.borderAlive(), {
+    left: true,
+    right: false,
+    top: true,
+    bottom: false,
+  });
   assertEquals(grid.getPopulation(), 1);
   {
     const array = grid.getArray();
@@ -55,14 +67,34 @@ Deno.test("BitGrid outerIsAlive", () => {
 
   grid.set(1, 32);
   assertEquals(grid.hasAliveCellAtBorder(), false);
+  assertEquals(grid.borderAlive(), {
+    left: false,
+    right: false,
+    top: false,
+    bottom: false,
+  });
+
   grid.clear();
 
   grid.set(0, 63);
   assertEquals(grid.hasAliveCellAtBorder(), true);
+  assertEquals(grid.borderAlive(), {
+    left: true,
+    right: false,
+    top: false,
+    bottom: true,
+  });
+
   grid.clear();
 
   grid.set(20, 63);
   assertEquals(grid.hasAliveCellAtBorder(), true);
+  assertEquals(grid.borderAlive(), {
+    left: false,
+    right: false,
+    top: false,
+    bottom: true,
+  });
   grid.clear();
 
   grid.set(63, 20);
@@ -71,6 +103,16 @@ Deno.test("BitGrid outerIsAlive", () => {
 
   grid.set(62, 20);
   assertEquals(grid.hasAliveCellAtBorder(), false);
+  grid.clear();
+
+  grid.set(63, 63);
+  assertEquals(grid.hasAliveCellAtBorder(), true);
+  assertEquals(grid.borderAlive(), {
+    left: false,
+    right: true,
+    top: false,
+    bottom: true,
+  });
   grid.clear();
 });
 

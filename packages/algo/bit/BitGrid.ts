@@ -186,6 +186,56 @@ export class BitGrid {
   }
 
   /**
+   * Checks if there are any live cells at the each border of the grid.
+   */
+  borderAlive(): {
+    left: boolean;
+    right: boolean;
+    top: boolean;
+    bottom: boolean;
+  } {
+    let left = false;
+    let right = false;
+    let top = false;
+    let bottom = false;
+
+    const width = this.width32;
+    const height = this.height;
+    const array = this.uint32array;
+
+    // right and left
+    for (let i = 0; i < height; i++) {
+      const leftCell = array[getOffset(width, i, 0)]!;
+      const rightCell = array[getOffset(width, i, width - 1)]!;
+      if (leftCell >>> 31 === 1) {
+        left = true;
+      }
+      if (rightCell & 1) {
+        right = true;
+      }
+    }
+
+    // top and bottom
+    for (let j = 0; j < width; j++) {
+      const topCell = array[getOffset(width, 0, j)];
+      if (topCell !== 0) {
+        top = true;
+      }
+      const bottomCell = array[getOffset(width, height - 1, j)];
+      if (bottomCell !== 0) {
+        bottom = true;
+      }
+    }
+
+    return {
+      left,
+      right,
+      top,
+      bottom,
+    };
+  }
+
+  /**
    * Checks if there are any live cells at the border of the grid.
    */
   hasAliveCellAtBorder(): boolean {
@@ -195,24 +245,24 @@ export class BitGrid {
 
     // right and left
     for (let i = 0; i < height; i++) {
-      const left = array[getOffset(width, i, 0)]!;
-      const right = array[getOffset(width, i, width - 1)]!;
-      if (left >>> 31 === 1) {
+      const leftCell = array[getOffset(width, i, 0)]!;
+      const rightCell = array[getOffset(width, i, width - 1)]!;
+      if (leftCell >>> 31 === 1) {
         return true;
       }
-      if (right & 1) {
+      if (rightCell & 1) {
         return true;
       }
     }
 
     // top and bottom
     for (let j = 0; j < width; j++) {
-      const top = array[getOffset(width, 0, j)];
-      if (top !== 0) {
+      const topCell = array[getOffset(width, 0, j)];
+      if (topCell !== 0) {
         return true;
       }
-      const bottom = array[getOffset(width, height - 1, j)];
-      if (bottom !== 0) {
+      const bottomCell = array[getOffset(width, height - 1, j)];
+      if (bottomCell !== 0) {
         return true;
       }
     }

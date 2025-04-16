@@ -4,6 +4,7 @@ import {
   createTotalisticNextCell,
   nextCellConway,
 } from "./internal/bitwise.ts";
+import { createMAPNextCell } from "./map/mod.ts";
 
 function mod(i: number, j: number): number {
   const k = i % j;
@@ -86,6 +87,14 @@ export class BitWorld {
    */
   setINTRule(intTransition: { birth: string[]; survive: string[] }) {
     this.nextCell = createINTNextCell(intTransition);
+  }
+
+  /**
+   * Set MAP rule.
+   * @param data 512 bits table
+   */
+  setMAPRule(data: (0 | 1)[]) {
+    this.nextCell = createMAPNextCell(data);
   }
 
   /**
