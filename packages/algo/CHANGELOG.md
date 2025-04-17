@@ -1,3 +1,10 @@
+## [0.8.0] - 2025-04-17
+
+### Changed
+
+- Add `BitGrid.borderAlive`
+- Add `BitWorld.setMAPRule` for MAP rules.
+
 ## [0.7.0] - 2025-04-11
 
 ### Changed
