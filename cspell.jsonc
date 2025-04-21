@@ -3,6 +3,7 @@
   "language": "en",
   "ignorePaths": [
     "./packages/rle/test-data/mod.ts",
+    "packages/rle/stringifyRLE.test.ts",
     "packages/apgcode/parseApgcode.test.ts",
     "packages/rule/lib/int/stringify-int.test.ts",
     "packages/rule/mod.ts",

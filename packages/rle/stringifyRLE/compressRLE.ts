@@ -1,5 +1,5 @@
 export function compressRLE<T>(
-  array: { count: number; value: T }[],
+  array: readonly { count: number; value: T }[],
 ): { count: number; value: T }[] {
   const encoded: { count: number; value: T }[] = [];
   let prev: { count: number; value: T } | null = null;

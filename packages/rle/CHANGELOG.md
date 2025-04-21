@@ -1,3 +1,9 @@
+## [0.11.3] - 2025-04-21
+
+### Changed
+
+- Fixed the formatting of `!` in `stringifyRLE`.
+
 ## [0.11.2] - 2025-04-15
 
 ### Changed

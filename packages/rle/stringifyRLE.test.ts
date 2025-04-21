@@ -400,3 +400,21 @@ Deno.test("stringifyRLE 1..255", () => {
   const rle = parseRLE(str);
   assertEquals(rle.cells, cells);
 });
+
+Deno.test("stringifyRLE maxLineChars", () => {
+  const rle = parseRLE(`x = 1, y = 1, rule = B3/S23\nobobo!`);
+
+  assertEquals(
+    stringifyRLE(rle, { maxLineChars: 3 }),
+    `x = 1, y = 1, rule = B3/S23\nobo\nbo!\n`,
+  );
+
+  assertEquals(
+    stringifyRLE(rle, { maxLineChars: 1 }),
+    `x = 1, y = 1, rule = B3/S23\no\nb\no\nb\no\n!\n`,
+  );
+
+  assertThrows(() => {
+    stringifyRLE(rle, { maxLineChars: 0 });
+  });
+});
