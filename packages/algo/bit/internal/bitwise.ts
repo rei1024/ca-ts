@@ -399,13 +399,12 @@ export function bitCountArrayBuffer(buffer: ArrayBuffer) {
  * a = a | b
  */
 export function bitOrUint32Array(a: Uint32Array, b: Uint32Array) {
-  if (a.length !== b.length) {
+  const aLen = a.length;
+  if (aLen !== b.length) {
     throw Error("bitOrUint32Array different length");
   }
 
-  const len = a.length;
-
-  for (let i = 0; i < len; i++) {
+  for (let i = 0; i < aLen; i++) {
     a[i] = a[i]! | b[i]!;
   }
 }
@@ -414,13 +413,12 @@ export function bitOrUint32Array(a: Uint32Array, b: Uint32Array) {
  * a = a & b
  */
 export function bitAndUint32Array(a: Uint32Array, b: Uint32Array) {
-  if (a.length !== b.length) {
+  const aLen = a.length;
+  if (aLen !== b.length) {
     throw Error("bitAndUint32Array different length");
   }
 
-  const len = a.length;
-
-  for (let i = 0; i < len; i++) {
+  for (let i = 0; i < aLen; i++) {
     a[i] = a[i]! & b[i]!;
   }
 }
