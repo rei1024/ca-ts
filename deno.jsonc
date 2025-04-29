@@ -36,6 +36,7 @@
     "./packages/plaintext",
     "./packages/apgcode",
     "./packages/algo",
-    "./packages/rule"
+    "./packages/rule",
+    "./packages/rule-format"
   ]
 }
