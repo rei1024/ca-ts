@@ -41,7 +41,28 @@ Deno.test("parseRuleFormat Error", () => {
     parseRuleFormat(``);
   });
 
+  // duplicate rule names
   assertThrows(() => {
     parseRuleFormat(`@RULE Test\n@RULE Test2`);
+  });
+
+  // invalid rule name
+  assertThrows(() => {
+    parseRuleFormat(`@RULE `);
+  });
+
+  // invalid rule name
+  assertThrows(() => {
+    parseRuleFormat(`@RULE Test:`);
+  });
+
+  // invalid rule name
+  assertThrows(() => {
+    parseRuleFormat(`@RULE Test Test`);
+  });
+
+  // no n_states
+  assertThrows(() => {
+    parseRuleFormat(`@RULE Test\n@TABLE\n0,1,2,3,4,5`);
   });
 });

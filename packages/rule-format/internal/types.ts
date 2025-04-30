@@ -4,6 +4,7 @@
  * ### Reference
  * - [RuleLoader | LifeWiki](https://conwaylife.com/wiki/RuleLoader)
  * - [Rule format | Golly Help](https://golly.sourceforge.io/Help/formats.html#rule)
+ * - [TheFormat | Rule Table Repository](https://github.com/GollyGang/ruletablerepository/wiki/TheFormat)
  * - [RoadMap | Rule Table Repository](https://github.com/GollyGang/ruletablerepository/wiki/RoadMap)
  */
 export type RuleFormat = {
@@ -75,10 +76,15 @@ export type RuleTableLine = {
     name: string;
     values: string[];
   };
+  comment?: string;
 } | {
+  /**
+   * Transition
+   */
   type: "transition";
   transition: {
     condition: string[];
     to: string;
   };
+  comment?: string;
 };

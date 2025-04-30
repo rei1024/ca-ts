@@ -3,11 +3,14 @@ import type { RuleFormat, RuleTableLine } from "./types.ts";
 
 const RULE_SECTION_PREFIX = "RULE ";
 
+/**
+ * Parse a rule format file.
+ */
 export function parseRuleFormat(ruleFileSource: string): RuleFormat {
   const sectionMap = parseRuleFormatRaw(ruleFileSource);
   const rule = sectionMap.get("RULE");
   if (!rule) {
-    throw new Error("No RULE section found");
+    throw new Error("No @RULE section found");
   }
   const ruleName = rule.ruleName;
   if (!ruleName) {
@@ -40,7 +43,42 @@ export function parseRuleFormat(ruleFileSource: string): RuleFormat {
 }
 
 function parseTable(lines: string[]): RuleTableLine[] {
-  return lines.map((line) => parseRuleTableLine(line));
+  let nStates: number | undefined = undefined;
+  let symmetries: string | undefined = undefined;
+  let neighborhood: string | undefined = undefined;
+  return lines.map((line) => {
+    const parsed = parseRuleTableLine(line, nStates);
+    if (parsed.type === "transition") {
+      if (nStates === undefined) {
+        throw new Error("n_states is not defined");
+      }
+      if (symmetries === undefined) {
+        throw new Error("symmetries is not defined");
+      }
+      if (neighborhood === undefined) {
+        throw new Error("neighborhood is not defined");
+      }
+    }
+    if (parsed.type === "n_states") {
+      if (nStates !== undefined) {
+        throw new Error("Duplicate n_states line");
+      }
+      nStates = parsed.numberOfStates;
+    }
+    if (parsed.type === "symmetries") {
+      if (symmetries !== undefined) {
+        throw new Error("Duplicate symmetries line");
+      }
+      symmetries = parsed.symmetries;
+    }
+    if (parsed.type === "neighborhood") {
+      if (neighborhood !== undefined) {
+        throw new Error("Duplicate neighborhood line");
+      }
+      neighborhood = parsed.neighborhood;
+    }
+    return parsed;
+  });
 }
 
 function parseRuleFormatRaw(ruleFileSource: string): Map<string, {
