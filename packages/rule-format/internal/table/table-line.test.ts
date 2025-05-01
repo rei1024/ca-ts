@@ -71,6 +71,17 @@ Deno.test("parseRuleTableLine", () => {
   );
 
   assertEquals(
+    parseRuleTableLine("0,1,2,3,a", undefined),
+    {
+      type: "transition",
+      transition: {
+        condition: ["0", "1", "2", "3"],
+        to: "a",
+      },
+    },
+  );
+
+  assertEquals(
     parseRuleTableLine("0,1,2,3,4 # This is a comment", undefined),
     {
       type: "transition",
