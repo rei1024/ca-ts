@@ -14,6 +14,7 @@ Deno.test("parseRuleTableLine", () => {
       variable: { name: "a", values: ["0", "1", "2"] },
     },
   );
+
   assertEquals(
     parseRuleTableLine("var a={0,1,2} # This is a comment", undefined),
     {
@@ -34,6 +35,38 @@ Deno.test("parseRuleTableLine", () => {
     {
       type: "variable",
       variable: { name: "abc", values: ["0", "1", "2"] },
+    },
+  );
+
+  assertEquals(
+    parseRuleTableLine("var a=b", undefined),
+    {
+      type: "variable",
+      variable: { name: "a", values: ["b"] },
+    },
+  );
+
+  assertEquals(
+    parseRuleTableLine("var a = b", undefined),
+    {
+      type: "variable",
+      variable: { name: "a", values: ["b"] },
+    },
+  );
+
+  assertEquals(
+    parseRuleTableLine("var a={0,1,2", undefined),
+    {
+      type: "variable",
+      variable: { name: "a", values: ["0", "1", "2"] },
+    },
+  );
+
+  assertEquals(
+    parseRuleTableLine("var a={0,,2}", undefined),
+    {
+      type: "variable",
+      variable: { name: "a", values: ["0", "2"] },
     },
   );
 
@@ -61,6 +94,17 @@ Deno.test("parseRuleTableLine", () => {
 
   assertEquals(
     parseRuleTableLine("0,1,2,3,4", undefined),
+    {
+      type: "transition",
+      transition: {
+        condition: ["0", "1", "2", "3"],
+        to: "4",
+      },
+    },
+  );
+
+  assertEquals(
+    parseRuleTableLine("0 1,2,3 4", undefined),
     {
       type: "transition",
       transition: {
@@ -119,15 +163,7 @@ Deno.test("parseRuleTableLine", () => {
 
 Deno.test("parseRuleTableLine error", () => {
   assertThrows(() => {
-    parseRuleTableLine("var a={0,1,2", undefined);
-  });
-
-  assertThrows(() => {
     parseRuleTableLine("var ={0,1,2}", undefined);
-  });
-
-  assertThrows(() => {
-    parseRuleTableLine("var a={0,,2}", undefined);
   });
 
   assertThrows(() => {

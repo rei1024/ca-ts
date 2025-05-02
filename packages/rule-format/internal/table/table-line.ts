@@ -40,16 +40,8 @@ export function parseRuleTableLine(
     if (!name || !valuesString) {
       throw new Error(`Invalid variable line: ${line}`);
     }
-    if (
-      valuesString.length < 2 || valuesString[0] !== "{" ||
-      valuesString[valuesString.length - 1] !== "}"
-    ) {
-      throw new Error(`Invalid variable values: ${valuesString} in ${line}`);
-    }
-    const values = valuesString.slice(1, -1).split(",").map((v) => v.trim());
-    if (values.some((v) => v.length === 0)) {
-      throw new Error(`Invalid variable values: ${valuesString} in ${line}`);
-    }
+    const values = parseValues(valuesString);
+
     return {
       type: "variable",
       variable: {
@@ -62,9 +54,10 @@ export function parseRuleTableLine(
 
   const [lineWithoutComment, lineComment] = splitComment(line);
 
-  const transitionParts = lineWithoutComment.split(",").map((part) =>
-    part.trim()
-  );
+  const transitionParts = lineWithoutComment.split(/,|(\s+)/g).filter((v) =>
+    v !== undefined && v.trim().length !== 0
+  )
+    .map((part) => part.trim());
   if (transitionParts.length < 2) {
     if (nStates === undefined) {
       throw new Error(`Number of states is not defined: ${line}`);
@@ -133,4 +126,10 @@ function splitComment(line: string): [string, string] {
     return [line, ""];
   }
   return [line.slice(0, index), line.slice(index)];
+}
+
+function parseValues(valuesString: string): string[] {
+  return valuesString.split(/{|}|,|(\s+)/g).map((x) => x?.trim()).filter((
+    v,
+  ) => (v?.length ?? 0) > 0);
 }
