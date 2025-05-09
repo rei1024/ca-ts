@@ -1,0 +1,7 @@
+{
+  "name": "@ca-ts/rule-format",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./mod.ts"
+  }
+}
