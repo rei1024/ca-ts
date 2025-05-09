@@ -6,6 +6,7 @@
  * - [Rule format | Golly Help](https://golly.sourceforge.io/Help/formats.html#rule)
  * - [TheFormat | Rule Table Repository](https://github.com/GollyGang/ruletablerepository/wiki/TheFormat)
  * - [RoadMap | Rule Table Repository](https://github.com/GollyGang/ruletablerepository/wiki/RoadMap)
+ * - [List of rule tables on LifeWiki](https://conwaylife.com/wiki/List_of_rule_tables_on_LifeWiki)
  */
 export type RuleFormat = {
   /**

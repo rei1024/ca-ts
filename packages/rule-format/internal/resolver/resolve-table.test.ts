@@ -1,5 +1,12 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { resolveVariableTransition } from "./resolve-table.ts";
+import { resolveTable, resolveVariableTransition } from "./resolve-table.ts";
+import { parseRuleFormat } from "../parse-rule-format.ts";
+import { WireWorldRule } from "../test-data/rule-data.ts";
+
+Deno.test("resolveTable", () => {
+  const table = parseRuleFormat(WireWorldRule);
+  const resolved = resolveTable(table.table?.lines ?? []);
+});
 
 Deno.test("resolveVariable", () => {
   assertEquals(

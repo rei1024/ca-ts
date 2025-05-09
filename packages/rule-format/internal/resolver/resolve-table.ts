@@ -1,5 +1,11 @@
 import type { RuleTableLine } from "../../mod.ts";
 
+const neighborhoodCount = {
+  vonNeumann: 4,
+  Moore: 8,
+  hexagonal: 6,
+};
+
 export function resolveTable(lines: RuleTableLine[]) {
   const nStates = lines.find((line) => line.type === "n_states")
     ?.numberOfStates;
@@ -15,7 +21,8 @@ export function resolveTable(lines: RuleTableLine[]) {
   ) => line.transition);
 
   if (
-    nStates === undefined || neighborhood === undefined
+    nStates === undefined || neighborhood === undefined ||
+    symmetries === undefined
   ) {
     throw new Error("Missing required fields in table");
   }
@@ -23,10 +30,59 @@ export function resolveTable(lines: RuleTableLine[]) {
   const variableResolvedTransitions = resolveVariableTransition(
     variables,
     transitions,
-  );
+  ).map((transition) => {
+    const condition = transition.condition.map((part) => {
+      if (/^[0-9]+$/.test(part)) {
+        return Number(part);
+      } else {
+        throw new Error(
+          `Invalid transition condition: ${part} is not a number`,
+        );
+      }
+    });
+    const to = transition.to;
+    if (/^[0-9]+$/.test(to)) {
+      return {
+        condition,
+        to: Number(to),
+      };
+    } else {
+      throw new Error(
+        `Invalid transition to: ${to} is not a number`,
+      );
+    }
+  });
+
+  // validation
+  for (const transition of variableResolvedTransitions) {
+    if (transition.condition.some((value) => value >= nStates)) {
+      throw new Error(
+        `Invalid transition condition: ${
+          transition.condition.join(",")
+        } for n_states: ${nStates}`,
+      );
+    }
+
+    if (transition.to >= nStates) {
+      throw new Error(
+        `Invalid transition to: ${transition.to} for n_states: ${nStates}`,
+      );
+    }
+
+    if (neighborhoodCount[neighborhood] + 1 !== transition.condition.length) {
+      throw new Error(
+        `Invalid transition condition length: ${
+          transition.condition.join(",")
+        } for neighborhood: ${neighborhood}`,
+      );
+    }
+  }
+
+  return variableResolvedTransitions;
 }
 
 type Variable = (RuleTableLine & { type: "variable" })["variable"];
+type Transition = (RuleTableLine & { type: "transition" })["transition"];
 
 function resolveVariableExpand(variables: Variable[]): Map<string, Variable> {
   const variableMap = new Map<string, Variable>();
@@ -59,11 +115,11 @@ function resolveVariableExpand(variables: Variable[]): Map<string, Variable> {
 
 export function resolveVariableTransition(
   variables: Variable[],
-  transitions: (RuleTableLine & { type: "transition" })["transition"][],
-): (RuleTableLine & { type: "transition" })["transition"][] {
+  transitions: Transition[],
+): Transition[] {
   const variableMap = resolveVariableExpand(variables);
 
-  let result: (RuleTableLine & { type: "transition" })["transition"][] = [];
+  let result: Transition[] = [];
   for (const transition of transitions) {
     const transitionParts = transition.condition.concat([transition.to]);
 
