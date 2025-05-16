@@ -6,6 +6,7 @@ import { WireWorldRule } from "../test-data/rule-data.ts";
 Deno.test("resolveTable", () => {
   const table = parseRuleFormat(WireWorldRule);
   const resolved = resolveTable(table.table?.lines ?? []);
+  assertEquals(resolved.size, 168980);
 });
 
 Deno.test("resolveVariable", () => {

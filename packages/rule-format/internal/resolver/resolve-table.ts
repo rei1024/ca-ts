@@ -1,4 +1,6 @@
 import type { RuleTableLine } from "../../mod.ts";
+import { applyIndices, symmetryMap } from "./symmetry-map.ts";
+import { type TransitionMap, transitionToMap } from "./transition-to-map.ts";
 
 const neighborhoodCount = {
   vonNeumann: 4,
@@ -6,7 +8,10 @@ const neighborhoodCount = {
   hexagonal: 6,
 };
 
-export function resolveTable(lines: RuleTableLine[]) {
+/**
+ * Create {@link TransitionMap}
+ */
+export function resolveTable(lines: RuleTableLine[]): TransitionMap {
   const nStates = lines.find((line) => line.type === "n_states")
     ?.numberOfStates;
   const neighborhood = lines.find((line) => line.type === "neighborhood")
@@ -54,6 +59,7 @@ export function resolveTable(lines: RuleTableLine[]) {
   });
 
   // validation
+  const expectedConditionLength = neighborhoodCount[neighborhood] + 1;
   for (const transition of variableResolvedTransitions) {
     if (transition.condition.some((value) => value >= nStates)) {
       throw new Error(
@@ -69,7 +75,7 @@ export function resolveTable(lines: RuleTableLine[]) {
       );
     }
 
-    if (neighborhoodCount[neighborhood] + 1 !== transition.condition.length) {
+    if (expectedConditionLength !== transition.condition.length) {
       throw new Error(
         `Invalid transition condition length: ${
           transition.condition.join(",")
@@ -78,7 +84,24 @@ export function resolveTable(lines: RuleTableLine[]) {
     }
   }
 
-  return variableResolvedTransitions;
+  if (neighborhood !== "Moore") {
+    throw new Error("TODO");
+  }
+
+  const symmetry = symmetryMap[neighborhood][symmetries as "rotate4"];
+  if (symmetry === undefined) {
+    throw new Error("Unknown symmetry " + symmetries);
+  }
+  const symmetryResolved = variableResolvedTransitions.flatMap((x) => {
+    return symmetry.map((indices) => {
+      return {
+        condition: applyIndices(x.condition, indices),
+        to: x.to,
+      };
+    });
+  });
+
+  return transitionToMap(symmetryResolved);
 }
 
 type Variable = (RuleTableLine & { type: "variable" })["variable"];
