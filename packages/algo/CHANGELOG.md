@@ -1,3 +1,9 @@
+## [0.9.0] - Unreleased
+
+### Changed
+
+- Add `RuleLoaderWorld`
+
 ## [0.8.0] - 2025-04-17
 
 ### Changed

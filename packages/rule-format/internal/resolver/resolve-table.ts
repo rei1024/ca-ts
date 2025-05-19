@@ -84,6 +84,10 @@ export function resolveTable(lines: RuleTableLine[]): TransitionMap {
     }
   }
 
+  if (symmetries === "none") {
+    return transitionToMap(variableResolvedTransitions);
+  }
+
   if (neighborhood !== "Moore") {
     throw new Error("TODO");
   }
