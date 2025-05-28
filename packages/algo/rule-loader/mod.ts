@@ -90,7 +90,7 @@ export class RuleLoaderWorld {
   }
 
   /**
-   * Get two dimentional array
+   * Get two dimensional array
    */
   getArray(): number[][] {
     const a: number[][] = [];
