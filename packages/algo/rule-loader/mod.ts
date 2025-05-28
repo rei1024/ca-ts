@@ -26,6 +26,11 @@ const tempN = [0, 0, 0, 0, 0, 0, 0, 0, 0];
  *   ruleLoaderWorld.next();
  * }
  * ```
+ * @module
+ */
+
+/**
+ * Represents a 2D cellular automaton world that evolves according to a user-defined rule.
  */
 export class RuleLoaderWorld {
   private rule: (values: number[]) => number | undefined;
@@ -58,6 +63,9 @@ export class RuleLoaderWorld {
     this.array.fill(0);
   }
 
+  /**
+   * Set `state` at (x, y)
+   */
   set(x: number, y: number, state: number): void {
     this.array[y * this.size.width + x] = state;
   }
@@ -81,6 +89,9 @@ export class RuleLoaderWorld {
     }
   }
 
+  /**
+   * Get two dimentional array
+   */
   getArray(): number[][] {
     const a: number[][] = [];
     this.forEach((x, y, state) => {
