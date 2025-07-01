@@ -381,6 +381,39 @@ export class BitGrid {
       other.asInternalUint32Array(),
     );
   }
+
+  expanded(
+    { expandX, expandY }: { expandX: number; expandY: number },
+    { offsetX = 0, offsetY = 0 } = {},
+  ): BitGrid {
+    if (expandX < 0 || expandY < 0) {
+      throw new RangeError("expandX and expandY must be non-negative");
+    }
+
+    if (offsetX % 32 !== 0) {
+      throw new RangeError("offsetX must be a multiple of 32");
+    }
+
+    const newWidth = this.getWidth() + expandX;
+    const newHeight = this.getHeight() + expandY;
+    const newGrid = BitGrid.make({ width: newWidth, height: newHeight });
+    const array = this.asInternalUint32Array();
+    const newArray = newGrid.asInternalUint32Array();
+
+    const newWidth32 = newGrid.getWidth32();
+    const currentWidth32 = this.getWidth32();
+    const currentHeight = this.height;
+
+    for (let i = 0; i < currentHeight; i++) {
+      for (let j = 0; j < currentWidth32; j++) {
+        const oldOffset = getOffset(currentWidth32, i, j);
+        const newOffset = getOffset(newWidth32, i + offsetY, j + offsetX);
+        newArray[newOffset] = array[oldOffset]!;
+      }
+    }
+
+    return newGrid;
+  }
 }
 
 function equalUint32(a: Uint32Array, b: Uint32Array): boolean {
