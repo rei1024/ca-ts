@@ -1,3 +1,9 @@
+## [0.10.0] - 2025-07-01
+
+### Changed
+
+- Add `BitGird.expanded`
+
 ## [0.9.0] - 2025-05-29
 
 ### Changed
