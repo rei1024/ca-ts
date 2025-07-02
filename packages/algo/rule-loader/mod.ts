@@ -1,5 +1,3 @@
-const tempN = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-
 /**
  * @example
  * ```ts ignore
@@ -28,6 +26,8 @@ const tempN = [0, 0, 0, 0, 0, 0, 0, 0, 0];
  * ```
  * @module
  */
+
+const tempN = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 /**
  * Represents a 2D cellular automaton world that evolves according to a user-defined rule.
@@ -82,9 +82,9 @@ export class RuleLoaderWorld {
     const height = this.size.height;
     const array = this.array;
     for (let i = 0; i < height; i++) {
-      const middle = i * width;
+      const offset = i * width;
       for (let j = 0; j < width; j++) {
-        fn(j, i, array[middle + j]!);
+        fn(j, i, array[offset + j]!);
       }
     }
   }

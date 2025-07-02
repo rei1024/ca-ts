@@ -156,14 +156,14 @@ Deno.test("BitGrid get", () => {
 
 Deno.test("BitGrid expanded expandX", () => {
   const grid = BitGrid.make({ width: 32, height: 5 });
-  const newGrid = grid.expanded({ expandX: 32, expandY: 0 });
+  const newGrid = grid.expanded({ expand: { x: 32, y: 0 } });
   assertEquals(newGrid.getWidth(), 64);
   assertEquals(newGrid.getHeight(), 5);
 });
 
 Deno.test("BitGrid expanded expandY", () => {
   const grid = BitGrid.make({ width: 32, height: 5 });
-  const newGrid = grid.expanded({ expandX: 0, expandY: 7 });
+  const newGrid = grid.expanded({ expand: { x: 0, y: 7 } });
   assertEquals(newGrid.getWidth(), 32);
   assertEquals(newGrid.getHeight(), 12);
 });
@@ -171,9 +171,12 @@ Deno.test("BitGrid expanded expandY", () => {
 Deno.test("BitGrid expanded with offset", () => {
   const grid = BitGrid.make({ width: 32, height: 5 });
   grid.set(1, 1);
-  const newGrid = grid.expanded({ expandX: 0, expandY: 7 }, {
-    offsetX: 0,
-    offsetY: 2,
+  const newGrid = grid.expanded({
+    expand: { x: 0, y: 7 },
+    offset: {
+      x: 0,
+      y: 2,
+    },
   });
   assertEquals(newGrid.get(1, 1), 0);
   assertEquals(newGrid.get(1, 3), 1);

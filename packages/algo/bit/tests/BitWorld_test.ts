@@ -44,8 +44,10 @@ Deno.test("BitWorld is correct 2", () => {
 });
 
 Deno.test("BitWorld is correct transition", () => {
-  const bitWorld = BitWorld.make({ width: 32 * 1, height: 32 }, {
-    transition: { birth: [3], survive: [2, 3] },
+  const bitWorld = BitWorld.make({ width: 32 * 1, height: 32 });
+  bitWorld.setRule({
+    birth: [3],
+    survive: [2, 3],
   });
   const world = new World(32 * 1, 32);
   randomCheck(bitWorld, world, 50);
@@ -104,9 +106,8 @@ Deno.test("BitWorld is correct intTransition", () => {
 Deno.test("BitWorld is correct intTransition cgol", () => {
   const cgolAsINT = parseIntRule("B3/S23");
   const size = { width: 32 * 3, height: 32 };
-  const bitWorld = BitWorld.make(size, {
-    intTransition: cgolAsINT.transition,
-  });
+  const bitWorld = BitWorld.make(size);
+  bitWorld.setINTRule(cgolAsINT.transition);
   const world = new World(size.width, size.height);
   randomCheck(bitWorld, world, 20);
 });
