@@ -15,36 +15,30 @@ function mod(i: number, j: number): number {
  * Outer-totalistic and isotropic non-totalistic cellular automata.
  */
 export class BitWorld {
-  public bitGrid: BitGrid;
+  private _bitGrid: BitGrid;
   private tempArray: Uint32Array;
   private nextCell: typeof nextCellConway;
   /**
    * Create {@link BitWorld}
    *
    * Default transition is Conway's Game of Life.
-   *
-   * "B3/S23" → `{ transition: { birth: [3], survive: [2, 3] } }`
    */
   constructor(
     bitGrid: BitGrid,
-    options: { transition?: { birth: number[]; survive: number[] } } | {
-      intTransition?: { birth: string[]; survive: string[] };
-    } = {},
   ) {
-    this.bitGrid = bitGrid;
+    this._bitGrid = bitGrid;
     this.tempArray = new Uint32Array(
-      this.bitGrid.asInternalUint32Array().length,
+      bitGrid.asInternalUint32Array().length,
     );
 
     this.nextCell = nextCellConway;
-    if ("transition" in options && options.transition !== undefined) {
-      this.setRule(options.transition ?? null);
-    } else if (
-      "intTransition" in options &&
-      options.intTransition !== undefined
-    ) {
-      this.setINTRule(options.intTransition);
-    }
+  }
+
+  /**
+   * Get the underlying {@link BitGrid} instance.
+   */
+  get bitGrid(): BitGrid {
+    return this._bitGrid;
   }
 
   /**
@@ -98,13 +92,17 @@ export class BitWorld {
   }
 
   /**
+   * Set a bit grid.
+   */
+  setBitGrid(bitGrid: BitGrid) {
+    this._bitGrid = bitGrid;
+    this.tempArray = new Uint32Array(bitGrid.asInternalUint32Array().length);
+  }
+
+  /**
    * Create {@link BitWorld}
    *
    * width is rounded up to 32
-   *
-   * Default rule is Conway's Game of Life.
-   *
-   * "B3/S23" → `{ transition: { birth: [3], survive: [2, 3] } }`
    */
   static make(
     { width, height }: {
@@ -115,52 +113,49 @@ export class BitWorld {
       width: number;
       height: number;
     },
-    options: { transition?: { birth: number[]; survive: number[] } } | {
-      intTransition?: { birth: string[]; survive: string[] };
-    } = {},
   ): BitWorld {
-    return new BitWorld(BitGrid.make({ width, height }), options);
+    return new BitWorld(BitGrid.make({ width, height }));
   }
 
   getWidth(): number {
-    return this.bitGrid.getWidth();
+    return this._bitGrid.getWidth();
   }
 
   getHeight(): number {
-    return this.bitGrid.getHeight();
+    return this._bitGrid.getHeight();
   }
 
   /**
    * Clear world.
    */
   clear() {
-    this.bitGrid.clear();
+    this._bitGrid.clear();
   }
 
   /** Fill random states */
   random() {
-    this.bitGrid.random();
+    this._bitGrid.random();
   }
 
   /**
    * set live cell at (x, y)
    */
   set(x: number, y: number) {
-    this.bitGrid.set(x, y);
+    this._bitGrid.set(x, y);
   }
 
   /**
    * Returns the entire grid as a 2D array of 0s and 1s.
    */
   getArray(): (0 | 1)[][] {
-    return this.bitGrid.getArray();
+    return this._bitGrid.getArray();
   }
 
   /**
    * Iterates over all cells in the grid, calling the provided function for each cell.
    */
   forEach(fn: (x: number, y: number, alive: 0 | 1) => void) {
-    this.bitGrid.forEach(fn);
+    this._bitGrid.forEach(fn);
   }
 
   /**
@@ -168,12 +163,12 @@ export class BitWorld {
    * for each alive cell.  This is more efficient than `forEach` if the grid is sparse.
    */
   forEachAlive(fn: (x: number, y: number) => void) {
-    this.bitGrid.forEachAlive(fn);
+    this._bitGrid.forEachAlive(fn);
   }
 
   getCellArray(): { x: number; y: number }[] {
     const array: { x: number; y: number }[] = [];
-    this.bitGrid.forEachAlive((x, y) => {
+    this._bitGrid.forEachAlive((x, y) => {
       array.push({ x, y });
     });
 
@@ -184,9 +179,10 @@ export class BitWorld {
    * Update to next generation
    */
   next() {
-    const width = this.bitGrid.getWidth32();
-    const height = this.bitGrid.getHeight();
-    const array = this.bitGrid.asInternalUint32Array();
+    const bitGrid = this._bitGrid;
+    const width = bitGrid.getWidth32();
+    const height = bitGrid.getHeight();
+    const array = bitGrid.asInternalUint32Array();
     const next = this.nextCell;
 
     const tempArray = this.tempArray;

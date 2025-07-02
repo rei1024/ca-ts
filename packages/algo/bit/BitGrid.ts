@@ -383,19 +383,24 @@ export class BitGrid {
   }
 
   expanded(
-    { expandX, expandY }: { expandX: number; expandY: number },
-    { offsetX = 0, offsetY = 0 } = {},
+    { expand, offset }: {
+      expand: { x: number; y: number };
+      offset?: { x?: number; y?: number };
+    },
   ): BitGrid {
-    if (expandX < 0 || expandY < 0) {
+    if (expand.x < 0 || expand.y < 0) {
       throw new RangeError("expandX and expandY must be non-negative");
     }
+
+    const offsetX = offset?.x ?? 0;
+    const offsetY = offset?.y ?? 0;
 
     if (offsetX % 32 !== 0) {
       throw new RangeError("offsetX must be a multiple of 32");
     }
 
-    const newWidth = this.getWidth() + expandX;
-    const newHeight = this.getHeight() + expandY;
+    const newWidth = this.getWidth() + expand.x;
+    const newHeight = this.getHeight() + expand.y;
     const newGrid = BitGrid.make({ width: newWidth, height: newHeight });
     const array = this.asInternalUint32Array();
     const newArray = newGrid.asInternalUint32Array();

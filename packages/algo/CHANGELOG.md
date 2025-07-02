@@ -1,3 +1,12 @@
+## [0.11.0] - 2025-07-02
+
+### Changed
+
+- **BREAKING** Removed rule options from `BitWorld` constructor
+- **BREAKING** Make `BitWorld.bitGrid` readonly
+- Add `BitWorld.setBitGrid`
+- Change `BitGird.expanded` signature
+
 ## [0.10.0] - 2025-07-01
 
 ### Changed
