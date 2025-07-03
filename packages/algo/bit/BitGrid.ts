@@ -3,6 +3,7 @@ import {
   bitCountArrayBuffer,
   bitOrUint32Array,
 } from "./internal/bitwise.ts";
+import { equalUint32Array } from "./internal/util.ts";
 
 const getOffset = (width32: number, iHeight: number, jWidth: number) => {
   return iHeight * width32 + jWidth;
@@ -302,17 +303,19 @@ export class BitGrid {
       for (let j = 0; j < width; j++) {
         const offset = rowIndex + j;
         const value = array[offset]!;
-        if (value !== 0) {
-          if (!firstRowFound) {
-            minY = i;
-            firstRowFound = true;
-          }
-
-          maxY = i;
+        if (value === 0) {
+          continue; // skip empty cells
         }
 
+        if (!firstRowFound) {
+          minY = i;
+          firstRowFound = true;
+        }
+
+        maxY = i;
+
         for (let u = 0; u < BITS; u++) {
-          const alive = (value & (1 << (BITS_MINUS_1 - u))) !== 0 ? 1 : 0;
+          const alive = (value & (1 << (BITS_MINUS_1 - u))) !== 0;
           if (alive) {
             const x = j * 32 + u;
             if (minXFound) {
@@ -354,7 +357,7 @@ export class BitGrid {
    */
   equal(otherBitGrid: BitGrid): boolean {
     this.assertSameSize("BitGrid.equal", otherBitGrid);
-    return equalUint32(
+    return equalUint32Array(
       this.asInternalUint32Array(),
       otherBitGrid.asInternalUint32Array(),
     );
@@ -419,20 +422,4 @@ export class BitGrid {
 
     return newGrid;
   }
-}
-
-function equalUint32(a: Uint32Array, b: Uint32Array): boolean {
-  if (a.length !== b.length) {
-    return false;
-  }
-
-  const len = a.length;
-
-  for (let i = 0; i < len; i++) {
-    if (a[i] !== b[i]) {
-      return false;
-    }
-  }
-
-  return true;
 }

@@ -1,3 +1,10 @@
+## [0.11.1] - 2025-07-03
+
+### Changed
+
+- Fix documentation
+- Optimize `BitGrid.getBoundingBox`
+
 ## [0.11.0] - 2025-07-02
 
 ### Changed
@@ -5,13 +12,13 @@
 - **BREAKING** Removed rule options from `BitWorld` constructor
 - **BREAKING** Make `BitWorld.bitGrid` readonly
 - Add `BitWorld.setBitGrid`
-- Change `BitGird.expanded` signature
+- Change `BitGrid.expanded` signature
 
 ## [0.10.0] - 2025-07-01
 
 ### Changed
 
-- Add `BitGird.expanded`
+- Add `BitGrid.expanded`
 
 ## [0.9.0] - 2025-05-29
 

@@ -3,7 +3,7 @@
  */
 export type GridParameter = {
   /**
-   * Size of the gird.
+   * Size of the grid.
    */
   size: {
     /**
