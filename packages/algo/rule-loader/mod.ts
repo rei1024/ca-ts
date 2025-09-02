@@ -47,6 +47,13 @@ export class RuleLoaderWorld {
     this.size = size;
     this.rule = rule;
 
+    const nextBackground = rule([0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    if (nextBackground !== 0 && nextBackground !== undefined) {
+      throw new Error(
+        "The rule must return 0 for an all-dead neighborhood to maintain a stable background.",
+      );
+    }
+
     const len = size.width * size.height;
     this.array = new Uint8Array(len);
     this.tempArray = new Uint8Array(len);

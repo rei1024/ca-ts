@@ -386,7 +386,7 @@ export function bitCount(n: number) {
   return ((n + (n >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
 }
 
-export function bitCountArrayBuffer(buffer: ArrayBuffer) {
+export function bitCountArrayBuffer(buffer: ArrayBufferLike) {
   let sum = 0;
   const array = new Uint32Array(buffer);
   for (const n of array) {

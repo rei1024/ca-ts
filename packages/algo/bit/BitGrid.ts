@@ -9,9 +9,6 @@ const getOffset = (width32: number, iHeight: number, jWidth: number) => {
   return iHeight * width32 + jWidth;
 };
 
-// compat TS 5.7
-export type _Uint32Array = ReturnType<typeof Uint32Array.prototype.slice>;
-
 /**
  * 2D bit array
  */
@@ -22,7 +19,7 @@ export class BitGrid {
   constructor(
     private readonly width32: number,
     private readonly height: number,
-    private readonly uint32array: _Uint32Array,
+    private readonly uint32array: Uint32Array,
   ) {
     if (width32 * height !== uint32array.length) {
       throw new Error("Error");
@@ -67,7 +64,7 @@ export class BitGrid {
   /**
    * Returns the internal Uint32Array representing the grid data.
    */
-  asInternalUint32Array(): _Uint32Array {
+  asInternalUint32Array(): Uint32Array {
     return this.uint32array;
   }
 
