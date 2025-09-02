@@ -1,3 +1,10 @@
+## [0.11.2] - 2025-09-02
+
+### Changed
+
+- Check rule on `RuleLoaderWorld` constructor
+- Fix types
+
 ## [0.11.1] - 2025-07-03
 
 ### Changed
