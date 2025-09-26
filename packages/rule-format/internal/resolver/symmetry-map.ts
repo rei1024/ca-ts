@@ -21,18 +21,25 @@ const mooreRotate4List = [
   iterate(3, mooreRotateRight, mooreBase),
 ];
 
+const rotate4reflect = mooreRotate4List.concat(
+  mooreRotate4List.map((x, i) =>
+    i % 2 === 0 ? mooreReflectHorizontal(x) : mooreReflectVertical(x)
+  ),
+);
+
 export const symmetryMap = {
   Moore: {
     rotate4: mooreRotate4List,
-    rotate4reflect: mooreRotate4List.concat(
-      [
-        mooreReflectHorizontal(mooreRotate4List[0] ?? internalError()),
-        mooreReflectVertical(mooreRotate4List[1] ?? internalError()),
-        mooreReflectHorizontal(mooreRotate4List[2] ?? internalError()),
-        mooreReflectVertical(mooreRotate4List[3] ?? internalError()),
-      ],
-    ),
+    rotate4reflect: rotate4reflect,
     rotate8: mooreRotate4List.flatMap((x) => [x, mooreRotateRight45(x)]),
+    // TODO
+    // rotate8reflect: rotate4reflect.flatMap((
+    //   x,
+    //   i,
+    // ) => [
+    //   x,
+    //   mooreRotateRight45(x),
+    // ]),
   },
 };
 
