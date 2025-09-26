@@ -1,3 +1,11 @@
+## [0.12.0] - 2025-09-26
+
+### Changed
+
+- **BREAKING** Support for triangular neighborhood
+  - Add `"triangular"` to `OuterTotalisticRule.neighborhood`
+  - `OuterTotalisticRule.triangularType` is added.
+
 ## [0.11.0] - 2025-04-16
 
 ### Changed
