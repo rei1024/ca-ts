@@ -1,3 +1,10 @@
+## [0.13.0] - 2025-09-27
+
+### Changed
+
+- **BREAKING** Support for hexagonal tripod neighborhood
+  - `OuterTotalisticRule.hexagonalType` is added.
+
 ## [0.12.0] - 2025-09-26
 
 ### Changed

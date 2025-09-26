@@ -69,6 +69,19 @@ Deno.test("parseOuterTotalistic B3/S23H", () => {
       survive: [2, 3],
     },
     neighborhood: "hexagonal",
+    hexagonalType: "honeycomb",
+  });
+});
+
+Deno.test("parseOuterTotalistic B3/S23HT", () => {
+  assertEquals(parseOuterTotalistic("B3/S23HT"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3],
+      survive: [2, 3],
+    },
+    neighborhood: "hexagonal",
+    hexagonalType: "tripod",
   });
 });
 
@@ -283,12 +296,14 @@ Deno.test("parseOuterTotalistic stringifyOuterTotalistic", () => {
     "B3/S23V",
     "B3/S23V:T30+1,20",
     "B3/S23H:K30,20*+1",
+    "B3/S23HT",
     "B3/S23L",
     "B3/S23XYZL",
     "B3XYZ/S23L",
     "B3/S23LI",
     "B3/S23LO",
     "B3/S23LB",
+    "B3/S23LV",
     "B3/S23LE",
     "B3/S23LR",
   ];
