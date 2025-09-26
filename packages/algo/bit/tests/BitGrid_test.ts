@@ -190,12 +190,12 @@ Deno.test("BitGrid expanded with offset x", () => {
     expand: { x: 32, y: 7 },
     offset: {
       x: 32,
-      y: 0,
+      y: 3,
     },
   });
 
   assertEquals(newGrid.get(1, 1), 0);
-  assertEquals(newGrid.get(33, 1), 1);
+  assertEquals(newGrid.get(33, 4), 1);
 
   assertEquals(newGrid.getHeight(), 12);
   assertEquals(newGrid.getWidth(), 64);
