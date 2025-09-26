@@ -1,3 +1,9 @@
+## [0.11.3] - 2025-09-27
+
+### Changed
+
+- Fix `BitGrid.expanded`
+
 ## [0.11.2] - 2025-09-02
 
 ### Changed

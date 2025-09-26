@@ -399,6 +399,9 @@ export class BitGrid {
       throw new RangeError("offsetX must be a multiple of 32");
     }
 
+    // use arithmetic shift to get word offset even for negative offsetX
+    const wordOffsetX = offsetX >> 5; // = Math.floor(offsetX / 32)
+
     const newWidth = this.getWidth() + expand.x;
     const newHeight = this.getHeight() + expand.y;
     const newGrid = BitGrid.make({ width: newWidth, height: newHeight });
@@ -412,7 +415,7 @@ export class BitGrid {
     for (let i = 0; i < currentHeight; i++) {
       for (let j = 0; j < currentWidth32; j++) {
         const oldOffset = getOffset(currentWidth32, i, j);
-        const newOffset = getOffset(newWidth32, i + offsetY, j + offsetX);
+        const newOffset = getOffset(newWidth32, i + offsetY, j + wordOffsetX);
         newArray[newOffset] = array[oldOffset]!;
       }
     }
