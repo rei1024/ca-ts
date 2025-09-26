@@ -183,7 +183,7 @@ Deno.test("BitGrid expanded with offset", () => {
   assertEquals(newGrid.getHeight(), 12);
 });
 
-Deno.test("BitGrid expanded with offset", () => {
+Deno.test("BitGrid expanded with offset x", () => {
   const grid = BitGrid.make({ width: 32, height: 5 });
   grid.set(1, 1);
   const newGrid = grid.expanded({
