@@ -88,6 +88,31 @@ Deno.test("parseOuterTotalistic B9/S", () => {
   });
 });
 
+Deno.test("parseOuterTotalistic XYZ", () => {
+  const items = [
+    "B3/S23X",
+    "B3/S23Y",
+    "B3/S23Z",
+    "B3/S23x",
+    "B3/S23y",
+    "B3/S23z",
+  ];
+
+  for (const item of items) {
+    assertThrows(() => {
+      parseOuterTotalistic(item);
+    });
+
+    assertThrows(() => {
+      parseOuterTotalistic(item + "H");
+    });
+
+    assertThrows(() => {
+      parseOuterTotalistic(item + "V");
+    });
+  }
+});
+
 Deno.test("parseOuterTotalistic B/S9", () => {
   assertThrows(() => {
     parseOuterTotalistic("B/S9");
@@ -104,6 +129,47 @@ Deno.test("parseOuterTotalistic B3/S7H", () => {
   assertThrows(() => {
     parseOuterTotalistic("B3/S5V");
   });
+});
+
+Deno.test("parseOuterTotalistic triangular B3/S23L", () => {
+  assertEquals(parseOuterTotalistic("B3/S23L"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3],
+      survive: [2, 3],
+    },
+    neighborhood: "triangular",
+    triangularType: "moore",
+  });
+});
+
+Deno.test("parseOuterTotalistic triangular B39Z/S23XYZL", () => {
+  assertEquals(parseOuterTotalistic("B39Z/S23XYZL"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3, 9, 12],
+      survive: [2, 3, 10, 11, 12],
+    },
+    neighborhood: "triangular",
+    triangularType: "moore",
+  });
+});
+
+Deno.test("parseOuterTotalistic triangular max", () => {
+  const items = [
+    "B/S4XLE",
+    "B/S4XLR",
+    "B/S7XLO",
+    "B/S7XLI",
+    "B/SXLB",
+    "B/SXLV",
+  ];
+
+  for (const item of items) {
+    assertThrows(() => {
+      parseOuterTotalistic(item);
+    });
+  }
 });
 
 Deno.test("parseOuterTotalistic Generations", () => {
@@ -217,6 +283,14 @@ Deno.test("parseOuterTotalistic stringifyOuterTotalistic", () => {
     "B3/S23V",
     "B3/S23V:T30+1,20",
     "B3/S23H:K30,20*+1",
+    "B3/S23L",
+    "B3/S23XYZL",
+    "B3XYZ/S23L",
+    "B3/S23LI",
+    "B3/S23LO",
+    "B3/S23LB",
+    "B3/S23LE",
+    "B3/S23LR",
   ];
 
   for (const item of items) {

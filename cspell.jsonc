@@ -8,6 +8,7 @@
     "packages/rule/lib/int/stringify-int.test.ts",
     "packages/rule/mod.ts",
     "packages/rule-format/internal/test-data/rule-data.ts",
+    "packages/rule/lib/outer-totalistic.test.ts",
     "deno.lock"
   ],
   "words": [
@@ -46,6 +47,7 @@
     "tlife",
     "neumann",
     "Silverman",
-    "CMOS"
+    "CMOS",
+    "neighbourhood"
   ]
 }
