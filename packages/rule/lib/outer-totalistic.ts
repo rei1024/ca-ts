@@ -62,6 +62,15 @@ export type OuterTotalisticRule = {
     | "outer"
     | "biohazard"
     | "radiation";
+  /**
+   * If `neighborhood` is `hexagonal`, this defines the type of hexagonal neighborhood.
+   *
+   * - `"honeycomb"`: six neighbors in a honeycomb pattern.
+   * - `"tripod"`: three neighbors in a tripod pattern.
+   *
+   * <https://conwaylife.com/wiki/Hexagonal_neighbourhood>
+   */
+  hexagonalType?: "honeycomb" | "tripod";
 };
 
 const triangularSuffixList = [
@@ -112,13 +121,9 @@ export function parseOuterTotalistic(
 
   let neighborhood: OuterTotalisticRule["neighborhood"] | undefined;
   let triangularType: OuterTotalisticRule["triangularType"] | undefined;
-  if (ruleString.endsWith("V") || ruleString.endsWith("v")) {
-    neighborhood = "von-neumann";
-    ruleString = ruleString.slice(0, -1);
-  } else if (ruleString.endsWith("H") || ruleString.endsWith("h")) {
-    neighborhood = "hexagonal";
-    ruleString = ruleString.slice(0, -1);
-  } else if (
+  let hexagonalType: OuterTotalisticRule["hexagonalType"] | undefined;
+  // This needs to be checked before checking "V" and "H"
+  if (
     triangularSuffixList.some((x) => ruleString.endsWith(x))
   ) {
     neighborhood = "triangular";
@@ -134,6 +139,21 @@ export function parseOuterTotalistic(
       LB: "biohazard",
       LR: "radiation",
     } as const)[suffix];
+  } else if (ruleString.endsWith("V") || ruleString.endsWith("v")) {
+    neighborhood = "von-neumann";
+    ruleString = ruleString.slice(0, -1);
+  } else if (
+    ruleString.endsWith("H") || ruleString.endsWith("h") ||
+    ruleString.endsWith("HT")
+  ) {
+    neighborhood = "hexagonal";
+    if (ruleString.endsWith("HT")) {
+      ruleString = ruleString.slice(0, -2);
+      hexagonalType = "tripod";
+    } else {
+      ruleString = ruleString.slice(0, -1);
+      hexagonalType = "honeycomb";
+    }
   }
 
   // B/S
@@ -170,7 +190,13 @@ export function parseOuterTotalistic(
     if (b !== undefined && s !== undefined) {
       return {
         type: "outer-totalistic",
-        transition: bsToTransition(b, s, neighborhood, triangularType),
+        transition: bsToTransition(
+          b,
+          s,
+          neighborhood,
+          triangularType,
+          hexagonalType,
+        ),
         ...generations == null ? {} : {
           generations: Number(generations),
         },
@@ -183,6 +209,9 @@ export function parseOuterTotalistic(
         ...triangularType == null ? {} : {
           triangularType,
         },
+        ...hexagonalType == null ? {} : {
+          hexagonalType,
+        },
       };
     }
   }
@@ -193,13 +222,23 @@ export function parseOuterTotalistic(
 function getMaxCount(
   neighborhood: OuterTotalisticRule["neighborhood"],
   triangularType: OuterTotalisticRule["triangularType"],
+  hexagonalType: OuterTotalisticRule["hexagonalType"],
 ): number {
   if (neighborhood == undefined) {
     return 8;
   } else if (neighborhood === "von-neumann") {
     return 4;
   } else if (neighborhood === "hexagonal") {
-    return 6;
+    switch (hexagonalType) {
+      case "honeycomb":
+        return 6;
+      case "tripod":
+        return 3;
+      default:
+        throw new Error(
+          "hexagonalType is required when neighborhood is hexagonal",
+        );
+    }
   } else if (neighborhood === "triangular") {
     if (triangularType == undefined) {
       throw new Error(
@@ -228,6 +267,7 @@ function bsToTransition(
   s: string,
   neighborhood: OuterTotalisticRule["neighborhood"],
   triangularType: OuterTotalisticRule["triangularType"],
+  hexagonalType: OuterTotalisticRule["hexagonalType"],
 ): {
   birth: number[];
   survive: number[];
@@ -235,7 +275,7 @@ function bsToTransition(
   const bs = toList(b);
   const ss = toList(s);
 
-  const maxCount = getMaxCount(neighborhood, triangularType);
+  const maxCount = getMaxCount(neighborhood, triangularType, hexagonalType);
 
   if (bs.some((x) => !Number.isInteger(x) || x < 0 || x > maxCount)) {
     throw new Error(`birth should be 0 to ${numberToChar(maxCount)}`);
@@ -270,18 +310,37 @@ function numberToChar(n: number) {
 export function stringifyOuterTotalistic(
   rule: OuterTotalisticRule,
 ): string {
-  const birth = rule.transition.birth;
-  const survive = rule.transition.survive;
-  const maxCount = getMaxCount(
-    rule.neighborhood,
-    rule.triangularType,
-  );
+  if (rule.neighborhood === "triangular" && rule.triangularType == undefined) {
+    throw new Error(
+      "triangularType is required when neighborhood is 'triangular'",
+    );
+  }
 
   if (rule.neighborhood !== "triangular" && rule.triangularType != undefined) {
     throw new Error(
       "triangularType is only valid when neighborhood is 'triangular'",
     );
   }
+
+  if (rule.neighborhood === "hexagonal" && rule.hexagonalType == undefined) {
+    throw new Error(
+      "hexagonalType is required when neighborhood is 'hexagonal'",
+    );
+  }
+
+  if (rule.neighborhood !== "hexagonal" && rule.hexagonalType != undefined) {
+    throw new Error(
+      "hexagonalType is only valid when neighborhood is 'hexagonal'",
+    );
+  }
+
+  const birth = rule.transition.birth;
+  const survive = rule.transition.survive;
+  const maxCount = getMaxCount(
+    rule.neighborhood,
+    rule.triangularType,
+    rule.hexagonalType,
+  );
 
   if (birth.some((x) => !Number.isInteger(x) || x < 0 || x > maxCount)) {
     throw new Error(`birth should be 0 to ${maxCount}`);
@@ -300,7 +359,7 @@ export function stringifyOuterTotalistic(
     rule.neighborhood === "von-neumann"
       ? "V"
       : rule.neighborhood === "hexagonal"
-      ? "H"
+      ? rule.hexagonalType === "tripod" ? "HT" : "H"
       : rule.neighborhood === "triangular"
       ? rule.triangularType == undefined
         ? (() => {

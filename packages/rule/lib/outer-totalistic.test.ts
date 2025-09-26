@@ -69,6 +69,19 @@ Deno.test("parseOuterTotalistic B3/S23H", () => {
       survive: [2, 3],
     },
     neighborhood: "hexagonal",
+    hexagonalType: "honeycomb",
+  });
+});
+
+Deno.test("parseOuterTotalistic B3/S23HT", () => {
+  assertEquals(parseOuterTotalistic("B3/S23HT"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3],
+      survive: [2, 3],
+    },
+    neighborhood: "hexagonal",
+    hexagonalType: "tripod",
   });
 });
 
@@ -99,17 +112,29 @@ Deno.test("parseOuterTotalistic XYZ", () => {
   ];
 
   for (const item of items) {
-    assertThrows(() => {
-      parseOuterTotalistic(item);
-    });
+    assertThrows(
+      () => {
+        parseOuterTotalistic(item);
+      },
+      Error,
+      "Parse Error",
+    );
 
-    assertThrows(() => {
-      parseOuterTotalistic(item + "H");
-    });
+    assertThrows(
+      () => {
+        parseOuterTotalistic(item + "H");
+      },
+      Error,
+      "Parse Error",
+    );
 
-    assertThrows(() => {
-      parseOuterTotalistic(item + "V");
-    });
+    assertThrows(
+      () => {
+        parseOuterTotalistic(item + "V");
+      },
+      Error,
+      "Parse Error",
+    );
   }
 });
 
@@ -283,12 +308,14 @@ Deno.test("parseOuterTotalistic stringifyOuterTotalistic", () => {
     "B3/S23V",
     "B3/S23V:T30+1,20",
     "B3/S23H:K30,20*+1",
+    "B3/S23HT",
     "B3/S23L",
     "B3/S23XYZL",
     "B3XYZ/S23L",
     "B3/S23LI",
     "B3/S23LO",
     "B3/S23LB",
+    "B3/S23LV",
     "B3/S23LE",
     "B3/S23LR",
   ];
@@ -307,6 +334,40 @@ Deno.test("stringifyOuterTotalistic sort", () => {
     },
   });
   assertEquals(rule, "B26/S14");
+});
+
+Deno.test("stringifyOuterTotalistic triangular error", () => {
+  assertThrows(
+    () => {
+      stringifyOuterTotalistic({
+        type: "outer-totalistic",
+        transition: {
+          birth: [6, 2],
+          survive: [4, 1],
+        },
+        triangularType: "moore",
+      });
+    },
+    Error,
+    "triangularType is only valid when neighborhood is 'triangular'",
+  );
+});
+
+Deno.test("stringifyOuterTotalistic hexagonal error", () => {
+  assertThrows(
+    () => {
+      stringifyOuterTotalistic({
+        type: "outer-totalistic",
+        transition: {
+          birth: [6, 2],
+          survive: [4, 1],
+        },
+        hexagonalType: "honeycomb",
+      });
+    },
+    Error,
+    "hexagonalType is only valid when neighborhood is 'hexagonal'",
+  );
 });
 
 Deno.test("stringifyOuterTotalistic error", () => {
