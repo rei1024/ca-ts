@@ -1,3 +1,10 @@
+## [0.14.0] - 2025-09-27
+
+### Changed
+
+- **BREAKING** Supported other connecting directions in sphere grid.
+- Exported `GridParameter`.
+
 ## [0.13.0] - 2025-09-27
 
 ### Changed

@@ -24,11 +24,21 @@ export type GridParameter = {
    */
   topology: {
     /**
-     * - P: Plane
      * - S: Sphere
+     */
+    type: "S";
+    /**
+     * - `"top-to-left"`: Top edge is connected to left edge. (default)
+     * - `"top-to-right"`: Top edge is connected to right edge. (with *)
+     *    - Golly 4.3 does not support this.
+     */
+    join: "top-to-left" | "top-to-right";
+  } | {
+    /**
+     * - P: Plane
      * - C: Cross-surface
      */
-    type: "P" | "S" | "C";
+    type: "P" | "C";
   } | {
     /**
      * - K: Klein bottle
@@ -76,13 +86,18 @@ export function parseGridParameter(str: string): GridParameter | null {
   const sizeStr = str.slice(1);
 
   if (topology === "S") {
-    if (!/^[0-9]+$/.test(sizeStr)) {
-      throw new Error("non valid character");
+    const match = sizeStr.match(/^(?<size>[0-9]+)(?<join>\*)?$/);
+    if (!match) {
+      throw new Error("invalid size for sphere");
     }
-    const size = Number(sizeStr);
+    const size = Number(match.groups?.size);
+    if (!Number.isInteger(size) || size < 0) {
+      throw new Error("invalid size for sphere");
+    }
     if (size === 0) {
-      throw new Error("infinite size is disallowed for cross-surface");
+      throw new Error("infinite size is disallowed for sphere");
     }
+    const join = match.groups?.join ? "top-to-right" : "top-to-left";
     return {
       size: {
         width: size,
@@ -90,6 +105,7 @@ export function parseGridParameter(str: string): GridParameter | null {
       },
       topology: {
         type: topology,
+        join,
       },
     };
   }
@@ -259,7 +275,9 @@ export function stringifyGridParameter(gridParameter: GridParameter): string {
       if (size.height !== size.width) {
         throw new Error("Non same size for sphere");
       }
-      return `S${size.width}`;
+      return `S${size.width}${
+        gridParameter.topology.join === "top-to-right" ? "*" : ""
+      }`;
     }
     case "T": {
       const isHorizontalShift =

@@ -307,7 +307,9 @@ Deno.test("parseOuterTotalistic stringifyOuterTotalistic", () => {
     "B3/S23/3:T20,40",
     "B3/S23V",
     "B3/S23V:T30+1,20",
-    "B3/S23H:K30,20*+1",
+    "B3/S23:K30,20*+1",
+    "B3/S23:S30",
+    "B3/S23:S30*",
     "B3/S23HT",
     "B3/S23L",
     "B3/S23XYZL",
@@ -334,6 +336,19 @@ Deno.test("stringifyOuterTotalistic sort", () => {
     },
   });
   assertEquals(rule, "B26/S14");
+});
+
+Deno.test("stringifyOuterTotalistic sort triangular", () => {
+  const rule = stringifyOuterTotalistic({
+    type: "outer-totalistic",
+    transition: {
+      birth: [6, 10, 2],
+      survive: [11, 4, 1],
+    },
+    neighborhood: "triangular",
+    triangularType: "moore",
+  });
+  assertEquals(rule, "B26X/S14YL");
 });
 
 Deno.test("stringifyOuterTotalistic triangular error", () => {
