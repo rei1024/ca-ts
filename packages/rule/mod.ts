@@ -71,10 +71,12 @@ import { stringifyINT } from "./lib/int/stringify-int.ts";
 import { parseMapRule } from "./lib/map/parse-map.ts";
 import type { MAPRule } from "./lib/map/core.ts";
 import { stringifyMap } from "./lib/map/stringify-map.ts";
+import type { GridParameter } from "./lib/grid/mod.ts";
 
 export type { OuterTotalisticRule };
 export type { INTCondition, INTRule };
 export type { MAPRule };
+export type { GridParameter };
 
 /**
  * Rule of a cellular automaton.

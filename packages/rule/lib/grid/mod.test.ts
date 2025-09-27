@@ -18,7 +18,15 @@ Deno.test("parseGridParameter Sphere", () => {
       width: 30,
       height: 30,
     },
-    topology: { type: "S" },
+    topology: { type: "S", join: "top-to-left" },
+  });
+
+  assertEquals(parseGridParameter("S30*"), {
+    size: {
+      width: 30,
+      height: 30,
+    },
+    topology: { type: "S", join: "top-to-right" },
   });
 
   assertThrows(() => {
@@ -27,6 +35,10 @@ Deno.test("parseGridParameter Sphere", () => {
 
   assertThrows(() => {
     parseGridParameter("S-1");
+  });
+
+  assertThrows(() => {
+    parseGridParameter("S10**");
   });
 
   assertThrows(() => {
