@@ -278,3 +278,172 @@ Deno.test("BitGrid getBoundingBox 2", () => {
     });
   }
 });
+
+Deno.test("BitGrid getTopRowLeftCellPosition", () => {
+  {
+    const grid = BitGrid.make({ width: 64, height: 8 });
+    assertEquals(grid.getTopRowLeftCellPosition(), null);
+    grid.set(1, 0);
+    assertEquals(grid.getTopRowLeftCellPosition(), { x: 1, y: 0 });
+    grid.set(0, 1);
+    assertEquals(grid.getTopRowLeftCellPosition(), { x: 1, y: 0 });
+  }
+
+  {
+    const grid = BitGrid.make({ width: 64, height: 8 });
+    assertEquals(grid.getTopRowLeftCellPosition(), null);
+    grid.set(3, 4);
+    assertEquals(grid.getTopRowLeftCellPosition(), { x: 3, y: 4 });
+    grid.set(3, 3);
+    assertEquals(grid.getTopRowLeftCellPosition(), { x: 3, y: 3 });
+  }
+
+  {
+    const grid = BitGrid.make({ width: 64, height: 8 });
+    assertEquals(grid.getTopRowLeftCellPosition(), null);
+    grid.set(3, 4);
+    assertEquals(grid.getTopRowLeftCellPosition(), { x: 3, y: 4 });
+    grid.set(2, 4);
+    assertEquals(grid.getTopRowLeftCellPosition(), { x: 2, y: 4 });
+  }
+
+  {
+    const grid = BitGrid.make({ width: 64, height: 8 });
+    assertEquals(grid.getTopRowLeftCellPosition(), null);
+    grid.set(35, 4);
+    assertEquals(grid.getTopRowLeftCellPosition(), { x: 35, y: 4 });
+  }
+});
+
+Deno.test("BitGrid isSamePatternIgnoreTranslation", () => {
+  const w = 64;
+  const h = 64;
+
+  // --- Test 1: Empty Grids ---
+  const g1 = BitGrid.make({ width: w, height: h });
+  const g2 = BitGrid.make({ width: w, height: h });
+  assertEquals(
+    g1.isSamePatternIgnoreTranslation(g2),
+    true,
+    "T1: Empty grids should match.",
+  );
+
+  // --- Test 2: Identical Position (No Translation) ---
+  g1.set(10, 10);
+  g1.set(11, 10);
+  g2.set(10, 10);
+  g2.set(11, 10);
+  assertEquals(
+    g1.isSamePatternIgnoreTranslation(g2),
+    true,
+    "T2: Identical pattern at same position.",
+  );
+
+  // --- Test 3: Simple Translation (Match) ---
+  const g3 = BitGrid.make({ width: w, height: h });
+  g3.set(20, 30); // TopLeft(20, 30)
+  g3.set(21, 30);
+  assertEquals(
+    g1.isSamePatternIgnoreTranslation(g3),
+    true,
+    "T3: Identical pattern with translation.",
+  );
+
+  // --- Test 4: More Complex Pattern (Glider) ---
+  const gliderA = BitGrid.make({ width: w, height: h });
+  gliderA.set(1, 0); // TopLeft (1, 0)
+  gliderA.set(2, 1);
+  gliderA.set(0, 2);
+  gliderA.set(1, 2);
+  gliderA.set(2, 2);
+
+  const gliderB = BitGrid.make({ width: w, height: h });
+  gliderB.set(10, 5); // TopLeft (10, 5)
+  gliderB.set(11, 6);
+  gliderB.set(9, 7);
+  gliderB.set(10, 7);
+  gliderB.set(11, 7);
+  assertEquals(
+    gliderA.isSamePatternIgnoreTranslation(gliderB),
+    true,
+    "T4: Glider pattern match with translation.",
+  );
+
+  // --- Test 5: Mismatch (Different Population) ---
+  gliderB.set(50, 50); // Add one extra cell
+  assertEquals(
+    gliderA.isSamePatternIgnoreTranslation(gliderB),
+    false,
+    "T5: Mismatch due to different population.",
+  );
+  gliderB.clear();
+
+  // --- Test 6: Mismatch (Same Population, Different Shape) ---
+  // A: Glider (Pop 5)
+  // C: 5 cells in a column (Pop 5)
+  const gC = BitGrid.make({ width: w, height: h });
+  gC.set(10, 10);
+  gC.set(10, 11);
+  gC.set(10, 12);
+  gC.set(10, 13);
+  gC.set(10, 14);
+  assertEquals(
+    gliderA.getPopulation(),
+    gC.getPopulation(),
+    "Populations should be equal (5)",
+  );
+  assertEquals(
+    gliderA.isSamePatternIgnoreTranslation(gC),
+    false,
+    "T6: Mismatch due to different shape.",
+  );
+
+  // --- Test 7: Boundary Condition Match (Near edge) ---
+  const edgeA = BitGrid.make({ width: w, height: h });
+  edgeA.set(62, 62); // TopLeft (62, 62)
+  edgeA.set(63, 63);
+
+  const edgeB = BitGrid.make({ width: w, height: h });
+  edgeB.set(0, 0); // TopLeft (0, 0)
+  edgeB.set(1, 1);
+  // dx = 0 - 62 = -62. dy = 0 - 62 = -62.
+  // edgeA(62, 62) -> check edgeB(62-62, 62-62) = edgeB(0, 0). Match.
+  // edgeA(63, 63) -> check edgeB(63-62, 63-62) = edgeB(1, 1). Match.
+  assertEquals(
+    edgeA.isSamePatternIgnoreTranslation(edgeB),
+    true,
+    "T7: Boundary Match",
+  );
+
+  // --- Test 8: Boundary Condition Mismatch (Partially out of bounds after shift) ---
+  const edgeC = BitGrid.make({ width: w, height: h });
+  edgeC.set(1, 1); // TopLeft (1, 1)
+
+  const edgeD = BitGrid.make({ width: 3, height: 3 });
+  edgeD.set(0, 0);
+
+  // Set up edge case where the pattern is shifted near the top-left boundary of the grid.
+  // edgeA: (62, 62) (TopLeft: 62, 62)
+  // edgeD: (0, 0) (TopLeft: 0, 0) -> Pop 1.
+  // Pop 2 != Pop 1. -> False (Correct)
+  assertEquals(
+    edgeA.isSamePatternIgnoreTranslation(edgeD),
+    false,
+    "T8a: Boundary Mismatch (Pop)",
+  );
+
+  edgeD.clear();
+  edgeD.set(0, 0); // Pop 1. TopLeft (0, 0)
+  edgeA.clear();
+  edgeA.set(50, 50); // Pop 1. TopLeft (50, 50)
+
+  // Match check: edgeA.isSamePatternIgnoreTranslation(edgeD)
+  // Pop is 1. Match.
+  // dx = 0 - 50 = -50. dy = 0 - 50 = -50.
+  // edgeA(50, 50) -> check edgeD(50-50, 50-50) = edgeD(0, 0). Match.
+  assertEquals(
+    edgeA.isSamePatternIgnoreTranslation(edgeD),
+    true,
+    "T8b: Boundary Match (Single Cell)",
+  );
+});

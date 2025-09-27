@@ -1,3 +1,10 @@
+## [0.12.0] - 2025-09-27
+
+### Changed
+
+- Add `BitGrid.getTopRowLeftCellPosition`
+- Add `BitGird.isSamePatternIgnoreTranslation`
+
 ## [0.11.3] - 2025-09-27
 
 ### Changed

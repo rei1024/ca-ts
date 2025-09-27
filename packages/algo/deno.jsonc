@@ -1,6 +1,6 @@
 {
   "name": "@ca-ts/algo",
-  "version": "0.11.3",
+  "version": "0.12.0",
   "exports": {
     "./bit": "./bit/mod.ts",
     "./rule-loader": "./rule-loader/mod.ts"

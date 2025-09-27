@@ -84,6 +84,12 @@ export class BitGrid {
    * Sets the cell at the specified coordinates (x, y) to "alive" (1).
    */
   set(x: number, y: number) {
+    const width32 = this.width32;
+    if (x < 0 || width32 * 32 <= x || y < 0 || this.height <= y) {
+      throw new RangeError(
+        `BitGrid.set x=${x} y=${y}`,
+      );
+    }
     const offset = x >>> 5; // = Math.floor(x / 32)
     const index = y * this.width32 + offset;
     const array = this.uint32array;
@@ -99,8 +105,20 @@ export class BitGrid {
    * Gets the state of the cell at the specified coordinates (x, y).
    */
   get(x: number, y: number): 0 | 1 {
+    const res = this.getSafe(x, y);
+    if (res === null) {
+      throw new RangeError(`BitGrid.get out of range x=${x} y=${y}`);
+    }
+    return res;
+  }
+
+  private getSafe(x: number, y: number): 0 | 1 | null {
     const offset = x >>> 5; // = Math.floor(x / 32)
-    const index = y * this.width32 + offset;
+    const width32 = this.width32;
+    if (x < 0 || width32 * 32 <= x || y < 0 || this.height <= y) {
+      return null;
+    }
+    const index = y * width32 + offset;
     const array = this.uint32array;
     if (array.length <= index) {
       throw new RangeError(
@@ -175,6 +193,37 @@ export class BitGrid {
           for (let u = 0; u < BITS; u++) {
             if ((value & bitMask) !== 0) {
               fn(BITS_J + u, i);
+            }
+            bitMask >>>= 1;
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Iterates over only the "alive" cells in the grid, calling the provided function
+   * for each alive cell. If the function returns true, the iteration stops.
+   */
+  private forEachAliveWithBreak(isBreak: (x: number, y: number) => boolean) {
+    const width = this.width32;
+    const height = this.height;
+    const array = this.uint32array;
+    const BITS = 32;
+    const BITS_MINUS_1 = BITS - 1;
+    for (let i = 0; i < height; i++) {
+      const rowIndex = i * width;
+      for (let j = 0; j < width; j++) {
+        const offset = rowIndex + j;
+        const value = array[offset]!;
+        if (value !== 0) {
+          let bitMask = 1 << BITS_MINUS_1;
+          const BITS_J = j * BITS;
+          for (let u = 0; u < BITS; u++) {
+            if ((value & bitMask) !== 0) {
+              if (isBreak(BITS_J + u, i)) {
+                return;
+              }
             }
             bitMask >>>= 1;
           }
@@ -421,5 +470,68 @@ export class BitGrid {
     }
 
     return newGrid;
+  }
+
+  /**
+   * most left cell in top row that is alive (1)
+   * or null if all cells are dead (0)
+   */
+  getTopRowLeftCellPosition(): { x: number; y: number } | null {
+    const height = this.getHeight();
+    const width32 = this.getWidth32();
+    const array = this.asInternalUint32Array();
+    const BITS = 32;
+    for (let i = 0; i < height; i++) {
+      const rowIndex = i * width32;
+      for (let j = 0; j < width32; j++) {
+        const offset = rowIndex + j;
+        const value = array[offset]!;
+        if (value !== 0) {
+          // Math.clz32 returns the number of leading zero bits (0-31).
+          // This count is exactly the bit index (u) from the left (MSB)
+          // where the first '1' bit is found.
+          const u = Math.clz32(value);
+          const x = j * BITS + u;
+          const y = i;
+          return { x, y };
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Checks if this BitGrid has the same pattern as another BitGrid,
+   * ignoring translation (position).
+   */
+  isSamePatternIgnoreTranslation(other: BitGrid): boolean {
+    const aPopulation = this.getPopulation();
+    const bPopulation = other.getPopulation();
+    if (aPopulation !== bPopulation) {
+      return false;
+    }
+
+    const aPos = this.getTopRowLeftCellPosition();
+    const bPos = other.getTopRowLeftCellPosition();
+
+    if (aPos === null || bPos === null) {
+      return aPos === bPos;
+    }
+
+    const dx = bPos.x - aPos.x;
+    const dy = bPos.y - aPos.y;
+
+    let match = true;
+
+    this.forEachAliveWithBreak((x, y) => {
+      // if out of range, treat as blank space
+      if (other.getSafe(x + dx, y + dy) !== 1) {
+        match = false;
+        return true; // break
+      }
+      return false;
+    });
+    if (!match) return false;
+    return match;
   }
 }
