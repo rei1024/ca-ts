@@ -38,6 +38,10 @@ Deno.test("parseGridParameter Sphere", () => {
   });
 
   assertThrows(() => {
+    parseGridParameter("S10**");
+  });
+
+  assertThrows(() => {
     parseGridParameter("S10,10");
   });
 });
