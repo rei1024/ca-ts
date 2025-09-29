@@ -68,6 +68,8 @@ Deno.test("stringifyRule parseRule", () => {
     assertEquals(stringifyRule(parsedRule), rule);
   }
   assertBack("B3/S23");
+  assertBack("B3/S23H");
+  assertBack("B3/S23oH");
   assertBack(TEST_MAP_CGOL);
 });
 

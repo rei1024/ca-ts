@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { parseIntRule } from "./int.ts";
+import { parseIntRule } from "./parse-int.ts";
 
 Deno.test("parseIntRule B3/S23", () => {
   assertEquals(parseIntRule("B3/S23"), {
