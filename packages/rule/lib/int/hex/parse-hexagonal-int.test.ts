@@ -11,6 +11,16 @@ Deno.test("parseHexagonalIntRule B/SH", () => {
   });
 });
 
+Deno.test("parseHexagonalIntRule B0156/S0156H", () => {
+  assertEquals(parseHexagonalIntRule("B0156/S0156H"), {
+    type: "hexagonal-int",
+    transition: {
+      birth: ["0", "1", "5", "6"],
+      survive: ["0", "1", "5", "6"],
+    },
+  });
+});
+
 Deno.test("parseHexagonalIntRule b/sh", () => {
   assertEquals(parseHexagonalIntRule("b/sh"), {
     type: "hexagonal-int",

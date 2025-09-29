@@ -2,6 +2,7 @@ import { assertEquals, assertThrows } from "@std/assert";
 
 import { stringifyHexagonalINT } from "./stringify-hexagonal-int.ts";
 import { parseHexagonalIntRule } from "./parse-hexagonal-int.ts";
+import type { HexagonalINTCondition, HexagonalINTRule } from "@ca-ts/rule";
 
 Deno.test("stringifyHexagonalINT", () => {
   assertEquals(
@@ -59,27 +60,54 @@ Deno.test("parseHexagonalIntRule stringifyHexagonalINT", () => {
 });
 
 Deno.test("stringifyHexagonalINT condition error", () => {
-  assertThrows(() => {
-    stringifyHexagonalINT({
+  const items: HexagonalINTRule[] = [
+    {
       type: "hexagonal-int",
       transition: {
         birth: ["3o"],
         // deno-lint-ignore no-explicit-any
-        survive: ["1o" as any],
+        survive: ["1o"] as any,
       },
-    });
-  });
-
-  assertThrows(() => {
-    stringifyHexagonalINT({
+    },
+    {
       type: "hexagonal-int",
       transition: {
         // deno-lint-ignore no-explicit-any
-        birth: ["1o" as any],
+        birth: ["1o"] as any,
         survive: ["3o"],
       },
+    },
+    {
+      type: "hexagonal-int",
+      transition: {
+        // deno-lint-ignore no-explicit-any
+        birth: ["5o"] as any,
+        survive: ["3o"],
+      },
+    },
+    {
+      type: "hexagonal-int",
+      transition: {
+        // deno-lint-ignore no-explicit-any
+        birth: ["0o"] as any,
+        survive: ["3o"],
+      },
+    },
+    {
+      type: "hexagonal-int",
+      transition: {
+        // deno-lint-ignore no-explicit-any
+        birth: ["6o"] as any,
+        survive: ["3o"],
+      },
+    },
+  ];
+
+  for (const item of items) {
+    assertThrows(() => {
+      stringifyHexagonalINT(item);
     });
-  });
+  }
 });
 
 Deno.test("stringifyINT generation error", () => {
