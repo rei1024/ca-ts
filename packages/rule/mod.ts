@@ -66,7 +66,11 @@ import {
   parseOuterTotalistic,
   stringifyOuterTotalistic,
 } from "./lib/outer-totalistic.ts";
-import { type INTCondition, type INTRule, parseIntRule } from "./lib/int.ts";
+import {
+  type INTCondition,
+  type INTRule,
+  parseIntRule,
+} from "./lib/int/moore/parse-int.ts";
 import { stringifyINT } from "./lib/int/moore/stringify-int.ts";
 import {
   type HexagonalINTCondition,
