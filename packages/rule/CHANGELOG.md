@@ -1,3 +1,10 @@
+## [0.15.0] - 2025-09-29
+
+### Changed
+
+- **BREAKING** Add hexagonal neighborhood isotropic non-totalistic rule.
+  - Add `HexagonalINTRule` and `HexagonalINTCondition`
+
 ## [0.14.0] - 2025-09-27
 
 ### Changed

@@ -1,7 +1,7 @@
 import { assertEquals, assertThrows } from "@std/assert";
 
 import { stringifyINT } from "./stringify-int.ts";
-import { parseIntRule } from "../int.ts";
+import { parseIntRule } from "./parse-int.ts";
 
 Deno.test("stringifyINT", () => {
   assertEquals(

@@ -66,8 +66,18 @@ import {
   parseOuterTotalistic,
   stringifyOuterTotalistic,
 } from "./lib/outer-totalistic.ts";
-import { type INTCondition, type INTRule, parseIntRule } from "./lib/int.ts";
-import { stringifyINT } from "./lib/int/stringify-int.ts";
+import {
+  type INTCondition,
+  type INTRule,
+  parseIntRule,
+} from "./lib/int/moore/parse-int.ts";
+import { stringifyINT } from "./lib/int/moore/stringify-int.ts";
+import {
+  type HexagonalINTCondition,
+  type HexagonalINTRule,
+  parseHexagonalIntRule,
+} from "./lib/int/hex/parse-hexagonal-int.ts";
+import { stringifyHexagonalINT } from "./lib/int/hex/stringify-hexagonal-int.ts";
 import { parseMapRule } from "./lib/map/parse-map.ts";
 import type { MAPRule } from "./lib/map/core.ts";
 import { stringifyMap } from "./lib/map/stringify-map.ts";
@@ -75,13 +85,18 @@ import type { GridParameter } from "./lib/grid/mod.ts";
 
 export type { OuterTotalisticRule };
 export type { INTCondition, INTRule };
+export type { HexagonalINTCondition, HexagonalINTRule };
 export type { MAPRule };
 export type { GridParameter };
 
 /**
  * Rule of a cellular automaton.
  */
-export type ParsedRule = OuterTotalisticRule | INTRule | MAPRule;
+export type ParsedRule =
+  | OuterTotalisticRule
+  | INTRule
+  | HexagonalINTRule
+  | MAPRule;
 
 /**
  * Parse a rulestring.
@@ -138,6 +153,13 @@ export function parseRule(ruleString: string): ParsedRule {
     // nop
   }
 
+  try {
+    const hexInt = parseHexagonalIntRule(ruleString);
+    return hexInt;
+  } catch {
+    // nop
+  }
+
   throw new Error("Parse error");
 }
 
@@ -167,6 +189,9 @@ export function stringifyRule(rule: ParsedRule): string {
     }
     case "outer-totalistic": {
       return stringifyOuterTotalistic(rule);
+    }
+    case "hexagonal-int": {
+      return stringifyHexagonalINT(rule);
     }
   }
 }

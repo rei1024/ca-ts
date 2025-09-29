@@ -1,13 +1,14 @@
-import type { INTCondition, INTRule } from "../../mod.ts";
-import { stringifyGridParameterWithColon } from "../grid/mod.ts";
-import { intModifiers } from "./int-condition.ts";
+import { stringifyGridParameterWithColon } from "../../grid/mod.ts";
+import { hexagonalINTModifiers } from "./hex-int-condition.ts";
+import type {
+  HexagonalINTCondition,
+  HexagonalINTRule,
+} from "./parse-hexagonal-int.ts";
 
 /**
- * Convert an INT rule to a string.
- *
- * Using Hensel notation.
+ * Convert an Hexagonal neighbourhood INT rule to a string.
  */
-export function stringifyINT(rule: INTRule): string {
+export function stringifyHexagonalINT(rule: HexagonalINTRule): string {
   const birth = rule.transition.birth;
   const survive = rule.transition.survive;
 
@@ -50,10 +51,10 @@ export function stringifyINT(rule: INTRule): string {
 
   return `B${encodeConditions(birth)}/S${
     encodeConditions(survive)
-  }${generations}${stringifyGridParameterWithColon(rule.gridParameter)}`;
+  }${generations}H${stringifyGridParameterWithColon(rule.gridParameter)}`;
 }
 
-function encodeConditions(cs: INTCondition[]): string {
+function encodeConditions(cs: HexagonalINTCondition[]): string {
   // Alphabetical order is generally seen
   cs = cs.slice().sort();
   const countToConditionLetters = new Map<number, string[]>();
@@ -68,7 +69,7 @@ function encodeConditions(cs: INTCondition[]): string {
   let conditionString = "";
 
   for (const [count, conditions] of countToConditionLetters.entries()) {
-    if (count === 0 || count === 8) {
+    if (count === 0 || count == 1 || count === 5 || count === 6) {
       conditionString += count.toString();
       continue;
     }
@@ -82,7 +83,7 @@ function encodeConditions(cs: INTCondition[]): string {
     let finalConditions = conditions;
 
     // deno-lint-ignore no-explicit-any
-    const possibleLetters: string[] = (intModifiers as any)[count];
+    const possibleLetters: string[] = (hexagonalINTModifiers as any)[count];
     const negatedLettersLength = possibleLetters.length - conditions.length +
       1; // +1 for "-"
     if (possibleLetters.length === conditions.length) {
@@ -104,6 +105,8 @@ function encodeConditions(cs: INTCondition[]): string {
 }
 
 function getAllINTConditions() {
-  return Object.entries(intModifiers).flatMap(([n, a]) => a.map((c) => n + c))
-    .concat(["0", "8"]);
+  return Object.entries(hexagonalINTModifiers).flatMap(([n, a]) =>
+    a.map((c) => n + c)
+  )
+    .concat(["0", "1", "5", "6"]);
 }

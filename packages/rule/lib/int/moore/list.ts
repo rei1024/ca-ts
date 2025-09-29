@@ -1,4 +1,4 @@
-import type { INTCondition } from "../../mod.ts";
+import type { INTCondition } from "../../../mod.ts";
 
 // created by `createConditionList()`
 /**

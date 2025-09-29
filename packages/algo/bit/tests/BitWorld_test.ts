@@ -5,7 +5,7 @@ import { BitWorld } from "../BitWorld.ts";
 import { World } from "./world.ts";
 import { parseRule } from "../../../rule/mod.ts";
 import { parseRLE } from "../../../rle/mod.ts";
-import { parseIntRule } from "../../../rule/lib/int.ts";
+import { parseIntRule } from "../../../rule/lib/int/moore/parse-int.ts";
 import { parseMapRule } from "../../../rule/lib/map/parse-map.ts";
 import { TEST_MAP_CGOL } from "../../../rule/lib/map/parse-map.test.ts";
 

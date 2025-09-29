@@ -1,43 +1,36 @@
-import { type GridParameter, parseGridParameter } from "./grid/mod.ts";
-import { intModifiers } from "./int/int-condition.ts";
+import { type GridParameter, parseGridParameter } from "./../../grid/mod.ts";
+import { hexagonalINTModifiers } from "./hex-int-condition.ts";
 
 /**
- * A condition of the INT rule.
+ * A condition of the Hexagonal neighborhood INT rule.
  *
- * [Isotropic non-totalistic rule > Square grid | LifeWiki](https://conwaylife.com/wiki/Isotropic_non-totalistic_rule#Square_grid)
- *
- * ```ts ignore
- * type INTCondition = "0" | "1c" | "1e" | "2c" | ... | "7e" | "7c" | "8"
+ * [Hexagonal neighbourhood > Isotropic non-totalistic rules | LifeWiki](https://conwaylife.com/wiki/Hexagonal_neighbourhood#Isotropic_non-totalistic_rules)
  */
-export type INTCondition =
+export type HexagonalINTCondition =
   | `0`
-  | `1${typeof intModifiers["1"][number]}`
-  | `2${typeof intModifiers["2"][number]}`
-  | `3${typeof intModifiers["3"][number]}`
-  | `4${typeof intModifiers["4"][number]}`
-  | `5${typeof intModifiers["5"][number]}`
-  | `6${typeof intModifiers["6"][number]}`
-  | `7${typeof intModifiers["7"][number]}`
-  | `8`;
+  | `1`
+  | `2${typeof hexagonalINTModifiers["2"][number]}`
+  | `3${typeof hexagonalINTModifiers["3"][number]}`
+  | `4${typeof hexagonalINTModifiers["4"][number]}`
+  | `5`
+  | `6`;
 
 /**
- * Isotropic non-totalistic rule
+ * Hexagonal neighborhood isotropic non-totalistic rule
  *
- * [Isotropic non-totalistic rule | LifeWiki](https://conwaylife.com/wiki/Isotropic_non-totalistic_rule)
+ * [Hexagonal neighbourhood > Isotropic non-totalistic rules | LifeWiki](https://conwaylife.com/wiki/Hexagonal_neighbourhood#Isotropic_non-totalistic_rules)
  */
-export type INTRule = {
+export type HexagonalINTRule = {
   /**
-   * Isotropic non-totalistic rule
+   * Hexagonal neighborhood isotropic non-totalistic rule
    */
-  type: "int";
-  /**
-   * Example: `B3k/S2ce` -> `{ birth: ["3k"], survive: ["2c", "2e"] }`
-   */
+  type: "hexagonal-int";
+  /** */
   transition: {
     /** Conditions for birth. */
-    birth: INTCondition[];
+    birth: HexagonalINTCondition[];
     /** Conditions for survival. */
-    survive: INTCondition[];
+    survive: HexagonalINTCondition[];
   };
   /**
    * If provided, number of states for the [Generations](https://conwaylife.com/wiki/Generations) rule.
@@ -50,11 +43,11 @@ export type INTRule = {
 };
 
 /**
- * Parse {@link INTRule} as [Hensel notation](https://conwaylife.com/wiki/Isotropic_non-totalistic_rule)
+ * Parse {@link HexagonalINTRule}
  */
-export function parseIntRule(
+export function parseHexagonalIntRule(
   ruleString: string,
-): INTRule {
+): HexagonalINTRule {
   ruleString = ruleString.trim();
 
   const colonIndex = ruleString.indexOf(":");
@@ -65,12 +58,18 @@ export function parseIntRule(
     gridParameter = parseGridParameter(gridParameterStr);
   }
 
+  if (!(ruleString.endsWith("H") || ruleString.endsWith("h"))) {
+    throw new Error(`must end with "H"`);
+  }
+
+  ruleString = ruleString.slice(0, -1);
+
   const bsRegex =
     // cspell:disable-next-line
-    /^(B|b)(?<birth>(\d|[cekainyqjrtwz-])*)\/(S|s)(?<survive>(\d|[cekainyqjrtwz-])*)(|\/(?<generations>\d+))$/;
+    /^(B|b)(?<birth>(\d|[omp-])*)\/(S|s)(?<survive>(\d|[omp-])*)(|\/(?<generations>\d+))$/;
   const sbRegex =
     // cspell:disable-next-line
-    /^(?<survive>(\d|[cekainyqjrtwz-])*)\/(?<birth>(\d|[cekainyqjrtwz-])*)(|\/(?<generations>\d+))$/;
+    /^(?<survive>(\d|[omp-])*)\/(?<birth>(\d|[omp-])*)(|\/(?<generations>\d+))$/;
   const match = ruleString.match(bsRegex) ?? ruleString.match(sbRegex);
   if (!match) {
     throw new Error("Parse Error");
@@ -81,7 +80,7 @@ export function parseIntRule(
   const generations = match.groups?.generations;
   if (b !== undefined && s !== undefined) {
     return {
-      type: "int",
+      type: "hexagonal-int",
       transition: bsToTransition(b, s),
       ...generations == null ? {} : {
         generations: Number(generations),
@@ -96,8 +95,8 @@ export function parseIntRule(
 }
 
 function bsToTransition(b: string, s: string): {
-  birth: INTCondition[];
-  survive: INTCondition[];
+  birth: HexagonalINTCondition[];
+  survive: HexagonalINTCondition[];
 } {
   return {
     birth: toCondition(b),
@@ -105,8 +104,8 @@ function bsToTransition(b: string, s: string): {
   };
 }
 
-function toCondition(str: string): INTCondition[] {
-  const conditions: INTCondition[] = [];
+function toCondition(str: string): HexagonalINTCondition[] {
+  const conditions: HexagonalINTCondition[] = [];
   let i = 0;
 
   while (i < str.length) {
@@ -117,7 +116,7 @@ function toCondition(str: string): INTCondition[] {
     // Parse the numeric part (e.g., "1", "2", "3", etc.)
     const num = parseInt(c, 10);
 
-    if (isNaN(num) || num < 0 || num > 8) {
+    if (isNaN(num) || num < 0 || num > 6) {
       throw new Error(`Invalid number in rule string: '${c}'`);
     }
 
@@ -129,8 +128,9 @@ function toCondition(str: string): INTCondition[] {
     }
 
     // Get all possible letters for this number from the `intConditions` mapping
-    const possibleLetters =
-      intModifiers[num as keyof typeof intModifiers] as readonly string[];
+    const possibleLetters = hexagonalINTModifiers[
+      num as keyof typeof hexagonalINTModifiers
+    ] as readonly string[];
 
     // Check if there's a modifier (letter) for this number (e.g., "e", "c")
     const letters: string[] = [];
@@ -142,11 +142,11 @@ function toCondition(str: string): INTCondition[] {
 
     if (letters.length === 0) {
       // If no letters follow, it's a basic condition (e.g., "3" means all configurations for 3 neighbors)
-      if (c === "0" || c === "8") {
-        conditions.push(c as INTCondition);
+      if (c === "0" || c === "1" || c === "5" || c === "6") {
+        conditions.push(c as HexagonalINTCondition);
       } else {
         for (const letter of possibleLetters) {
-          conditions.push(`${num}${letter}` as INTCondition);
+          conditions.push(`${num}${letter}` as HexagonalINTCondition);
         }
       }
     } else {
@@ -156,7 +156,7 @@ function toCondition(str: string): INTCondition[] {
         ? possibleLetters.filter((l) => !letters.includes(l))
         : letters;
       for (const letter of addLetters) {
-        conditions.push(`${num}${letter}` as INTCondition);
+        conditions.push(`${num}${letter}` as HexagonalINTCondition);
       }
     }
   }
