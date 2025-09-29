@@ -2,6 +2,7 @@ import {
   bitAndUint32Array,
   bitCountArrayBuffer,
   bitOrUint32Array,
+  ctrz,
 } from "./internal/bitwise.ts";
 import { equalUint32Array } from "./internal/util.ts";
 
@@ -340,41 +341,51 @@ export class BitGrid {
     const width = this.width32;
     const height = this.height;
     const array = this.uint32array;
-    const BITS = 32;
-    const BITS_MINUS_1 = BITS - 1;
     let firstRowFound = false;
     let minXFound = false;
+
+    // Iterate through rows (i)
     for (let i = 0; i < height; i++) {
       const rowIndex = i * width;
+      // Iterate through words (j) in the row
       for (let j = 0; j < width; j++) {
-        const offset = rowIndex + j;
-        const value = array[offset]!;
+        const value = array[rowIndex + j]!;
         if (value === 0) {
-          continue; // skip empty cells
+          continue; // Skip empty word
         }
 
+        // Set minY to the first row where a live cell is found
         if (!firstRowFound) {
           minY = i;
           firstRowFound = true;
         }
 
+        // Update maxY to the current row index
         maxY = i;
 
-        for (let u = 0; u < BITS; u++) {
-          const alive = (value & (1 << (BITS_MINUS_1 - u))) !== 0;
-          if (alive) {
-            const x = j * 32 + u;
-            if (minXFound) {
-              minX = Math.min(minX, x);
-            } else {
-              // first found
-              minXFound = true;
-              minX = x;
-            }
+        // 1. Calculate minX within the word (closest to MSB) using Math.clz32
+        // Math.clz32(value) returns the index of the first '1' bit (0 to 31)
+        const uMin = Math.clz32(value); // Renamed from u_min
+        const xWordMin = j * 32 + uMin; // Renamed from x_word_min
 
-            maxX = Math.max(maxX, x);
-          }
+        // Update global minX
+        if (minXFound) {
+          minX = Math.min(minX, xWordMin);
+        } else {
+          minXFound = true;
+          minX = xWordMin;
         }
+
+        // 2. Calculate maxX within the word (closest to LSB) using ctrz
+        // ctrz calculates the number of trailing zeros
+        const trailingZeros = ctrz(value);
+        // The index of the rightmost '1' bit (MSB-based, 0 to 31) is 31 - (number of trailing zeros)
+        const uMax = 31 - trailingZeros; // Renamed from u_max
+
+        const xWordMax = j * 32 + uMax; // Renamed from x_word_max
+
+        // Update global maxX (always track the maximum x)
+        maxX = Math.max(maxX, xWordMax);
       }
     }
 

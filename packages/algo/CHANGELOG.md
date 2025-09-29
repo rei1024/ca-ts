@@ -1,3 +1,9 @@
+## [0.12.1] - 2025-09-29
+
+### Changed
+
+- Optimize `BitGrid.getBoundingBox`
+
 ## [0.12.0] - 2025-09-27
 
 ### Changed
