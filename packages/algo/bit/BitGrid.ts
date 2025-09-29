@@ -369,11 +369,11 @@ export class BitGrid {
         const xWordMin = j * 32 + uMin; // Renamed from x_word_min
 
         // Update global minX
-        if (!minXFound) {
+        if (minXFound) {
+          minX = Math.min(minX, xWordMin);
+        } else {
           minXFound = true;
           minX = xWordMin;
-        } else {
-          minX = Math.min(minX, xWordMin);
         }
 
         // 2. Calculate maxX within the word (closest to LSB) using ctrz
