@@ -11,8 +11,8 @@ Deno.test("parseHexagonalIntRule B/SH", () => {
   });
 });
 
-Deno.test("parseHexagonalIntRule b/sH", () => {
-  assertEquals(parseHexagonalIntRule("b/sH"), {
+Deno.test("parseHexagonalIntRule b/sh", () => {
+  assertEquals(parseHexagonalIntRule("b/sh"), {
     type: "hexagonal-int",
     transition: {
       birth: [],
@@ -21,9 +21,15 @@ Deno.test("parseHexagonalIntRule b/sH", () => {
   });
 });
 
-Deno.test("parseHexagonalIntRule 7", () => {
+Deno.test("parseHexagonalIntRule 7,8,9", () => {
   assertThrows(() => {
     parseHexagonalIntRule("b7/sH");
+  });
+  assertThrows(() => {
+    parseHexagonalIntRule("b8/sH");
+  });
+  assertThrows(() => {
+    parseHexagonalIntRule("b9/sH");
   });
 });
 

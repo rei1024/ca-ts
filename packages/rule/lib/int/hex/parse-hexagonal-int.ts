@@ -58,7 +58,7 @@ export function parseHexagonalIntRule(
     gridParameter = parseGridParameter(gridParameterStr);
   }
 
-  if (!ruleString.endsWith("H")) {
+  if (!(ruleString.endsWith("H") || ruleString.endsWith("h"))) {
     throw new Error(`must end with "H"`);
   }
 
