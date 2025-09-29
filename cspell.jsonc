@@ -5,7 +5,7 @@
     "./packages/rle/test-data/mod.ts",
     "packages/rle/stringifyRLE.test.ts",
     "packages/apgcode/parseApgcode.test.ts",
-    "packages/rule/lib/int/stringify-int.test.ts",
+    "packages/rule/lib/int/moore/stringify-int.test.ts",
     "packages/rule/mod.ts",
     "packages/rule-format/internal/test-data/rule-data.ts",
     "packages/rule/lib/outer-totalistic.test.ts",

@@ -73,7 +73,7 @@ import {
   type HexagonalINTRule,
   parseHexagonalIntRule,
 } from "./lib/int/hex/parse-hexagonal-int.ts";
-import { stringifyHexgonalINT } from "./lib/int/hex/stringify-hexagonal-int.ts";
+import { stringifyHexagonalINT } from "./lib/int/hex/stringify-hexagonal-int.ts";
 import { parseMapRule } from "./lib/map/parse-map.ts";
 import type { MAPRule } from "./lib/map/core.ts";
 import { stringifyMap } from "./lib/map/stringify-map.ts";
@@ -187,7 +187,7 @@ export function stringifyRule(rule: ParsedRule): string {
       return stringifyOuterTotalistic(rule);
     }
     case "hexagonal-int": {
-      return stringifyHexgonalINT(rule);
+      return stringifyHexagonalINT(rule);
     }
   }
 }

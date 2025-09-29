@@ -8,7 +8,7 @@ import type {
 /**
  * Convert an Hexagonal neighbourhood INT rule to a string.
  */
-export function stringifyHexgonalINT(rule: HexagonalINTRule): string {
+export function stringifyHexagonalINT(rule: HexagonalINTRule): string {
   const birth = rule.transition.birth;
   const survive = rule.transition.survive;
 

@@ -1,11 +1,11 @@
 import { assertEquals, assertThrows } from "@std/assert";
 
-import { stringifyHexgonalINT } from "./stringify-hexagonal-int.ts";
+import { stringifyHexagonalINT } from "./stringify-hexagonal-int.ts";
 import { parseHexagonalIntRule } from "./parse-hexagonal-int.ts";
 
-Deno.test("stringifyHexgonalINT", () => {
+Deno.test("stringifyHexagonalINT", () => {
   assertEquals(
-    stringifyHexgonalINT({
+    stringifyHexagonalINT({
       type: "hexagonal-int",
       transition: {
         birth: ["0"],
@@ -16,7 +16,7 @@ Deno.test("stringifyHexgonalINT", () => {
   );
 
   assertEquals(
-    stringifyHexgonalINT({
+    stringifyHexagonalINT({
       type: "hexagonal-int",
       transition: {
         birth: ["6", "0"],
@@ -27,7 +27,7 @@ Deno.test("stringifyHexgonalINT", () => {
   );
 
   assertEquals(
-    stringifyHexgonalINT({
+    stringifyHexagonalINT({
       type: "hexagonal-int",
       transition: {
         birth: [],
@@ -38,9 +38,9 @@ Deno.test("stringifyHexgonalINT", () => {
   );
 });
 
-Deno.test("parseHexagonalIntRule stringifyHexgonalINT", () => {
+Deno.test("parseHexagonalIntRule stringifyHexagonalINT", () => {
   function assertBack(rule: string) {
-    assertEquals(stringifyHexgonalINT(parseHexagonalIntRule(rule)), rule);
+    assertEquals(stringifyHexagonalINT(parseHexagonalIntRule(rule)), rule);
   }
 
   assertBack("B/SH");
@@ -58,9 +58,9 @@ Deno.test("parseHexagonalIntRule stringifyHexgonalINT", () => {
   assertBack(`B3/S23/3H:T20,40`);
 });
 
-Deno.test("stringifyHexgonalINT condition error", () => {
+Deno.test("stringifyHexagonalINT condition error", () => {
   assertThrows(() => {
-    stringifyHexgonalINT({
+    stringifyHexagonalINT({
       type: "hexagonal-int",
       transition: {
         birth: ["3o"],
@@ -71,7 +71,7 @@ Deno.test("stringifyHexgonalINT condition error", () => {
   });
 
   assertThrows(() => {
-    stringifyHexgonalINT({
+    stringifyHexagonalINT({
       type: "hexagonal-int",
       transition: {
         // deno-lint-ignore no-explicit-any
@@ -93,7 +93,7 @@ Deno.test("stringifyINT generation error", () => {
   ];
   for (const item of items) {
     assertThrows(() => {
-      stringifyHexgonalINT({
+      stringifyHexagonalINT({
         type: "hexagonal-int",
         transition: {
           birth: ["3o"],
