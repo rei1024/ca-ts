@@ -226,13 +226,6 @@ Deno.test("BitGrid getBoundingBox", () => {
     });
   }
 
-  assertEquals(grid.getBoundingBox(), {
-    maxX: 0,
-    minX: 0,
-    maxY: 0,
-    minY: 0,
-  });
-
   grid.set(2, 5);
   assertEquals(grid.getBoundingBox(), {
     maxX: 2,
@@ -277,6 +270,35 @@ Deno.test("BitGrid getBoundingBox 2", () => {
       minY: 5,
     });
   }
+
+  grid.set(63, 9);
+  {
+    const rect = grid.getBoundingBox();
+    assertEquals(rect, {
+      maxX: 63,
+      minX: 2,
+      maxY: 9,
+      minY: 5,
+    });
+  }
+});
+
+Deno.test("BitGrid getBoundingBox 3", () => {
+  const grid = BitGrid.make({ width: 32, height: 32 });
+  grid.set(0, 0);
+  assertEquals(grid.getBoundingBox(), {
+    minX: 0,
+    minY: 0,
+    maxX: 0,
+    maxY: 0,
+  });
+  grid.set(1, 0);
+  assertEquals(grid.getBoundingBox(), {
+    minX: 0,
+    minY: 0,
+    maxX: 1,
+    maxY: 0,
+  });
 });
 
 Deno.test("BitGrid getTopRowLeftCellPosition", () => {

@@ -422,3 +422,19 @@ export function bitAndUint32Array(a: Uint32Array, b: Uint32Array) {
     a[i] = a[i]! & b[i]!;
   }
 }
+
+/**
+ * Count Trailing Zeros (ctrz) utility.
+ * Calculates the number of trailing zero bits in a 32-bit integer.
+ * * @param integer - The 32-bit unsigned integer value.
+ * @returns The number of trailing zero bits (0 to 32).
+ */
+export const ctrz = (integer: number): number => {
+  // If integer is 0, all bits are zero, so return 32.
+  if (integer === 0) {
+    return 32;
+  }
+  // Isolate the LSB (Least Significant Bit) and calculate the distance from the MSB (clz32)
+  // which corresponds to the number of trailing zeros.
+  return 31 - Math.clz32(integer & -integer);
+};
