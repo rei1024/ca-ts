@@ -12,6 +12,16 @@ Deno.test("parseGridParameter Plane", () => {
   });
 });
 
+Deno.test("parseGridParameter Plane lower case", () => {
+  assertEquals(parseGridParameter("p20,30"), {
+    size: {
+      width: 20,
+      height: 30,
+    },
+    topology: { type: "P" },
+  });
+});
+
 Deno.test("parseGridParameter Sphere", () => {
   assertEquals(parseGridParameter("S30"), {
     size: {

@@ -1,5 +1,5 @@
-import type { INTCondition, INTRule } from "../../mod.ts";
-import { stringifyGridParameterWithColon } from "../grid/mod.ts";
+import type { INTCondition, INTRule } from "../../../mod.ts";
+import { stringifyGridParameterWithColon } from "../../grid/mod.ts";
 import { intModifiers } from "./int-condition.ts";
 
 /**

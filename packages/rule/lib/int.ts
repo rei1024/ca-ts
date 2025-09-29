@@ -1,5 +1,5 @@
 import { type GridParameter, parseGridParameter } from "./grid/mod.ts";
-import { intModifiers } from "./int/int-condition.ts";
+import { intModifiers } from "./int/moore/int-condition.ts";
 
 /**
  * A condition of the INT rule.

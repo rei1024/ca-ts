@@ -67,7 +67,7 @@ import {
   stringifyOuterTotalistic,
 } from "./lib/outer-totalistic.ts";
 import { type INTCondition, type INTRule, parseIntRule } from "./lib/int.ts";
-import { stringifyINT } from "./lib/int/stringify-int.ts";
+import { stringifyINT } from "./lib/int/moore/stringify-int.ts";
 import { parseMapRule } from "./lib/map/parse-map.ts";
 import type { MAPRule } from "./lib/map/core.ts";
 import { stringifyMap } from "./lib/map/stringify-map.ts";

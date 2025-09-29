@@ -1,4 +1,4 @@
-import { intModifiers } from "./int-condition.ts";
+import { intModifiers } from "../moore/int-condition.ts";
 
 /**
  * `console.log(createConditionList().join(" "))
