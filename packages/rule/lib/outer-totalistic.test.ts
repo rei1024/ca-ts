@@ -129,7 +129,7 @@ Deno.test("parseOuterTotalistic XYZ", () => {
         parseOuterTotalistic(item);
       },
       Error,
-      "Parse Error",
+      `Invalid Outer-Totalistic Rule Format`,
     );
 
     assertThrows(
@@ -137,7 +137,7 @@ Deno.test("parseOuterTotalistic XYZ", () => {
         parseOuterTotalistic(item + "H");
       },
       Error,
-      "Parse Error",
+      `Invalid Outer-Totalistic Rule Format`,
     );
 
     assertThrows(
@@ -145,7 +145,7 @@ Deno.test("parseOuterTotalistic XYZ", () => {
         parseOuterTotalistic(item + "V");
       },
       Error,
-      "Parse Error",
+      `Invalid Outer-Totalistic Rule Format`,
     );
   }
 });
@@ -244,7 +244,7 @@ Deno.test("parseOuterTotalistic Generations error less than 2: 1", () => {
       parseOuterTotalistic("B2/S23/1");
     },
     Error,
-    "Generations should be greater than or equal to 2",
+    "Generations value must be greater than or equal to 2.",
   );
 });
 
@@ -254,7 +254,7 @@ Deno.test("parseOuterTotalistic Generations error less than 2: 0", () => {
       parseOuterTotalistic("B2/S23/0");
     },
     Error,
-    "Generations should be greater than or equal to 2",
+    "Generations value must be greater than or equal to 2.",
   );
 });
 

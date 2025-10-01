@@ -1,3 +1,5 @@
+import { ParseRuleError } from "../core.ts";
+
 /**
  * [Bounded grids | Golly Help](https://golly.sourceforge.io/Help/bounded.html)
  */
@@ -48,6 +50,9 @@ export type GridParameter = {
      * Which edge is twisted.
      */
     twisted: "horizontal" | "vertical";
+    /**
+     * Golly treats any non-zero shift on a Klein bottle as 1.
+     */
     shift: 1 | null;
   } | {
     /**
@@ -79,24 +84,32 @@ export function parseGridParameter(str: string): GridParameter | null {
       break;
     }
     default: {
-      throw new Error("Unknown topology type " + `"${firstChar}"`);
+      throw new ParseRuleError(
+        `Unknown topology type "${firstChar}". Must be one of P, T, K, C, or S.`,
+        "topology",
+      );
     }
   }
 
   const sizeStr = str.slice(1);
 
+  // --- Sphere (S) ---
   if (topology === "S") {
     const match = sizeStr.match(/^(?<size>[0-9]+)(?<join>\*)?$/);
     if (!match) {
-      throw new Error("invalid size for sphere");
+      throw new ParseRuleError(
+        "Invalid format for Sphere topology (S). Expected 'S<size>' or 'S<size>*' (e.g., S30).",
+        "topology",
+      );
     }
     const size = Number(match.groups?.size);
-    if (!Number.isInteger(size) || size < 0) {
-      throw new Error("invalid size for sphere");
+    if (!Number.isInteger(size) || size <= 0) {
+      throw new ParseRuleError(
+        "Sphere size must be a positive integer.",
+        "topology",
+      );
     }
-    if (size === 0) {
-      throw new Error("infinite size is disallowed for sphere");
-    }
+
     const join = match.groups?.join ? "top-to-right" : "top-to-left";
     return {
       size: {
@@ -110,16 +123,23 @@ export function parseGridParameter(str: string): GridParameter | null {
     };
   }
 
+  // --- Cross-surface (C) ---
   if (topology === "C") {
     const regex = /^(?<w>[0-9]+),(?<h>[0-9]+)$/;
     const match = sizeStr.match(regex);
     if (!match) {
-      throw new Error("invalid size for cross-surface");
+      throw new ParseRuleError(
+        "Invalid format for Cross-surface topology (C). Expected 'C<width>,<height>' (e.g., C30,20).",
+        "topology",
+      );
     }
     const width = Number(match.groups?.w);
     const height = Number(match.groups?.h);
     if (width === 0 || height === 0) {
-      throw new Error("infinite size is disallowed for cross-surface");
+      throw new ParseRuleError(
+        "Cross-surface (C) does not allow infinite dimensions (0).",
+        "topology",
+      );
     }
     return {
       size: {
@@ -132,11 +152,15 @@ export function parseGridParameter(str: string): GridParameter | null {
     };
   }
 
+  // --- Plane (P) ---
   if (topology === "P") {
     const regex = /^(?<w>[0-9]+),(?<h>[0-9]+)$/;
     const match = sizeStr.match(regex);
     if (!match) {
-      throw new Error("invalid size for plane");
+      throw new ParseRuleError(
+        "Invalid format for Plane topology (P). Expected 'P<width>,<height>' (e.g., P30,20 or P30,0).",
+        "topology",
+      );
     }
     return {
       size: {
@@ -149,20 +173,36 @@ export function parseGridParameter(str: string): GridParameter | null {
     };
   }
 
+  // --- Torus (T) ---
   if (topology === "T") {
     const regex =
       /^(?<w>[0-9]+)(?<hShift>(\+|-)[0-9]+)?,(?<h>[0-9]+)(?<vShift>(\+|-)[0-9]+)?$/;
     const match = sizeStr.match(regex);
     if (!match) {
-      throw new Error("invalid size for torus");
+      throw new ParseRuleError(
+        "Invalid format for Torus topology (T). Expected 'T<w>[,<shift>],<h>[,<shift>]' (e.g., T30,20 or T30+5,20).",
+        "topology",
+      );
     }
     const hShift = match.groups?.hShift;
     const vShift = match.groups?.vShift;
-    if (hShift && vShift) {
-      throw new Error("invalid shift for torus");
-    }
     const width = Number(match.groups?.w);
     const height = Number(match.groups?.h);
+
+    if (hShift && vShift) {
+      throw new ParseRuleError(
+        "Torus topology (T) only allows a shift on horizontal edges OR vertical edges, not both.",
+        "topology",
+      );
+    }
+
+    if ((hShift || vShift) && (width === 0 || height === 0)) {
+      throw new ParseRuleError(
+        "Shifting is not allowed on a Torus (T) if either dimension is infinite (0).",
+        "topology",
+      );
+    }
+
     return {
       size: {
         width,
@@ -180,50 +220,84 @@ export function parseGridParameter(str: string): GridParameter | null {
     };
   }
 
+  // --- Klein bottle (K) ---
   if (topology === "K") {
     const regex =
       /^(?<w>[0-9]+)(?<hTwisted>\*)?(?<hShift>(\+|-)[0-9]+)?,(?<h>[0-9]+)(?<vTwisted>\*)?(?<vShift>(\+|-)[0-9]+)?$/;
     const match = sizeStr.match(regex);
     if (!match) {
-      throw new Error("invalid size for klein bottle");
+      throw new ParseRuleError(
+        "Invalid format for Klein bottle topology (K). Expected 'K<w>[*][<shift>],<h>[*][<shift>]' (e.g., K30*,20).",
+        "topology",
+      );
     }
-    const hShift = match.groups?.hShift;
-    const vShift = match.groups?.vShift;
-    if (hShift && vShift) {
-      throw new Error("invalid shift for klein bottle");
-    }
+
     const hTwisted = match.groups?.hTwisted;
     let vTwisted = match.groups?.vTwisted;
-    // treat ":K10,20" like ":K10,20*"
+
+    // Handle the case where K<w>,<h> defaults to vertical twist, K<w>,<h>*
     if (!hTwisted && !vTwisted) {
       vTwisted = "*";
     }
-    if (hShift && vTwisted || vShift && hTwisted) {
-      throw new Error("invalid twisted edge for klein bottle");
+
+    const hShift = match.groups?.hShift;
+    const vShift = match.groups?.vShift;
+    const width = Number(match.groups?.w);
+    const height = Number(match.groups?.h);
+
+    if (width === 0 || height === 0) {
+      throw new ParseRuleError(
+        "Klein bottle (K) does not allow infinite dimensions (0).",
+        "topology",
+      );
     }
+
+    // Check for invalid combinations
     if (hTwisted && vTwisted) {
-      throw new Error("invalid twisted edge for klein bottle");
+      throw new ParseRuleError(
+        "Klein bottle (K) only allows one pair of edges to be twisted (horizontal OR vertical), not both. Use 'C' for cross-surface.",
+        "topology",
+      );
     }
+    if (hShift && vShift) {
+      throw new ParseRuleError(
+        "Klein bottle (K) only allows one shift (horizontal OR vertical), not both.",
+        "topology",
+      );
+    }
+
+    // Check shift is on twisted edge
+    if ((hShift && !hTwisted) || (vShift && !vTwisted)) {
+      throw new ParseRuleError(
+        "Shift on a Klein bottle (K) is only allowed on the twisted edge.",
+        "topology",
+      );
+    }
+
     const shiftAmount = hShift != null || vShift != null
       ? (
         Number(hShift ?? vShift)
       )
       : null;
-    const width = Number(match.groups?.w);
-    const height = Number(match.groups?.h);
+
+    // Check even dimension for shift
     if (shiftAmount != null) {
       if (hTwisted && width % 2 !== 0) {
-        throw new Error("width must be even");
+        throw new ParseRuleError(
+          "Shift on a horizontally twisted Klein bottle (K<w>*) requires the width to be even.",
+          "topology",
+        );
       }
 
       if (vTwisted && height % 2 !== 0) {
-        throw new Error("height must be even");
+        throw new ParseRuleError(
+          "Shift on a vertically twisted Klein bottle (K<w>,<h>*) requires the height to be even.",
+          "topology",
+        );
       }
     }
 
-    if (width === 0 || height === 0) {
-      throw new Error("infinite size is disallowed for Klein bottle");
-    }
+    // Golly treats all Klein bottle shifts as +1 (if present).
     return {
       size: {
         width,
@@ -237,11 +311,12 @@ export function parseGridParameter(str: string): GridParameter | null {
     };
   }
 
+  // This should be unreachable due to the initial switch
   assertNever(topology);
 }
 
 function assertNever(v: never): never {
-  return v;
+  throw new Error(`Exhaustiveness check failed: received value ${v}`);
 }
 
 export function stringifyGridParameterWithColon(
@@ -257,11 +332,13 @@ export function stringifyGridParameterWithColon(
 export function stringifyGridParameter(gridParameter: GridParameter): string {
   const size = gridParameter.size;
   if (!Number.isInteger(size.width) || !Number.isInteger(size.height)) {
-    throw new Error("size is not a integer");
+    throw new Error(
+      "Grid dimensions (width and height) must be integers for stringification.",
+    );
   }
 
   if (size.width < 0 || size.height < 0) {
-    throw new Error("size is less than 0");
+    throw new Error("Grid dimensions (width and height) cannot be negative.");
   }
 
   switch (gridParameter.topology.type) {
@@ -269,40 +346,58 @@ export function stringifyGridParameter(gridParameter: GridParameter): string {
       return `P${size.width},${size.height}`;
     }
     case "C": {
+      if (size.width === 0 || size.height === 0) {
+        throw new Error(
+          "Cross-surface (C) cannot have infinite dimensions (0).",
+        );
+      }
       return `C${size.width},${size.height}`;
     }
     case "S": {
       if (size.height !== size.width) {
-        throw new Error("Non same size for sphere");
+        throw new Error(
+          "Sphere topology (S) requires width and height to be equal.",
+        );
+      }
+      if (size.width === 0) {
+        throw new Error("Sphere topology (S) cannot have infinite size (0).");
       }
       return `S${size.width}${
         gridParameter.topology.join === "top-to-right" ? "*" : ""
       }`;
     }
     case "T": {
-      const isHorizontalShift =
-        gridParameter.topology.shift?.edge === "horizontal";
+      const shift = gridParameter.topology.shift;
+      if (shift && (size.width === 0 || size.height === 0)) {
+        throw new Error(
+          "Shifting on a Torus (T) is not allowed if either dimension is infinite (0).",
+        );
+      }
+
+      const isHorizontalShift = shift?.edge === "horizontal";
       return `T${size.width}${
-        isHorizontalShift
-          ? encodeShift(gridParameter.topology.shift?.amount)
-          : ""
-      },${size.height}${
-        isHorizontalShift
-          ? ""
-          : encodeShift(gridParameter.topology.shift?.amount)
-      }`;
+        isHorizontalShift ? encodeShift(shift?.amount) : ""
+      },${size.height}${isHorizontalShift ? "" : encodeShift(shift?.amount)}`;
     }
     case "K": {
+      if (size.width === 0 || size.height === 0) {
+        throw new Error(
+          "Klein bottle (K) cannot have infinite dimensions (0).",
+        );
+      }
+
       const horizontalTwisted = gridParameter.topology.twisted === "horizontal";
+      const shift = gridParameter.topology.shift;
+      if (shift && (size.width === 0 || size.height === 0)) {
+        // This is technically caught above, but ensures the check is explicit for K.
+        throw new Error(
+          "Shifting on a Klein bottle (K) is not allowed if either dimension is infinite (0).",
+        );
+      }
+
       return `K${size.width}${
-        horizontalTwisted
-          ? ("*" + encodeShift(gridParameter.topology.shift))
-          : ""
-      },${size.height}${
-        horizontalTwisted
-          ? ""
-          : ("*" + encodeShift(gridParameter.topology.shift))
-      }`;
+        horizontalTwisted ? ("*" + encodeShift(shift)) : ""
+      },${size.height}${horizontalTwisted ? "" : ("*" + encodeShift(shift))}`;
     }
     default: {
       assertNever(gridParameter.topology);
@@ -314,12 +409,13 @@ function encodeShift(amount: number | null | undefined) {
   if (amount == null) {
     return "";
   } else if (Number.isNaN(amount)) {
-    throw new Error("shift is NaN");
+    throw new Error("Shift amount cannot be NaN.");
   } else if (amount === 0) {
     return "";
   } else if (amount > 0) {
     return "+" + amount;
   } else {
-    return "-" + (-amount);
+    // Handle negative amounts correctly for string representation
+    return String(amount);
   }
 }

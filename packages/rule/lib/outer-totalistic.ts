@@ -1,3 +1,4 @@
+import { ParseRuleError } from "./core.ts";
 import {
   type GridParameter,
   parseGridParameter,
@@ -185,7 +186,10 @@ export function parseOuterTotalistic(
       ? undefined
       : Number(generationsString);
     if (generations != null && generations < 2) {
-      throw new Error("Generations should be greater than or equal to 2");
+      throw new ParseRuleError(
+        "Generations value must be greater than or equal to 2.",
+        "generations",
+      );
     }
     if (b !== undefined && s !== undefined) {
       return {
@@ -216,7 +220,10 @@ export function parseOuterTotalistic(
     }
   }
 
-  throw new Error(`Parse Error "${originalRuleString}"`);
+  throw new ParseRuleError(
+    `Invalid Outer-Totalistic Rule Format: "${originalRuleString}". Expected B/S notation (e.g., B3/S23).`,
+    "format",
+  );
 }
 
 function getMaxCount(
@@ -225,7 +232,7 @@ function getMaxCount(
   hexagonalType: OuterTotalisticRule["hexagonalType"],
 ): number {
   if (neighborhood == undefined) {
-    return 8;
+    return 8; // Moore neighborhood (default)
   } else if (neighborhood === "von-neumann") {
     return 4;
   } else if (neighborhood === "hexagonal") {
@@ -259,7 +266,7 @@ function getMaxCount(
         return 12;
     }
   }
-  throw new Error("never");
+  throw new Error("unreachable state in getMaxCount");
 }
 
 function bsToTransition(
@@ -276,13 +283,20 @@ function bsToTransition(
   const ss = toList(s);
 
   const maxCount = getMaxCount(neighborhood, triangularType, hexagonalType);
+  const maxChar = numberToChar(maxCount);
 
   if (bs.some((x) => !Number.isInteger(x) || x < 0 || x > maxCount)) {
-    throw new Error(`birth should be 0 to ${numberToChar(maxCount)}`);
+    throw new ParseRuleError(
+      `One or more birth neighbor counts are invalid. Values must be between 0 and ${maxChar} for the current neighborhood type.`,
+      "transition",
+    );
   }
 
   if (ss.some((x) => !Number.isInteger(x) || x < 0 || x > maxCount)) {
-    throw new Error(`survive should be 0 to ${numberToChar(maxCount)}`);
+    throw new ParseRuleError(
+      `One or more survive neighbor counts are invalid. Values must be between 0 and ${maxChar} for the current neighborhood type.`,
+      "transition",
+    );
   }
 
   return {
@@ -343,11 +357,15 @@ export function stringifyOuterTotalistic(
   );
 
   if (birth.some((x) => !Number.isInteger(x) || x < 0 || x > maxCount)) {
-    throw new Error(`birth should be 0 to ${maxCount}`);
+    throw new Error(
+      `One or more values in the 'birth' array exceed the maximum neighbor count (${maxCount}) for the defined neighborhood.`,
+    );
   }
 
   if (survive.some((x) => !Number.isInteger(x) || x < 0 || x > maxCount)) {
-    throw new Error(`survive should be 0 to ${maxCount}`);
+    throw new Error(
+      `One or more values in the 'survive' array exceed the maximum neighbor count (${maxCount}) for the defined neighborhood.`,
+    );
   }
 
   const b = birth.slice().sort((a, b) => a - b).map((x) => numberToChar(x))

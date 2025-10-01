@@ -16,10 +16,12 @@ export function stringifyHexagonalINT(rule: HexagonalINTRule): string {
   {
     if (rule.generations != null) {
       if (!Number.isInteger(rule.generations)) {
-        throw new Error("Generation should be an integer");
+        throw new Error("Generations value should be an integer");
       }
       if (rule.generations < 2) {
-        throw new Error("Generation should be greater than or equal to 2");
+        throw new Error(
+          "Generations value should be greater than or equal to 2",
+        );
       }
     }
 

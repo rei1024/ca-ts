@@ -173,6 +173,15 @@ Deno.test("parseGridParameter Klein bottle", () => {
   });
 
   const invalidItems = [
+    "T3+1,3+1",
+
+    // Shifting is not allowed if either dimension is infinite.
+    "T30+5,0",
+    "T30,0+5",
+    "T0+5,30",
+    "T0,30+5",
+
+    // Klein
     "K4*,3*",
     "K4+1,3*",
     "K4*,4+1",

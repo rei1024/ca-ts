@@ -1,3 +1,4 @@
+import { ParseRuleError } from "../../core.ts";
 import { type GridParameter, parseGridParameter } from "./../../grid/mod.ts";
 import { hexagonalINTModifiers } from "./hex-int-condition.ts";
 
@@ -49,6 +50,7 @@ export function parseHexagonalIntRule(
   ruleString: string,
 ): HexagonalINTRule {
   ruleString = ruleString.trim();
+  const originalRuleString = ruleString;
 
   const colonIndex = ruleString.indexOf(":");
   let gridParameter: GridParameter | null = null;
@@ -59,7 +61,10 @@ export function parseHexagonalIntRule(
   }
 
   if (!(ruleString.endsWith("H") || ruleString.endsWith("h"))) {
-    throw new Error(`must end with "H"`);
+    throw new ParseRuleError(
+      `Invalid rule string "${originalRuleString}". Hexagonal Isotropic Non-Totalistic (INT) rules must end with the "H" suffix.`,
+      "format",
+    );
   }
 
   ruleString = ruleString.slice(0, -1);
@@ -72,18 +77,32 @@ export function parseHexagonalIntRule(
     /^(?<survive>(\d|[omp-])*)\/(?<birth>(\d|[omp-])*)(|\/(?<generations>\d+))$/;
   const match = ruleString.match(bsRegex) ?? ruleString.match(sbRegex);
   if (!match) {
-    throw new Error("Parse Error");
+    throw new ParseRuleError(
+      `Invalid Hexagonal INT rule format: "${originalRuleString}". Expected B/S or S/B notation (e.g., B3o/S2H).`,
+      "format",
+    );
   }
 
   const b = match.groups?.birth;
   const s = match.groups?.survive;
-  const generations = match.groups?.generations;
+  const generationsString = match.groups?.generations;
+  const generations = generationsString != null
+    ? Number(generationsString)
+    : null;
+
+  if (generations != null && generations < 2) {
+    throw new ParseRuleError(
+      `Generations value must be greater than or equal to 2.`,
+      "generations",
+    );
+  }
+
   if (b !== undefined && s !== undefined) {
     return {
       type: "hexagonal-int",
       transition: bsToTransition(b, s),
       ...generations == null ? {} : {
-        generations: Number(generations),
+        generations,
       },
       ...gridParameter == null ? {} : {
         gridParameter,
@@ -91,7 +110,10 @@ export function parseHexagonalIntRule(
     };
   }
 
-  throw new Error("Parse Error");
+  // This should be unreachable if the regex matching worked correctly, but kept for robustness
+  throw new Error(
+    `Invalid Hexagonal INT rule format: "${originalRuleString}". Expected B/S or S/B notation (e.g., B3o/S2H).`,
+  );
 }
 
 function bsToTransition(b: string, s: string): {
@@ -111,13 +133,16 @@ function toCondition(str: string): HexagonalINTCondition[] {
   while (i < str.length) {
     let negating = false; // To handle negation
 
-    const c = str[i] ?? error();
+    const c = str[i]!;
 
     // Parse the numeric part (e.g., "1", "2", "3", etc.)
     const num = parseInt(c, 10);
 
     if (isNaN(num) || num < 0 || num > 6) {
-      throw new Error(`Invalid number in rule string: '${c}'`);
+      throw new ParseRuleError(
+        `Invalid neighbor count '${c}' found in condition string. For Hexagonal INT rules, counts must be between 0 and 6.`,
+        "transition",
+      );
     }
 
     i++;
@@ -127,16 +152,16 @@ function toCondition(str: string): HexagonalINTCondition[] {
       i++;
     }
 
-    // Get all possible letters for this number from the `intConditions` mapping
+    // Get all possible letters for this number from the `hexagonalINTModifiers` mapping
     const possibleLetters = hexagonalINTModifiers[
       num as keyof typeof hexagonalINTModifiers
     ] as readonly string[];
 
-    // Check if there's a modifier (letter) for this number (e.g., "e", "c")
+    // Check if there's a modifier (letter) for this number (e.g., "o", "m", "p")
     const letters: string[] = [];
 
     while (i < str.length && possibleLetters.includes(str[i] ?? "")) {
-      letters.push(str[i] ?? error());
+      letters.push(str[i]!);
       i++;
     }
 
@@ -145,6 +170,7 @@ function toCondition(str: string): HexagonalINTCondition[] {
       if (c === "0" || c === "1" || c === "5" || c === "6") {
         conditions.push(c as HexagonalINTCondition);
       } else {
+        // If the number *can* have modifiers but none were specified, expand to all of them.
         for (const letter of possibleLetters) {
           conditions.push(`${num}${letter}` as HexagonalINTCondition);
         }
@@ -163,8 +189,4 @@ function toCondition(str: string): HexagonalINTCondition[] {
 
   // sort to canonical order
   return conditions.sort();
-}
-
-function error(): never {
-  throw new Error("internal");
 }
