@@ -1,3 +1,10 @@
+## [0.16.0] - 2025-10-01
+
+### Changed
+
+- **BREAKING** `parseRule` throws `AggregateError`.
+- Exported `ParseRuleError`.
+
 ## [0.15.0] - 2025-09-29
 
 ### Changed

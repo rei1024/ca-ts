@@ -82,12 +82,14 @@ import { parseMapRule } from "./lib/map/parse-map.ts";
 import type { MAPRule } from "./lib/map/core.ts";
 import { stringifyMap } from "./lib/map/stringify-map.ts";
 import type { GridParameter } from "./lib/grid/mod.ts";
+import { ParseRuleError } from "./lib/core.ts";
 
 export type { OuterTotalisticRule };
 export type { INTCondition, INTRule };
 export type { HexagonalINTCondition, HexagonalINTRule };
 export type { MAPRule };
 export type { GridParameter };
+export { ParseRuleError };
 
 /**
  * Rule of a cellular automaton.
@@ -97,6 +99,8 @@ export type ParsedRule =
   | INTRule
   | HexagonalINTRule
   | MAPRule;
+
+const aggregateErrorAvailable = typeof AggregateError !== "undefined";
 
 /**
  * Parse a rulestring.
@@ -126,41 +130,56 @@ export type ParsedRule =
 //   },
 // }
  * ```
+ * Throws {@link AggregateError}. an element of `errors` property is either `Error` or `ParseRuleError`
  */
 export function parseRule(ruleString: string): ParsedRule {
   ruleString = ruleString.trim();
 
   ruleString = alias(ruleString);
 
+  const errors: Error[] = [];
+
   try {
     const map = parseMapRule(ruleString);
     return map;
   } catch (error) {
-    // nop
+    if (error instanceof Error) {
+      errors.push(error);
+    }
   }
 
   try {
     const outerTotalistic = parseOuterTotalistic(ruleString);
     return outerTotalistic;
-  } catch {
-    // nop
+  } catch (error) {
+    if (error instanceof Error) {
+      errors.push(error);
+    }
   }
 
   try {
     const int = parseIntRule(ruleString);
     return int;
-  } catch {
-    // nop
+  } catch (error) {
+    if (error instanceof Error) {
+      errors.push(error);
+    }
   }
 
   try {
     const hexInt = parseHexagonalIntRule(ruleString);
     return hexInt;
-  } catch {
-    // nop
+  } catch (error) {
+    if (error instanceof Error) {
+      errors.push(error);
+    }
   }
 
-  throw new Error("Parse error");
+  if (aggregateErrorAvailable) {
+    throw new AggregateError(errors, "Parse error");
+  } else {
+    throw new Error("Parse error");
+  }
 }
 
 /**

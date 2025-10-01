@@ -1,3 +1,4 @@
+import { ParseRuleError } from "../../core.ts";
 import { type GridParameter, parseGridParameter } from "./../../grid/mod.ts";
 import { intModifiers } from "./int-condition.ts";
 
@@ -56,6 +57,7 @@ export function parseIntRule(
   ruleString: string,
 ): INTRule {
   ruleString = ruleString.trim();
+  const originalRuleString = ruleString; // Store the original for better error reporting
 
   const colonIndex = ruleString.indexOf(":");
   let gridParameter: GridParameter | null = null;
@@ -67,24 +69,40 @@ export function parseIntRule(
 
   const bsRegex =
     // cspell:disable-next-line
-    /^(B|b)(?<birth>(\d|[cekainyqjrtwz-])*)\/(S|s)(?<survive>(\d|[cekainyqjrtwz-])*)(|\/(?<generations>\d+))$/;
+    /^(B|b)(?<birth>(\d|[cekainyqjrtwz-])*)\/(S|s)(?<survive>(\d|[cekainyqjrtwz-])*)(|\/(G|g|C|c)?(?<generations>\d+))$/;
   const sbRegex =
     // cspell:disable-next-line
     /^(?<survive>(\d|[cekainyqjrtwz-])*)\/(?<birth>(\d|[cekainyqjrtwz-])*)(|\/(?<generations>\d+))$/;
   const match = ruleString.match(bsRegex) ?? ruleString.match(sbRegex);
+
   if (!match) {
-    throw new Error("Parse Error");
+    throw new ParseRuleError(
+      `Invalid Isotropic Non-Totalistic (INT) rule format: "${ruleString}". Expected B/S or S/B notation (e.g., B3k/S2ce).`,
+      "format",
+    );
   }
 
   const b = match.groups?.birth;
   const s = match.groups?.survive;
-  const generations = match.groups?.generations;
+  const generationsString = match.groups?.generations;
+
   if (b !== undefined && s !== undefined) {
+    const generations = generationsString == null
+      ? undefined
+      : Number(generationsString);
+
+    if (generations != null && generations < 2) {
+      throw new ParseRuleError(
+        `Generations value must be greater than or equal to 2.`,
+        "generations",
+      );
+    }
+
     return {
       type: "int",
       transition: bsToTransition(b, s),
       ...generations == null ? {} : {
-        generations: Number(generations),
+        generations: generations,
       },
       ...gridParameter == null ? {} : {
         gridParameter,
@@ -92,7 +110,10 @@ export function parseIntRule(
     };
   }
 
-  throw new Error("Parse Error");
+  // This should only happen if regex matched but groups were unexpectedly empty/undefined
+  throw new Error(
+    `Rule string matched the pattern but failed to extract birth/survive conditions: "${ruleString}".`,
+  );
 }
 
 function bsToTransition(b: string, s: string): {
@@ -112,13 +133,15 @@ function toCondition(str: string): INTCondition[] {
   while (i < str.length) {
     let negating = false; // To handle negation
 
-    const c = str[i] ?? error();
+    const c = str[i];
 
     // Parse the numeric part (e.g., "1", "2", "3", etc.)
-    const num = parseInt(c, 10);
+    const num = parseInt(c!, 10); // Safe to use c! as we check i < str.length
 
     if (isNaN(num) || num < 0 || num > 8) {
-      throw new Error(`Invalid number in rule string: '${c}'`);
+      throw new Error(
+        `Invalid neighbor count '${c}' found in condition string. For INT rules, counts must be between 0 and 8.`,
+      );
     }
 
     i++;
@@ -136,7 +159,7 @@ function toCondition(str: string): INTCondition[] {
     const letters: string[] = [];
 
     while (i < str.length && possibleLetters.includes(str[i] ?? "")) {
-      letters.push(str[i] ?? error());
+      letters.push(str[i]!);
       i++;
     }
 
@@ -145,6 +168,7 @@ function toCondition(str: string): INTCondition[] {
       if (c === "0" || c === "8") {
         conditions.push(c as INTCondition);
       } else {
+        // If the number *can* have modifiers but none were specified, expand to all of them.
         for (const letter of possibleLetters) {
           conditions.push(`${num}${letter}` as INTCondition);
         }
@@ -163,8 +187,4 @@ function toCondition(str: string): INTCondition[] {
 
   // sort to canonical order
   return conditions.sort();
-}
-
-function error(): never {
-  throw new Error("internal");
 }
