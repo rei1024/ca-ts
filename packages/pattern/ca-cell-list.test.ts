@@ -173,6 +173,17 @@ Deno.test("CACellList from2dArray", () => {
   ]);
 });
 
+Deno.test("CACellList from2dArray readonly", () => {
+  const array: ReadonlyArray<ReadonlyArray<number>> = [
+    [0, 0],
+    [0, 5],
+  ];
+  const cellList = CACellList.from2dArray(array);
+  assertEquals(cellList.getCells(), [
+    { position: { x: 1, y: 1 }, state: 5 },
+  ]);
+});
+
 Deno.test("CACellList to2dArray throws", () => {
   const cellList = CACellList.fromCells([{
     state: 1,
