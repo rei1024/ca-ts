@@ -26,5 +26,9 @@ jobs:
       - name: Publish JSR (Dry Run)
         run: deno publish --dry-run
 
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
       - name: Publish npm (Dry Run)
         run: ./scripts/build_all.sh
