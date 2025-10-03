@@ -35,18 +35,20 @@ const world = BitWorld.make({ width: 32, height: 32 });
 world.random();
 
 // Run the simulation
-setInterval(() => {
-  console.clear();
-  console.log("__".repeat(32));
-  console.log(
-    world.getArray().map((row) =>
-      row.map((cell) => (cell === 1 ? "O " : "  ")).join("")
-    ).join("\n"),
-  );
+function run() {
+  setInterval(() => {
+    console.clear();
+    console.log("__".repeat(32));
+    console.log(
+      world.getArray().map((row) =>
+        row.map((cell) => (cell === 1 ? "O " : "  ")).join("")
+      ).join("\n"),
+    );
 
-  // Advance to the next generation
-  world.next();
-}, 100);
+    // Advance to the next generation
+    world.next();
+  }, 100);
+}
 ```
 
 ### Outer-Totalistic Rules (e.g., HighLife)
@@ -107,6 +109,7 @@ const world = new RuleLoaderWorld({
   size: { width: 32, height: 32 },
   rule: (neighbors) => {
     const centerState = neighbors[0];
+    if (centerState == null) return 0;
     const nextState = (centerState + 1) % NUM_STATES;
 
     let count = 0;
@@ -135,14 +138,16 @@ for (let y = 0; y < height; y++) {
 }
 
 // Run the simulation
-setInterval(() => {
-  console.clear();
-  console.log(
-    world
-      .getArray()
-      .map((row) => row.map((cell) => ".:*"[cell]).join(""))
-      .join("\n"),
-  );
-  world.next();
-}, 100);
+function run() {
+  setInterval(() => {
+    console.clear();
+    console.log(
+      world
+        .getArray()
+        .map((row) => row.map((cell) => ".:*"[cell]).join(""))
+        .join("\n"),
+    );
+    world.next();
+  }, 100);
+}
 ```
