@@ -1,3 +1,9 @@
+## [0.12.2] - 2025-10-03
+
+### Changed
+
+- Improve documentation
+
 ## [0.12.1] - 2025-09-29
 
 ### Changed
