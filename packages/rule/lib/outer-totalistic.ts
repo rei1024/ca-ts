@@ -164,19 +164,27 @@ export function parseOuterTotalistic(
     /^(B|b)(?<birth>(\d|X|Y|Z)*)\/(S|s)(?<survive>(\d|X|Y|Z)*)(|\/(G|g|C|c)?(?<generations>\d+))$/;
   // S/B
   const sbRegex = /^(?<survive>\d*)\/(?<birth>\d*)(|\/(?<generations>\d+))$/;
+  const sbWithPrefixRegex =
+    /^(S|s)(?<survive>\d*)\/(B|b)(?<birth>\d*)(|\/(?<generations>\d+))$/;
   const sbRegexTriangular =
     /^(?<survive>(\d|X|Y|Z)*)\/(?<birth>(\d|X|Y|Z)*)(|\/(?<generations>\d+))$/;
   // G/B/S
   const gbsRegex =
     /^(G|g|C|c)(?<generations>\d+)\/(B|b)(?<birth>\d*)\/(S|s)(?<survive>\d*)$/;
+  const gbsNoSlashRegex =
+    /^(G|g|C|c)(?<generations>\d+)(B|b)(?<birth>\d*)(S|s)(?<survive>\d*)$/;
+  const bsgNoSlashRegex =
+    /^(B|b)(?<birth>\d*)(S|s)(?<survive>\d*)((G|g|C|c)(?<generations>\d+))?$/;
   const gbsRegexTriangular =
     /^(G|g|C|c)(?<generations>\d+)\/(B|b)(?<birth>(\d|X|Y|Z)*)\/(S|s)(?<survive>(\d|X|Y|Z)*)$/;
   const match = neighborhood === "triangular" && triangularType === "moore"
     ? ((ruleString.match(bsRegexTriangular) ??
       ruleString.match(sbRegexTriangular)) ??
       ruleString.match(gbsRegexTriangular))
-    : ((ruleString.match(bsRegex) ?? ruleString.match(sbRegex)) ??
-      ruleString.match(gbsRegex));
+    : ((ruleString.match(bsRegex) ?? ruleString.match(sbWithPrefixRegex) ??
+      ruleString.match(sbRegex)) ??
+      ruleString.match(gbsRegex) ?? ruleString.match(gbsNoSlashRegex) ??
+      ruleString.match(bsgNoSlashRegex));
 
   if (match) {
     const b = match.groups?.birth;

@@ -7,11 +7,15 @@ import {
 Deno.test("parseOuterTotalistic B3/S23", () => {
   const items = [
     "B3/S23",
+    "S23/B3",
     "B3/S32",
     "b3/s23",
     "B3/s23",
     "23/3",
     "32/3",
+    "b3s23",
+    "B3S23",
+    "b3S23",
   ];
 
   const expected = {
@@ -211,12 +215,16 @@ Deno.test("parseOuterTotalistic triangular max", () => {
 
 Deno.test("parseOuterTotalistic Generations", () => {
   const items = [
+    "S23/B2/8", // use by Catagolue
     "B2/S23/8",
     "B2/S23/G8",
     "b2/s23/g8",
     "B2/S23/C8",
     "b2/s23/c8",
     "G8/B2/S23",
+    "g8b2s23", // lifelib
+    "G8B2S23",
+    "B2S23G8",
     "C8/B2/S23",
     "23/2/8",
   ];
