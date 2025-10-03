@@ -2,8 +2,10 @@
 
 ### Changed
 
-- Support more Generations rulestring formats
+- Support more Generations rulestring formats.
   - `S23/B3/17`, `g17b3s23` , `b3s23g17`
+- Specifying only the width of a grid topology will result in the same height.
+  - `:P30`
 
 ## [0.16.0] - 2025-10-01
 

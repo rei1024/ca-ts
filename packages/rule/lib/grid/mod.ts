@@ -125,16 +125,18 @@ export function parseGridParameter(str: string): GridParameter | null {
 
   // --- Cross-surface (C) ---
   if (topology === "C") {
-    const regex = /^(?<w>[0-9]+),(?<h>[0-9]+)$/;
+    const regex = /^(?<w>[0-9]+)(,(?<h>[0-9]+))?$/;
     const match = sizeStr.match(regex);
     if (!match) {
       throw new ParseRuleError(
-        "Invalid format for Cross-surface topology (C). Expected 'C<width>,<height>' (e.g., C30,20).",
+        "Invalid format for Cross-surface topology (C). Expected 'C<width>,<height>' or 'C<size>' (e.g., C30,20 or C10).",
         "topology",
       );
     }
     const width = Number(match.groups?.w);
-    const height = Number(match.groups?.h);
+    const height = match.groups?.h !== undefined
+      ? Number(match.groups.h)
+      : width;
     if (width === 0 || height === 0) {
       throw new ParseRuleError(
         "Cross-surface (C) does not allow infinite dimensions (0).",
@@ -154,18 +156,22 @@ export function parseGridParameter(str: string): GridParameter | null {
 
   // --- Plane (P) ---
   if (topology === "P") {
-    const regex = /^(?<w>[0-9]+),(?<h>[0-9]+)$/;
+    const regex = /^(?<w>[0-9]+)(,(?<h>[0-9]+))?$/;
     const match = sizeStr.match(regex);
     if (!match) {
       throw new ParseRuleError(
-        "Invalid format for Plane topology (P). Expected 'P<width>,<height>' (e.g., P30,20 or P30,0).",
+        "Invalid format for Plane topology (P). Expected 'P<width>,<height>' or 'P<size>' (e.g., P30,20 or P10).",
         "topology",
       );
     }
+    const width = Number(match.groups?.w);
+    const height = match.groups?.h !== undefined
+      ? Number(match.groups.h)
+      : width;
     return {
       size: {
-        width: Number(match.groups?.w),
-        height: Number(match.groups?.h),
+        width,
+        height,
       },
       topology: {
         type: topology,
@@ -176,18 +182,20 @@ export function parseGridParameter(str: string): GridParameter | null {
   // --- Torus (T) ---
   if (topology === "T") {
     const regex =
-      /^(?<w>[0-9]+)(?<hShift>(\+|-)[0-9]+)?,(?<h>[0-9]+)(?<vShift>(\+|-)[0-9]+)?$/;
+      /^(?<w>[0-9]+)(?<hShift>(\+|-)[0-9]+)?(,(?<h>[0-9]+)(?<vShift>(\+|-)[0-9]+)?)?$/;
     const match = sizeStr.match(regex);
     if (!match) {
       throw new ParseRuleError(
-        "Invalid format for Torus topology (T). Expected 'T<w>[,<shift>],<h>[,<shift>]' (e.g., T30,20 or T30+5,20).",
+        "Invalid format for Torus topology (T). Expected 'T<w>[,<shift>],<h>[,<shift>]' or 'T<size>[<shift>]' (e.g., T30,20, T30+5,20, or T10).",
         "topology",
       );
     }
     const hShift = match.groups?.hShift;
     const vShift = match.groups?.vShift;
     const width = Number(match.groups?.w);
-    const height = Number(match.groups?.h);
+    const height = match.groups?.h !== undefined
+      ? Number(match.groups.h)
+      : width;
 
     if (hShift && vShift) {
       throw new ParseRuleError(
@@ -223,11 +231,11 @@ export function parseGridParameter(str: string): GridParameter | null {
   // --- Klein bottle (K) ---
   if (topology === "K") {
     const regex =
-      /^(?<w>[0-9]+)(?<hTwisted>\*)?(?<hShift>(\+|-)[0-9]+)?,(?<h>[0-9]+)(?<vTwisted>\*)?(?<vShift>(\+|-)[0-9]+)?$/;
+      /^(?<w>[0-9]+)(?<hTwisted>\*)?(?<hShift>(\+|-)[0-9]+)?(,(?<h>[0-9]+)(?<vTwisted>\*)?(?<vShift>(\+|-)[0-9]+)?)?$/;
     const match = sizeStr.match(regex);
     if (!match) {
       throw new ParseRuleError(
-        "Invalid format for Klein bottle topology (K). Expected 'K<w>[*][<shift>],<h>[*][<shift>]' (e.g., K30*,20).",
+        "Invalid format for Klein bottle topology (K). Expected 'K<w>[*][<shift>],<h>[*][<shift>]' or 'K<size>[*][<shift>]' (e.g., K30*,20 or K10*).",
         "topology",
       );
     }
@@ -243,7 +251,9 @@ export function parseGridParameter(str: string): GridParameter | null {
     const hShift = match.groups?.hShift;
     const vShift = match.groups?.vShift;
     const width = Number(match.groups?.w);
-    const height = Number(match.groups?.h);
+    const height = match.groups?.h !== undefined
+      ? Number(match.groups.h)
+      : width;
 
     if (width === 0 || height === 0) {
       throw new ParseRuleError(
