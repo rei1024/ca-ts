@@ -20,9 +20,15 @@ build_and_publish() {
 
     if $SHOULD_PUBLISH; then
         echo "Publishing $package_name..."
-        cd npm_dist
-        npm publish --access public
-        echo "$package_name published successfully."
+
+        IS_PUBLISHED="$(deno run -A ../../scripts/is-published.ts $package_name)"
+        if [ "$IS_PUBLISHED" == "1" ]; then
+            echo "$package_name already published."
+        else
+            cd npm_dist
+            npm publish --access public
+            echo "$package_name published successfully."
+        fi
     else
         echo "Skipping npm publish for $package_name."
     fi
