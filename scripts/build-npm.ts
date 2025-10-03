@@ -11,19 +11,20 @@ const packages: Record<string, {
   description: string;
   keywords: string[];
 }> = {
-  "pattern": {
-    npmPackageName: "@rei1024/ca-pattern",
-    description: "Library for manipulating cellular automaton patterns",
+  "algo": {
+    npmPackageName: "@rei1024/ca-algo",
+    description: "Algorithms for cellular automata simulation.",
     keywords: [
       "cellular-automata",
+      "algorithm",
     ],
   },
-  "rule": {
-    npmPackageName: "@rei1024/ca-rulestring",
-    description: "Rulestring parser and writer (Cellular automaton)",
+  "pattern": {
+    npmPackageName: "@rei1024/ca-pattern",
+    description:
+      "Cellular automata pattern data structures for managing cell states and positions.",
     keywords: [
       "cellular-automata",
-      "rulestring",
     ],
   },
   "rle": {
@@ -33,6 +34,24 @@ const packages: Record<string, {
     keywords: [
       "cellular-automata",
       "rle",
+      "parse",
+    ],
+  },
+  "rule": {
+    npmPackageName: "@rei1024/ca-rulestring",
+    description: "Rulestring parser and writer (Cellular automaton)",
+    keywords: [
+      "cellular-automata",
+      "rulestring",
+      "parse",
+    ],
+  },
+  "rule-format": {
+    npmPackageName: "@rei1024/ca-rule-format",
+    description: "Rule format parser.",
+    keywords: [
+      "cellular-automata",
+      "parse",
     ],
   },
 };
@@ -56,7 +75,18 @@ if (!deno.version) {
 }
 
 await build({
-  entryPoints: ["./mod.ts"],
+  entryPoints: packageKey === "algo"
+    ? [
+      {
+        name: "./bit",
+        path: "./bit/mod.ts",
+      },
+      {
+        name: "./rule-loader",
+        path: "./rule-loader/mod.ts",
+      },
+    ]
+    : ["./mod.ts"],
   outDir: `./${DIST_DIR}/`,
   shims: {
     deno: "dev",
@@ -81,7 +111,7 @@ await build({
     Deno.copyFileSync("../../LICENSE", `${DIST_DIR}/LICENSE`);
     Deno.writeTextFileSync(
       `${DIST_DIR}/README.md`,
-      `### ${packageData.npmPackageName}\n\nSee <https://jsr.io/@ca-ts/${packageKey}> for documentation.`,
+      `# ${packageData.npmPackageName}\n\n${packageData.description}\n\nSee <https://jsr.io/@ca-ts/${packageKey}> for documentation.`,
     );
   },
   // ...etc...
