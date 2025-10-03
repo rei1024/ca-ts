@@ -12,16 +12,23 @@ function mod(i: number, j: number): number {
 }
 
 /**
- * Outer-totalistic and isotropic non-totalistic cellular automata.
+ * A optimized simulator for 2-state cellular automata on a 2D grid.
+ * It supports various rule types, including Conway's Game of Life, other
+ * outer-totalistic rules, isotropic non-totalistic rules, and non-isotropic
+ * (MAP) rules.
+ *
+ * The world is toroidal, meaning the edges wrap around.
  */
 export class BitWorld {
   private _bitGrid: BitGrid;
   private tempArray: Uint32Array;
   private nextCell: typeof nextCellConway;
+
   /**
-   * Create {@link BitWorld}
+   * Creates a new `BitWorld` instance.
+   * The default transition rule is Conway's Game of Life.
    *
-   * Default transition is Conway's Game of Life.
+   * @param bitGrid The underlying {@link BitGrid} to use for the world.
    */
   constructor(
     bitGrid: BitGrid,
@@ -35,19 +42,20 @@ export class BitWorld {
   }
 
   /**
-   * Get the underlying {@link BitGrid} instance.
+   * Gets the underlying {@link BitGrid} instance.
    */
   get bitGrid(): BitGrid {
     return this._bitGrid;
   }
 
   /**
-   * Set a outer-totalistic rule.
+   * Sets an outer-totalistic rule for the simulation.
+   * If `null` is passed, it defaults to Conway's Game of Life (B3/S23).
    *
-   * Example: (B3/S23)
-   * ```
-   * bitWorld.setRule({ birth: [3], survive: [2, 3] });
-   * ```
+   * @param transition An object with `birth` and `survive` arrays.
+   * @example
+   * // HighLife (B36/S23)
+   * world.setRule({ birth: [3, 6], survive: [2, 3] });
    */
   setRule(transition: { birth: number[]; survive: number[] } | null) {
     function sortUnique(a: number[]) {
@@ -72,27 +80,33 @@ export class BitWorld {
   }
 
   /**
-   * Set a isotropic non-totalistic rule.
+   * Sets an isotropic non-totalistic (INT) rule for the simulation.
    *
-   * Example: (B3k/S4i)
-   * ```
-   * bitWorld.setRule({ birth: ["3k"], survive: ["4i"] });
-   * ```
+   * Use `@ca-ts/rule` package to parse a rule string into the required format.
+   *
+   * @param intTransition An object with `birth` and `survive` arrays of INT rule strings.
+   * @example
+   * // Just Friends (B2-a/S12)
+   * world.setINTRule({
+   *   birth: ["2c", "2e", "2i", "2k", "2n"],
+   *   survive: ["1c", "1e", "2a", "2c", "2e", "2i", "2k", "2n"],
+   * });
    */
   setINTRule(intTransition: { birth: string[]; survive: string[] }) {
     this.nextCell = createINTNextCell(intTransition);
   }
 
   /**
-   * Set MAP rule.
-   * @param data 512 bits table
+   * Sets a non-isotropic (MAP) rule from a 512-bit transition table.
+   * @param data An array of 512 bits (0 or 1) representing the transition table.
    */
   setMAPRule(data: (0 | 1)[]) {
     this.nextCell = createMAPNextCell(data);
   }
 
   /**
-   * Set a bit grid.
+   * Replaces the underlying bit grid with a new one.
+   * @param bitGrid The new {@link BitGrid} to use.
    */
   setBitGrid(bitGrid: BitGrid) {
     this._bitGrid = bitGrid;
@@ -100,14 +114,16 @@ export class BitWorld {
   }
 
   /**
-   * Create {@link BitWorld}
+   * Creates a new `BitWorld` instance with a new {@link BitGrid}.
+   * The width is rounded up to the nearest multiple of 32.
    *
-   * width is rounded up to 32
+   * @param dimensions The width and height of the world.
    */
   static make(
     { width, height }: {
       /**
-       * Actual width is ceil(width / 32) * 32
+       * The desired width of the world.
+       * The actual width will be `ceil(width / 32) * 32`.
        * @example 32
        */
       width: number;
@@ -117,55 +133,70 @@ export class BitWorld {
     return new BitWorld(BitGrid.make({ width, height }));
   }
 
+  /**
+   * Gets the width of the world.
+   */
   getWidth(): number {
     return this._bitGrid.getWidth();
   }
 
+  /**
+   * Gets the height of the world.
+   */
   getHeight(): number {
     return this._bitGrid.getHeight();
   }
 
   /**
-   * Clear world.
+   * Clears the world, setting all cells to the dead state.
    */
   clear() {
     this._bitGrid.clear();
   }
 
-  /** Fill random states */
+  /**
+   * Fills the world with a random pattern of live and dead cells.
+   */
   random() {
     this._bitGrid.random();
   }
 
   /**
-   * set live cell at (x, y)
+   * Sets a cell at the given coordinates to the alive state.
+   * @param x The x-coordinate of the cell.
+   * @param y The y-coordinate of the cell.
    */
   set(x: number, y: number) {
     this._bitGrid.set(x, y);
   }
 
   /**
-   * Returns the entire grid as a 2D array of 0s and 1s.
+   * Returns the entire grid as a 2D array of 0s (dead) and 1s (alive).
    */
   getArray(): (0 | 1)[][] {
     return this._bitGrid.getArray();
   }
 
   /**
-   * Iterates over all cells in the grid, calling the provided function for each cell.
+   * Iterates over all cells in the grid.
+   * @param fn The function to call for each cell, receiving `x`, `y`, and `alive` state.
    */
   forEach(fn: (x: number, y: number, alive: 0 | 1) => void) {
     this._bitGrid.forEach(fn);
   }
 
   /**
-   * Iterates over only the "alive" cells in the grid, calling the provided function
-   * for each alive cell.  This is more efficient than `forEach` if the grid is sparse.
+   * Iterates over only the "alive" cells in the grid. This is more efficient
+   * than `forEach` if the grid is sparse.
+   * @param fn The function to call for each alive cell, receiving `x` and `y`.
    */
   forEachAlive(fn: (x: number, y: number) => void) {
     this._bitGrid.forEachAlive(fn);
   }
 
+  /**
+   * Returns an array of objects, each containing the `x` and `y` coordinates of a live cell.
+   */
   getCellArray(): { x: number; y: number }[] {
     const array: { x: number; y: number }[] = [];
     this._bitGrid.forEachAlive((x, y) => {
@@ -176,7 +207,8 @@ export class BitWorld {
   }
 
   /**
-   * Update to next generation
+   * Advances the simulation to the next generation, updating all cells according
+   * to the current rule.
    */
   next() {
     const bitGrid = this._bitGrid;
@@ -218,7 +250,7 @@ export class BitWorld {
   }
 
   /**
-   * Gets the population (number of live cells) in the grid.
+   * Gets the total number of live cells in the grid.
    */
   getPopulation(): number {
     return this.bitGrid.getPopulation();
