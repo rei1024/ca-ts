@@ -39,6 +39,16 @@ Deno.test("parseIntRule B3/S23", () => {
   });
 });
 
+Deno.test("parseIntRule B2-a/S12", () => {
+  assertEquals(parseIntRule("B2-a/S12"), {
+    type: "int",
+    transition: {
+      birth: ["2c", "2e", "2i", "2k", "2n"],
+      survive: ["1c", "1e", "2a", "2c", "2e", "2i", "2k", "2n"],
+    },
+  });
+});
+
 Deno.test("parseIntRule B3/S2-i34q", () => {
   assertEquals(parseIntRule("B3/S2-i34q"), {
     type: "int",
