@@ -1,3 +1,10 @@
+## [0.16.1] - 2025-10-03
+
+### Changed
+
+- Support more Generations rulestring formats
+  - `S23/B3/17`, `g17b3s23` , `b3s23g17`
+
 ## [0.16.0] - 2025-10-01
 
 ### Changed
