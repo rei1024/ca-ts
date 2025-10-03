@@ -101,6 +101,8 @@ Here is an example of a 3-state cyclic cellular automaton:
 
 ```ts
 import { RuleLoaderWorld } from "@ca-ts/algo/rule-loader";
+// for npm
+// import { RuleLoaderWorld } from "@rei1024/ca-algo/rule-loader";
 
 const NUM_STATES = 3;
 const THRESHOLD = 3;
