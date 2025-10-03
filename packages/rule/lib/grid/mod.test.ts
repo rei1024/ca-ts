@@ -251,3 +251,45 @@ Deno.test("stringifyGridParameter offset NaN", () => {
     });
   });
 });
+
+Deno.test("parseGridParameter single value for size", () => {
+  assertEquals(parseGridParameter("P10"), {
+    size: {
+      width: 10,
+      height: 10,
+    },
+    topology: { type: "P" },
+  });
+
+  assertEquals(parseGridParameter("C10"), {
+    size: {
+      width: 10,
+      height: 10,
+    },
+    topology: { type: "C" },
+  });
+
+  assertEquals(parseGridParameter("T10"), {
+    size: {
+      width: 10,
+      height: 10,
+    },
+    topology: { type: "T", shift: null },
+  });
+
+  assertEquals(parseGridParameter("K10"), {
+    size: {
+      width: 10,
+      height: 10,
+    },
+    topology: { type: "K", twisted: "vertical", shift: null },
+  });
+
+  assertEquals(parseGridParameter("K10*"), {
+    size: {
+      width: 10,
+      height: 10,
+    },
+    topology: { type: "K", twisted: "horizontal", shift: null },
+  });
+});
