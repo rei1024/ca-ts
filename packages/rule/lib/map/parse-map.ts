@@ -1,6 +1,7 @@
 import { type GridParameter, parseGridParameter } from "../grid/mod.ts";
 import { decodeBase64 } from "@std/encoding/base64";
 import type { MAPRule } from "./core.ts";
+import { ParseRuleError } from "@ca-ts/rule";
 
 /** Number of base64 characters to encode 512 bits for Moore neighborhood */
 const MAP512LENGTH = 86;
@@ -11,7 +12,7 @@ const MAP32LENGTH = 6;
 
 export function parseMapRule(ruleString: string): MAPRule {
   if (ruleString.slice(0, 3).toUpperCase() !== "MAP") {
-    throw new Error('Should start with "MAP"');
+    throw new ParseRuleError('Should start with "MAP"', "format");
   }
   ruleString = ruleString.slice(3);
 
@@ -35,8 +36,9 @@ export function parseMapRule(ruleString: string): MAPRule {
   } else if (ruleString.length === MAP32LENGTH) {
     neighbors = "von-neumann";
   } else {
-    throw new Error(
+    throw new ParseRuleError(
       `Invalid MAP string length: ${ruleString.length}.`,
+      "transition",
     );
   }
 

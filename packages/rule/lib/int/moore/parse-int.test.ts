@@ -168,6 +168,17 @@ Deno.test("parseIntRule S/B 3k/4i/5", () => {
   });
 });
 
+Deno.test("parseIntRule S/B B3k/S4i/G5", () => {
+  assertEquals(parseIntRule("B3k/S4i/G5"), {
+    type: "int",
+    transition: {
+      birth: ["3k"],
+      survive: ["4i"],
+    },
+    generations: 5,
+  });
+});
+
 Deno.test("parseIntRule Grid parameter", () => {
   assertEquals(parseIntRule("B3k/S4i:K30*,20"), {
     type: "int",

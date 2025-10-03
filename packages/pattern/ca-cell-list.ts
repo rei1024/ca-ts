@@ -93,7 +93,7 @@ export class CACellList {
    * // ]
    */
   to2dArray(
-    options?: { backgroundState?: number },
+    options?: { readonly backgroundState?: number },
   ): {
     array: number[][];
     size: { width: number; height: number };
@@ -145,8 +145,8 @@ export class CACellList {
    * @returns
    */
   static from2dArray(
-    array: number[][],
-    offset?: { dx: number; dy: number },
+    array: ReadonlyArray<ReadonlyArray<number>>,
+    offset?: { readonly dx: number; readonly dy: number },
   ): CACellList {
     const cells: CACell[] = [];
     const height = array.length;
@@ -201,7 +201,7 @@ export class CACellList {
    * );
    * ```
    */
-  translate(offset: { dx: number; dy: number }): CACellList {
+  translate(offset: { readonly dx: number; readonly dy: number }): CACellList {
     const { dx, dy } = offset;
     return this.mapInternal((cell) => ({
       ...cell,
