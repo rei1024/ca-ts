@@ -7,15 +7,24 @@ and custom rules.
 
 ## Features
 
-- **High Performance:** `BitWorld` is optimized for speed using bitwise
-  operations.
-- **Flexible:** `RuleLoaderWorld` supports multi-state automata and custom rule
-  functions.
-- **Multiple Rule Formats (for `BitWorld`):**
-  - Conway's Game of Life (default)
-  - Outer-totalistic rules (e.g., B36/S23 HighLife)
-  - Isotropic non-totalistic rules (e.g., B2-a/S12 Just Friends)
-  - Non-isotropic rules (MAP)
+### `BitWorld`
+
+`BitWorld` is optimized for speed using bitwise operations.
+
+Supported rules:
+
+- **Outer-totalistic:** Rules defined by birth and survival conditions based on
+  the number of neighbors (e.g., Conway's Game of Life: B3/S23). Both Moore
+  (8-neighbor) and von Neumann (4-neighbor) neighborhoods are supported.
+- **Isotropic Non-totalistic:** Rules where the next state depends on the
+  specific arrangement of neighbors, not just their count (e.g., "Just Friends":
+  B2-a/S12).
+- **Non-isotropic (MAP):** Rules where each of the 8 neighbors can have a
+  different effect on the cell's next state.
+
+### `RuleLoaderWorld`
+
+`RuleLoaderWorld` supports multi-state automata and custom rules.
 
 ## Usage
 
@@ -71,7 +80,7 @@ world.random();
 
 ### Isotropic Non-Totalistic Rules
 
-The library also supports more complex isotropic non-totalistic rules.
+The library also supports isotropic non-totalistic rules.
 
 ```ts
 import { BitWorld } from "@ca-ts/algo/bit";

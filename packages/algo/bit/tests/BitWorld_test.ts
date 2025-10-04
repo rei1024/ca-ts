@@ -31,15 +31,17 @@ Deno.test("BitWorld is correct block", () => {
 });
 
 Deno.test("BitWorld is correct", () => {
-  const bitWorld = BitWorld.make({ width: 32 * 3, height: 32 });
-  const world = new World(32 * 3, 32);
+  const size = { width: 32 * 3, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  const world = World.make(size);
 
   randomCheck(bitWorld, world, 50);
 });
 
 Deno.test("BitWorld is correct 2", () => {
-  const bitWorld = BitWorld.make({ width: 32 * 1, height: 32 });
-  const world = new World(32 * 1, 32);
+  const size = { width: 32 * 1, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  const world = World.make(size);
   randomCheck(bitWorld, world, 50);
 });
 
@@ -49,10 +51,24 @@ Deno.test("BitWorld is correct OT rule", () => {
     birth: [3, 6],
     survive: [2, 3],
   };
-  const bitWorld = BitWorld.make({ width: 32 * 2, height: 32 });
+  const size = { width: 32 * 2, height: 32 };
+  const bitWorld = BitWorld.make(size);
   bitWorld.setRule(transition);
-  const world = new World(32 * 2, 32);
+  const world = World.make(size);
   world.setOTRule(transition);
+  randomCheck(bitWorld, world, 50);
+});
+
+Deno.test("BitWorld is correct von Neumann neighborhood rule", () => {
+  const transition = {
+    birth: [2, 3],
+    survive: [2, 3],
+  };
+  const size = { width: 32 * 2, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  bitWorld.setVonNeumannOTRule(transition);
+  const world = World.make(size);
+  world.setVonNeumannOTRule(transition);
   randomCheck(bitWorld, world, 50);
 });
 
@@ -83,6 +99,33 @@ function randomCheck(bitWorld: BitWorld, world: World, generations: number) {
     world.next();
   }
 }
+
+Deno.test("BitWorld is correct von", () => {
+  const world = BitWorld.make({ width: 64, height: 64 });
+
+  const rle = parseRLE(`x = 13, y = 23, rule = B23/S234V
+4$5bobobo$6bobo$5bobobo$8bo$5bobobo$5bobobo$4bobo$7bobo$4bobo$5bo3bo$
+4bobo$7bobo$4bobo$5bobobo!
+`);
+  for (const cell of rle.cells) {
+    world.set(cell.position.x, cell.position.y);
+  }
+
+  const rule = parseRule(rle.ruleString);
+  if (rule.type !== "outer-totalistic") {
+    throw new Error("expected outer totalistic rule");
+  }
+
+  world.setVonNeumannOTRule(rule.transition);
+  const initialGrid = world.bitGrid.clone();
+  for (let i = 0; i < 26; i++) {
+    world.next();
+  }
+
+  if (!world.bitGrid.equal(initialGrid)) {
+    throw new Error(`not a oscillator`);
+  }
+});
 
 Deno.test("BitWorld is correct intTransition", () => {
   const world = BitWorld.make({ width: 64, height: 64 });

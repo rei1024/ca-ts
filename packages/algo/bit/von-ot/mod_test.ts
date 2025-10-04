@@ -1,5 +1,4 @@
-import { assertEquals } from "@std/assert";
-import { bitCount, sort8 } from "./bitwise.ts";
+import { sort4 } from "./mod.ts";
 
 function error(): never {
   throw new Error("assert");
@@ -22,10 +21,10 @@ function* cartesian<A>(array: A[][]): Generator<A[]> {
 
 function checkCorrect() {
   const sum = (a: number[]) => a.reduce((acc, x) => acc + x, 0);
-  const array = Array(8).fill(0).map(() => [0, 1]);
+  const array = Array(4).fill(0).map(() => [0, 1]);
   for (const x of cartesian(array)) {
     // @ts-ignore length is correct
-    const sorted = sort8(...x);
+    const sorted = sort4(...x);
     const num = sum(sorted);
 
     if (sorted.slice(sorted.length - num).every((x) => x === 1)) {
@@ -39,21 +38,6 @@ function checkCorrect() {
   }
 }
 
-Deno.test("sort8", () => {
+Deno.test("sort4", () => {
   checkCorrect();
-});
-
-Deno.test("bitCount", () => {
-  assertEquals(bitCount(0), 0);
-  assertEquals(bitCount(0b1), 1);
-  assertEquals(bitCount(0b10), 1);
-  assertEquals(bitCount(0b11), 2);
-  assertEquals(bitCount(2 ** 31 - 1), 31);
-
-  for (let i = 0; i < 2 ** 10; i++) {
-    assertEquals(
-      [...i.toString(2)].reduce((acc, x) => x === "1" ? (acc + 1) : acc, 0),
-      bitCount(i),
-    );
-  }
 });

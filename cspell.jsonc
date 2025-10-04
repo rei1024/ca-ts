@@ -49,6 +49,7 @@
     "Silverman",
     "CMOS",
     "neighbourhood",
-    "ctrz"
+    "ctrz",
+    "bitmasks"
   ]
 }
