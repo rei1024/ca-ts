@@ -48,7 +48,7 @@ function createVonNeumannTotalisticNextCellCount(
   const survive = transition.survive;
 
   if (birth.some((x) => x > 4) || survive.some((x) => x > 4)) {
-    throw new Error("count shoud be less than 5 for von Neumann neighborhood");
+    throw new Error("count should be less than 5 for von Neumann neighborhood");
   }
 
   // Pre-calculate bitmasks for rules B0 to B4

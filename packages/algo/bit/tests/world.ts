@@ -83,7 +83,7 @@ function createVonOTNextCell(
   if (
     transition.birth.some((x) => x > 4) || transition.survive.some((x) => x > 4)
   ) {
-    throw new Error("count shoud be less than 5 for von Neumann neighborhood");
+    throw new Error("count should be less than 5 for von Neumann neighborhood");
   }
   const birthSet = new Set(transition.birth);
   const surviveSet = new Set(transition.survive);
