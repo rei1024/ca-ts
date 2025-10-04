@@ -16,9 +16,9 @@ Supported rules:
 - **Outer-totalistic:** Rules defined by birth and survival conditions based on
   the number of neighbors (e.g., Conway's Game of Life: B3/S23). Both Moore
   (8-neighbor) and von Neumann (4-neighbor) neighborhoods are supported.
-- **Isotropic Non-totalistic:** Complex rules where the next state depends on
-  the specific arrangement of neighbors, not just their count (e.g., "Just
-  Friends": B2-a/S12).
+- **Isotropic Non-totalistic:** Rules where the next state depends on the
+  specific arrangement of neighbors, not just their count (e.g., "Just Friends":
+  B2-a/S12).
 - **Non-isotropic (MAP):** Rules where each of the 8 neighbors can have a
   different effect on the cell's next state.
 
@@ -80,7 +80,7 @@ world.random();
 
 ### Isotropic Non-Totalistic Rules
 
-The library also supports more complex isotropic non-totalistic rules.
+The library also supports isotropic non-totalistic rules.
 
 ```ts
 import { BitWorld } from "@ca-ts/algo/bit";
