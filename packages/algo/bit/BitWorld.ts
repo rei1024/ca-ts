@@ -4,6 +4,7 @@ import {
   createTotalisticNextCell,
   nextCellConway,
 } from "./internal/bitwise.ts";
+import { isLifeTransition } from "./internal/is-life-transition.ts";
 import { createMAPNextCell } from "./map/mod.ts";
 
 function mod(i: number, j: number): number {
@@ -58,23 +59,7 @@ export class BitWorld {
    * world.setRule({ birth: [3, 6], survive: [2, 3] });
    */
   setRule(transition: { birth: number[]; survive: number[] } | null) {
-    function sortUnique(a: number[]) {
-      return [...new Set(a.slice().sort((a, b) => a - b))];
-    }
-
-    const normalizedBirth = transition ? sortUnique(transition.birth) : null;
-
-    const normalizedSurvive = transition
-      ? sortUnique(transition.survive)
-      : null;
-
-    const isConway = transition == null ||
-      (normalizedBirth && normalizedBirth.length === 1 &&
-        normalizedBirth[0] === 3 &&
-        normalizedSurvive && normalizedSurvive.length === 2 &&
-        normalizedSurvive[0] === 2 && normalizedSurvive[1] === 3);
-
-    this.nextCell = isConway
+    this.nextCell = transition == null || isLifeTransition(transition)
       ? nextCellConway
       : createTotalisticNextCell(transition);
   }

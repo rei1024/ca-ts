@@ -102,9 +102,25 @@ Deno.bench({ name: "BitWorld Int", group: "algo" }, () => {
   }
 });
 
-Deno.bench({ name: "World", group: "algo" }, () => {
+Deno.bench({ name: "World CGOL", group: "algo" }, () => {
   for (let j = 0; j < N; j++) {
     const world = new World(width, height);
+    world.forEach((x, y) => {
+      if (Math.random() > 0.5) {
+        world.set(x, y);
+      }
+    });
+
+    for (let i = 0; i < M; i++) {
+      world.next();
+    }
+  }
+});
+
+Deno.bench({ name: "World OT", group: "algo" }, () => {
+  for (let j = 0; j < N; j++) {
+    const world = new World(width, height);
+    world.setOTRule({ birth: [3, 6], survive: [2, 3] });
     world.forEach((x, y) => {
       if (Math.random() > 0.5) {
         world.set(x, y);

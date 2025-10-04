@@ -43,6 +43,19 @@ Deno.test("BitWorld is correct 2", () => {
   randomCheck(bitWorld, world, 50);
 });
 
+Deno.test("BitWorld is correct OT rule", () => {
+  // HighLife
+  const transition = {
+    birth: [3, 6],
+    survive: [2, 3],
+  };
+  const bitWorld = BitWorld.make({ width: 32 * 2, height: 32 });
+  bitWorld.setRule(transition);
+  const world = new World(32 * 2, 32);
+  world.setOTRule(transition);
+  randomCheck(bitWorld, world, 50);
+});
+
 Deno.test("BitWorld is correct transition", () => {
   const bitWorld = BitWorld.make({ width: 32 * 1, height: 32 });
   bitWorld.setRule({
