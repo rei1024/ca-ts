@@ -222,6 +222,10 @@ export class BitWorld {
     return array;
   }
 
+  /**
+   * Advances the simulation to the next generation, updating all cells according
+   * to the current rule.
+   */
   next() {
     switch (this.neighborhood) {
       case MOORE_NEIGHBORHOOD: {

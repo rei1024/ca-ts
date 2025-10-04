@@ -1,3 +1,9 @@
+## [0.13.0] - 2025-10-05
+
+### Changed
+
+- Add `BitWorld.setVonNeumannOTRule`
+
 ## [0.12.2] - 2025-10-03
 
 ### Changed
