@@ -6,11 +6,15 @@ import {
 } from "./internal/bitwise.ts";
 import { isLifeTransition } from "./internal/is-life-transition.ts";
 import { createMAPNextCell } from "./map/mod.ts";
+import { createVonNeumannNextCell } from "./von-ot/mod.ts";
 
 function mod(i: number, j: number): number {
   const k = i % j;
   return k < 0 ? k + (j < 0 ? -j : j) : k;
 }
+
+const MOORE_NEIGHBORHOOD = 0;
+const VON_NEUMANN_NEIGHBORHOOD = 1;
 
 /**
  * A optimized simulator for 2-state cellular automata on a 2D grid.
@@ -24,6 +28,18 @@ export class BitWorld {
   private _bitGrid: BitGrid;
   private tempArray: Uint32Array;
   private nextCell: typeof nextCellConway;
+  private nextVonCell:
+    | ((
+      center: number,
+      n: number,
+      e: number,
+      s: number,
+      w: number,
+    ) => number)
+    | undefined;
+  private neighborhood:
+    | typeof MOORE_NEIGHBORHOOD
+    | typeof VON_NEUMANN_NEIGHBORHOOD;
 
   /**
    * Creates a new `BitWorld` instance.
@@ -40,6 +56,7 @@ export class BitWorld {
     );
 
     this.nextCell = nextCellConway;
+    this.neighborhood = MOORE_NEIGHBORHOOD;
   }
 
   /**
@@ -62,6 +79,8 @@ export class BitWorld {
     this.nextCell = transition == null || isLifeTransition(transition)
       ? nextCellConway
       : createTotalisticNextCell(transition);
+    this.nextVonCell = undefined;
+    this.neighborhood = MOORE_NEIGHBORHOOD;
   }
 
   /**
@@ -79,6 +98,8 @@ export class BitWorld {
    */
   setINTRule(intTransition: { birth: string[]; survive: string[] }) {
     this.nextCell = createINTNextCell(intTransition);
+    this.nextVonCell = undefined;
+    this.neighborhood = MOORE_NEIGHBORHOOD;
   }
 
   /**
@@ -87,6 +108,16 @@ export class BitWorld {
    */
   setMAPRule(data: (0 | 1)[]) {
     this.nextCell = createMAPNextCell(data);
+    this.nextVonCell = undefined;
+    this.neighborhood = MOORE_NEIGHBORHOOD;
+  }
+
+  /**
+   * Set von Neumann neighbourhood outer totalistic rule
+   */
+  setVonNeumannOTRule(transition: { birth: number[]; survive: number[] }) {
+    this.nextVonCell = createVonNeumannNextCell(transition);
+    this.neighborhood = VON_NEUMANN_NEIGHBORHOOD;
   }
 
   /**
@@ -191,11 +222,24 @@ export class BitWorld {
     return array;
   }
 
+  next() {
+    switch (this.neighborhood) {
+      case MOORE_NEIGHBORHOOD: {
+        this.nextMoore();
+        break;
+      }
+      case VON_NEUMANN_NEIGHBORHOOD: {
+        this.nextVon();
+        break;
+      }
+    }
+  }
+
   /**
    * Advances the simulation to the next generation, updating all cells according
    * to the current rule.
    */
-  next() {
+  private nextMoore() {
     const bitGrid = this._bitGrid;
     const width = bitGrid.getWidth32();
     const height = bitGrid.getHeight();
@@ -221,6 +265,41 @@ export class BitWorld {
         const middleOffset = middle + j;
         const center = array[middleOffset]!;
         tempArray[middleOffset] = next(center, ne, n, nw, e, w, se, s, sw);
+      }
+    }
+
+    array.set(tempArray);
+  }
+
+  /**
+   * Advances the simulation to the next generation, updating all cells according
+   * to the current rule.
+   */
+  private nextVon() {
+    const bitGrid = this._bitGrid;
+    const width = bitGrid.getWidth32();
+    const height = bitGrid.getHeight();
+    const array = bitGrid.asInternalUint32Array();
+    const next = this.nextVonCell;
+    if (next === undefined) {
+      throw new Error("Internal error");
+    }
+
+    const tempArray = this.tempArray;
+    for (let i = 0; i < height; i++) {
+      const up = mod(i - 1, height) * width;
+      const middle = i * width;
+      const down = ((i + 1) % height) * width;
+      for (let j = 0; j < width; j++) {
+        const left = j === 0 ? width - 1 : (j - 1) % width;
+        const right = (j + 1) % width;
+        const n = array[up + j]!;
+        const w = array[middle + right]!;
+        const e = array[middle + left]!;
+        const s = array[down + j]!;
+        const middleOffset = middle + j;
+        const center = array[middleOffset]!;
+        tempArray[middleOffset] = next(center, n, e, s, w);
       }
     }
 

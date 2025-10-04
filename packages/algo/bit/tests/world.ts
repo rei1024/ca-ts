@@ -80,6 +80,11 @@ function createVonOTNextCell(
   s: CellState,
   sw: CellState,
 ) => CellState {
+  if (
+    transition.birth.some((x) => x > 4) || transition.survive.some((x) => x > 4)
+  ) {
+    throw new Error("count shoud be less than 5 for von Neumann neighborhood");
+  }
   const birthSet = new Set(transition.birth);
   const surviveSet = new Set(transition.survive);
   return (cell, ne, n, nw, e, w, se, s, sw) => {
@@ -113,6 +118,10 @@ export class World {
 
     this.array = new Uint8Array(len);
     this.tempArray = new Uint8Array(len);
+  }
+
+  static make({ width, height }: { width: number; height: number }) {
+    return new World(width, height);
   }
 
   /**

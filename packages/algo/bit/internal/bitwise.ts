@@ -12,7 +12,7 @@
 /**
  * Sort bitwise
  */
-export function sort(
+export function sort8(
   a: number,
   b: number,
   c: number,

@@ -31,15 +31,17 @@ Deno.test("BitWorld is correct block", () => {
 });
 
 Deno.test("BitWorld is correct", () => {
-  const bitWorld = BitWorld.make({ width: 32 * 3, height: 32 });
-  const world = new World(32 * 3, 32);
+  const size = { width: 32 * 3, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  const world = World.make(size);
 
   randomCheck(bitWorld, world, 50);
 });
 
 Deno.test("BitWorld is correct 2", () => {
-  const bitWorld = BitWorld.make({ width: 32 * 1, height: 32 });
-  const world = new World(32 * 1, 32);
+  const size = { width: 32 * 1, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  const world = World.make(size);
   randomCheck(bitWorld, world, 50);
 });
 
@@ -49,10 +51,24 @@ Deno.test("BitWorld is correct OT rule", () => {
     birth: [3, 6],
     survive: [2, 3],
   };
-  const bitWorld = BitWorld.make({ width: 32 * 2, height: 32 });
+  const size = { width: 32 * 2, height: 32 };
+  const bitWorld = BitWorld.make(size);
   bitWorld.setRule(transition);
-  const world = new World(32 * 2, 32);
+  const world = World.make(size);
   world.setOTRule(transition);
+  randomCheck(bitWorld, world, 50);
+});
+
+Deno.test("BitWorld is correct von Neumann neighborhood rule", () => {
+  const transition = {
+    birth: [2, 3],
+    survive: [2, 3],
+  };
+  const size = { width: 32 * 2, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  bitWorld.setVonNeumannOTRule(transition);
+  const world = World.make(size);
+  world.setVonNeumannOTRule(transition);
   randomCheck(bitWorld, world, 50);
 });
 
