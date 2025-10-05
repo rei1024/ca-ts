@@ -107,9 +107,7 @@ Deno.test("BitWorld is correct von", () => {
 4$5bobobo$6bobo$5bobobo$8bo$5bobobo$5bobobo$4bobo$7bobo$4bobo$5bo3bo$
 4bobo$7bobo$4bobo$5bobobo!
 `);
-  for (const cell of rle.cells) {
-    world.set(cell.position.x, cell.position.y);
-  }
+  world.bitGrid.setAll(rle.cells.map((c) => c.position));
 
   const rule = parseRule(rle.ruleString);
   if (rule.type !== "outer-totalistic") {
@@ -139,9 +137,7 @@ Deno.test("BitWorld is correct intTransition", () => {
   `,
   );
 
-  for (const cell of rle.cells) {
-    world.set(cell.position.x, cell.position.y);
-  }
+  world.bitGrid.setAll(rle.cells.map((c) => c.position));
 
   const rule = parseRule(rle.ruleString);
   if (rule.type !== "int") {
