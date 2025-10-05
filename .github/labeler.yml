@@ -1,0 +1,19 @@
+"package:rule":
+  - changed-files:
+      - any-glob-to-any-file: "packages/rule/*"
+
+"package:algo":
+  - changed-files:
+      - any-glob-to-any-file: "packages/algo/*"
+
+"package:rule-format":
+  - changed-files:
+      - any-glob-to-any-file: "packages/rule-format/*"
+
+"package:rule-rle":
+  - changed-files:
+      - any-glob-to-any-file: "packages/rule-rle/*"
+
+"documentation":
+  - changed-files:
+      - any-glob-to-any-file: ["docs/**/*", "**/README.md"]
