@@ -81,6 +81,10 @@ export class BitGrid {
     return this.height;
   }
 
+  getSize(): { width: number; height: number } {
+    return { width: this.getWidth(), height: this.height };
+  }
+
   /**
    * Sets the cell at the specified coordinates (x, y) to "alive" (1).
    */
@@ -92,7 +96,7 @@ export class BitGrid {
       );
     }
     const offset = x >>> 5; // = Math.floor(x / 32)
-    const index = y * this.width32 + offset;
+    const index = y * width32 + offset;
     const array = this.uint32array;
     if (array.length <= index) {
       throw new RangeError(
@@ -100,6 +104,12 @@ export class BitGrid {
       );
     }
     array[index] = array[index]! | (1 << (31 - (x % 32)));
+  }
+
+  setAll(positions: { x: number; y: number }[]) {
+    for (const p of positions) {
+      this.set(p.x, p.y);
+    }
   }
 
   /**
@@ -111,6 +121,13 @@ export class BitGrid {
       throw new RangeError(`BitGrid.get out of range x=${x} y=${y}`);
     }
     return res;
+  }
+
+  /**
+   * Gets the state of the cell at the specified coordinates (x, y).
+   */
+  getByPosition(position: { x: number; y: number }): 0 | 1 {
+    return this.get(position.x, position.y);
   }
 
   private getSafe(x: number, y: number): 0 | 1 | null {
@@ -134,10 +151,11 @@ export class BitGrid {
    * Returns the entire grid as a 2D array of 0s and 1s.
    */
   getArray(): (0 | 1)[][] {
+    const width = this.getWidth();
     const array: (0 | 1)[][] = Array(this.getHeight())
       .fill(0)
       .map(() =>
-        Array(this.getWidth())
+        Array(width)
           .fill(0)
           .map(() => 0)
       );

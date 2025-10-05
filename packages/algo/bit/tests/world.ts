@@ -152,6 +152,10 @@ export class World {
     return this.height;
   }
 
+  getSize(): { width: number; height: number } {
+    return { width: this.width, height: this.height };
+  }
+
   /**
    * set all cells to dead
    */

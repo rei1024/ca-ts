@@ -199,6 +199,7 @@ Deno.test("BitGrid expanded with offset x", () => {
 
   assertEquals(newGrid.getHeight(), 12);
   assertEquals(newGrid.getWidth(), 64);
+  assertEquals(newGrid.getSize(), { width: 64, height: 12 });
 });
 
 Deno.test("BitGrid clone", () => {
@@ -373,18 +374,25 @@ Deno.test("BitGrid isSamePatternIgnoreTranslation", () => {
 
   // --- Test 4: More Complex Pattern (Glider) ---
   const gliderA = BitGrid.make({ width: w, height: h });
-  gliderA.set(1, 0); // TopLeft (1, 0)
-  gliderA.set(2, 1);
-  gliderA.set(0, 2);
-  gliderA.set(1, 2);
-  gliderA.set(2, 2);
+  // TopLeft (1, 0)
+  gliderA.setAll(([
+    [1, 0],
+    [2, 1],
+    [0, 2],
+    [1, 2],
+    [2, 2],
+  ] as const).map(([x, y]) => ({ x, y })));
 
   const gliderB = BitGrid.make({ width: w, height: h });
-  gliderB.set(10, 5); // TopLeft (10, 5)
-  gliderB.set(11, 6);
-  gliderB.set(9, 7);
-  gliderB.set(10, 7);
-  gliderB.set(11, 7);
+  // TopLeft (10, 5)
+  gliderB.setAll(([
+    [10, 5],
+    [11, 6],
+    [9, 7],
+    [10, 7],
+    [11, 7],
+  ] as const).map(([x, y]) => ({ x, y })));
+
   assertEquals(
     gliderA.isSamePatternIgnoreTranslation(gliderB),
     true,
@@ -404,11 +412,14 @@ Deno.test("BitGrid isSamePatternIgnoreTranslation", () => {
   // A: Glider (Pop 5)
   // C: 5 cells in a column (Pop 5)
   const gC = BitGrid.make({ width: w, height: h });
-  gC.set(10, 10);
-  gC.set(10, 11);
-  gC.set(10, 12);
-  gC.set(10, 13);
-  gC.set(10, 14);
+  gC.setAll(([
+    [10, 10],
+    [10, 11],
+    [10, 12],
+    [10, 13],
+    [10, 14],
+  ] as const).map(([x, y]) => ({ x, y })));
+
   assertEquals(
     gliderA.getPopulation(),
     gC.getPopulation(),
