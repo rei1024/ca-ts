@@ -536,6 +536,40 @@ Deno.test("parseMapRule AllShips", () => {
   // cspell:disable-next-line
   const rule = parseMapRule("MAPAAD//w");
   assertEquals(rule.neighbors, "von-neumann");
+  assertEquals(rule.data, [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+  ]);
 });
 
 Deno.test("parseMapRule AllShips with padding", () => {
