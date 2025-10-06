@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Changed
+
+- Use `Uint8Array.fromBase64` for MAP rules.
+
 ## [0.16.1] - 2025-10-03
 
 ### Changed

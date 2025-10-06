@@ -66,8 +66,9 @@ await build({
   },
   // ...etc...
   filterDiagnostic(diagnostic) {
+    const path = diagnostic.file?.path;
     if (
-      diagnostic.file?.path?.includes("@std/assert")
+      path?.includes("@std/assert") || path.includes("decodeBase64-fallback")
     ) {
       return false; // ignore all diagnostics
     }

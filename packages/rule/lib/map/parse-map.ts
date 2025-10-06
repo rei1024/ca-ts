@@ -1,7 +1,7 @@
 import { type GridParameter, parseGridParameter } from "../grid/mod.ts";
-import { decodeBase64 } from "@std/encoding/base64";
 import type { MAPRule } from "./core.ts";
 import { ParseRuleError } from "@ca-ts/rule";
+import { decodeBase64Fallback } from "./decodeBase64-fallback.ts";
 
 /** Number of base64 characters to encode 512 bits for Moore neighborhood */
 const MAP512LENGTH = 86;
@@ -42,7 +42,7 @@ export function parseMapRule(ruleString: string): MAPRule {
     );
   }
 
-  const decoded = decodeBase64(ruleString);
+  const decoded = decodeBase64Fallback(ruleString);
 
   const data: (0 | 1)[] = [...decoded].flatMap((byte) =>
     [7, 6, 5, 4, 3, 2, 1, 0].map((bit) => (byte >> bit) & 1) as (0 | 1)[]
