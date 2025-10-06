@@ -1,5 +1,4 @@
 import { type GridParameter, parseGridParameter } from "../grid/mod.ts";
-import { decodeBase64 } from "@std/encoding/base64";
 import type { MAPRule } from "./core.ts";
 import { ParseRuleError } from "@ca-ts/rule";
 import { decodeBase64Fallback } from "./decodeBase64-fallback.ts";
