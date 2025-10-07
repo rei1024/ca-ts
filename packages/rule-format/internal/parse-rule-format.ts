@@ -22,6 +22,19 @@ export function parseRuleFormat(ruleFileSource: string): RuleFormat {
   }
 
   const table = sectionMap.get("TABLE");
+  const parsedTable = table != null ? parseTable(table.lines) : null;
+
+  const names = sectionMap.get("NAMES");
+
+  let numberOfStates: number | undefined;
+  if (parsedTable) {
+    const states = parsedTable.find((x) => x.type === "n_states");
+    if (!states) {
+      throw new Error("no states count");
+    } else {
+      numberOfStates = states.numberOfStates;
+    }
+  }
 
   return {
     name: ruleName,
@@ -32,14 +45,49 @@ export function parseRuleFormat(ruleFileSource: string): RuleFormat {
         value.lines,
       ];
     })),
-    ...table
+    ...names
+      ? {
+        names: {
+          stateNames: parseNames(names.lines, numberOfStates),
+        },
+      }
+      : {},
+    ...parsedTable
       ? {
         table: {
-          lines: parseTable(table.lines),
+          lines: parsedTable,
         },
       }
       : {},
   };
+}
+
+function parseNames(
+  lines: string[],
+  numberOfStates: number | undefined,
+): string[] {
+  if (numberOfStates === undefined) {
+    throw new Error("n_states is required");
+  }
+
+  const names = Array(numberOfStates).fill("");
+
+  for (const line of lines) {
+    const trimmedLine = line.trim();
+    if (trimmedLine.length === 0 || trimmedLine.startsWith("#")) {
+      continue;
+    }
+    const array = trimmedLine.split(" ");
+    const numberString = array[0];
+    if (numberString !== undefined && /^\d+$/.test(numberString)) {
+      const number = Number(numberString);
+      if (0 <= number && number < numberOfStates) {
+        names[number] = array.slice(1).join(" ");
+      }
+    }
+  }
+
+  return names;
 }
 
 function parseTable(lines: string[]): RuleTableLine[] {

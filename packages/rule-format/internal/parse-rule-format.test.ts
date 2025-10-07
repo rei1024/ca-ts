@@ -17,6 +17,14 @@ Deno.test("parseRuleFormat WireWorld", () => {
       "and other digital circuits.",
       "",
     ],
+    names: {
+      stateNames: [
+        "empty",
+        "electron head",
+        "electron tail",
+        "copper wire",
+      ],
+    },
     table: undefined,
     rawSections: undefined,
   });
