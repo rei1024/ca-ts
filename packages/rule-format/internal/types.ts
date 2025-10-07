@@ -18,6 +18,12 @@ export type RuleFormat = {
    */
   description: string[];
   /**
+   * `@NAMES` section
+   */
+  names?: {
+    stateNames: string[];
+  };
+  /**
    * `@TABLE` section
    */
   table?: {
