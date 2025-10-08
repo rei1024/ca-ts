@@ -9,7 +9,7 @@ import type { INTCondition } from "../../../mod.ts";
  * ```
  *
  * ```js ignore
- * intConditionArray = ["0", "1c", "1e", "2a", ..., "7e", "7c", "8"]
+ * intConditionList = ["0", "1c", "1e", "2a", ..., "7e", "7c", "8"]
  * ```
  */
 export const intConditionList: INTCondition[] =

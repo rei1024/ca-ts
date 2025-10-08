@@ -59,6 +59,22 @@ Deno.test("BitWorld is correct OT rule", () => {
   randomCheck(bitWorld, world, 50);
 });
 
+Deno.test("BitWorld is correct INT rule", () => {
+  // https://conwaylife.com/forums/viewtopic.php?f=11&t=6956
+  const rule = parseRule(
+    `B2cik3-cijn4cknqr5-anqy6ekn7/S1c2acn3-aijq4cjktw5ejny6aen7c8`,
+  );
+  if (rule.type !== "int") {
+    throw new Error("expected int rule");
+  }
+  const size = { width: 32 * 2, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  bitWorld.setINTRule(rule.transition);
+  const world = World.make(size);
+  world.setINTRule(rule.transition);
+  randomCheck(bitWorld, world, 50);
+});
+
 Deno.test("BitWorld is correct von Neumann neighborhood rule", () => {
   const transition = {
     birth: [2, 3],

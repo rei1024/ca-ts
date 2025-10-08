@@ -1,3 +1,4 @@
+import { intConditionList } from "../int/mod.ts";
 import { isLifeTransition } from "../internal/is-life-transition.ts";
 
 function mod(i: number, j: number) {
@@ -93,6 +94,53 @@ function createVonOTNextCell(
   };
 }
 
+function createINTNextCell(
+  transition: { birth: string[]; survive: string[] },
+): (
+  center: CellState,
+  ne: CellState,
+  n: CellState,
+  nw: CellState,
+  e: CellState,
+  w: CellState,
+  se: CellState,
+  s: CellState,
+  sw: CellState,
+) => CellState {
+  const birth = transition.birth;
+  const survive = transition.survive;
+
+  if (birth.includes("0")) {
+    throw new Error("B0 rule");
+  }
+
+  const lookupTableBirth = new Uint8Array(256);
+  const lookupTableSurvive = new Uint8Array(256);
+
+  for (let i = 0; i < 256; i++) {
+    const condition = intConditionList[i] ?? "";
+    lookupTableBirth[i] = birth.includes(condition) ? 1 : 0;
+    lookupTableSurvive[i] = survive.includes(condition) ? 1 : 0;
+  }
+
+  // 1   2   4
+  // 8      16
+  // 32 64 128
+  /**
+   * ```txt
+   * ne n nw
+   * e  c  w
+   * se s sw
+   * ```
+   */
+
+  return (cell, ne, n, nw, e, w, se, s, sw) => {
+    const index = ne + (n << 1) + (nw << 2) + (e << 3) + (w << 4) + (se << 5) +
+      (s << 6) + (sw << 7);
+    return (cell === 0 ? lookupTableBirth : lookupTableSurvive)[index] ? 1 : 0;
+  };
+}
+
 /**
  * Game of Life
  */
@@ -144,6 +192,11 @@ export class World {
     this.neighborhood = "von";
   }
 
+  setINTRule(transition: { birth: string[]; survive: string[] }) {
+    this.nextCell = createINTNextCell(transition);
+    this.neighborhood = "moore";
+  }
+
   getWidth() {
     return this.width;
   }
@@ -168,7 +221,16 @@ export class World {
    * @param y
    */
   set(x: number, y: number) {
-    this.array[y * this.width + x] = 1;
+    const array = this.array;
+    const width = this.width;
+    const height = this.height;
+    if (x < 0 || x >= width) {
+      throw new RangeError("x is out of range");
+    }
+    if (y < 0 || y >= height) {
+      throw new RangeError("x is out of range");
+    }
+    array[y * width + x] = 1;
   }
 
   random({ liveRatio }: { liveRatio?: number } = {}) {
@@ -208,7 +270,8 @@ export class World {
   }
 
   /**
-   * 次の世代に更新する
+   * Advances the simulation to the next generation, updating all cells according
+   * to the current rule.
    */
   next() {
     const nextCell = this.nextCell;
