@@ -96,6 +96,16 @@ Deno.test("parseExtendedWechslerFormat yz twice", () => {
   assertEquals(cells, [{ x: 0, y: 0 }, { x: 79, y: 0 }]);
 });
 
+Deno.test("parseApgcode spaces", () => {
+  assertThrows(() => {
+    parseApgcode(" xs4_33");
+  }, ApgcodeParseError);
+
+  assertThrows(() => {
+    parseApgcode("xs4_33 ");
+  }, ApgcodeParseError);
+});
+
 Deno.test("parseApgcode Error", () => {
   assertThrows(() => {
     parseApgcode("!");
