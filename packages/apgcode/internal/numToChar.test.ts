@@ -4,22 +4,22 @@ import { numToChar, numToCharForYSingleChar } from "./numToChar.ts";
 import { assertThrows } from "@std/assert/throws";
 
 Deno.test("numToChar", () => {
-  function aseertBack(n: number) {
+  function assertBack(n: number) {
     assertEquals(charToNum(numToChar(n)), n);
   }
 
   for (let i = 0; i <= 31; i++) {
-    aseertBack(i);
+    assertBack(i);
   }
 });
 
 Deno.test("numToCharForYSingleChar", () => {
-  function aseertBack(n: number) {
+  function assertBack(n: number) {
     assertEquals(charToNumForY(numToCharForYSingleChar(n)), n);
   }
 
   for (let i = 4; i <= 39; i++) {
-    aseertBack(i);
+    assertBack(i);
   }
 });
 
