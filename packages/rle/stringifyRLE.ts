@@ -35,10 +35,12 @@ export function stringifyRLE(
 
   if (options?.acceptUnorderedCells) {
     cells.sort((a, b) => {
-      if (a.position.y === b.position.y) {
-        return a.position.x - b.position.x;
+      const aPosition = a.position;
+      const bPosition = b.position;
+      if (aPosition.y === bPosition.y) {
+        return aPosition.x - bPosition.x;
       } else {
-        return a.position.y - b.position.y;
+        return aPosition.y - bPosition.y;
       }
     });
   }
@@ -48,10 +50,11 @@ export function stringifyRLE(
     const offsetX = offset.x;
     const offsetY = offset.y;
     cells = cells.map((c) => {
+      const position = c.position;
       return {
         position: {
-          x: c.position.x - offsetX,
-          y: c.position.y - offsetY,
+          x: position.x + offsetX,
+          y: position.y + offsetY,
         },
         state: c.state,
       };
@@ -71,19 +74,18 @@ export function stringifyRLE(
     (x.count === 1 ? "" : x.count.toString()) + x.value
   );
 
-  if (parts.length === 0) {
-    parts.push("!");
-  } else {
-    parts[parts.length - 1] += "!";
-  }
+  parts.push("!");
 
-  const cxrleComment = rle.comments?.every((x) => !x.startsWith("#CXRLE")) &&
+  const cxrleComment =
+    (rle.comments?.every((x) => !x.startsWith("#CXRLE")) ?? true) &&
       (offsetZeroPattern.offset.dx !== 0 ||
-        offsetZeroPattern.offset.dy !== 0)
-    ? [
-      `#CXRLE Pos=${offsetZeroPattern.offset.dx},${offsetZeroPattern.offset.dy}`,
-    ]
-    : [];
+        offsetZeroPattern.offset.dy !== 0 || rle.XRLE?.generation != null)
+      ? [
+        `#CXRLE Pos=${offsetZeroPattern.offset.dx},${offsetZeroPattern.offset.dy}${
+          rle.XRLE?.generation != null ? (" Gen=" + rle.XRLE.generation) : ""
+        }`,
+      ]
+      : [];
 
   const size = rle.size != null
     ? `x = ${rle.size.width}, y = ${rle.size.height}`
@@ -96,8 +98,9 @@ export function stringifyRLE(
     ...format(parts, MAX_CHAR),
   ].join(
     "\n",
-  ) + (rle.trailingComment ?? "") +
-    "\n";
+  ) + (rle.trailingComment == null || rle.trailingComment === ""
+    ? "\n"
+    : rle.trailingComment);
 }
 
 function cellsToItems(

@@ -7,11 +7,15 @@ import {
 Deno.test("parseOuterTotalistic B3/S23", () => {
   const items = [
     "B3/S23",
+    "S23/B3",
     "B3/S32",
     "b3/s23",
     "B3/s23",
     "23/3",
     "32/3",
+    "b3s23",
+    "B3S23",
+    "b3S23",
   ];
 
   const expected = {
@@ -50,6 +54,53 @@ Deno.test("parseOuterTotalistic B012345678/S012345678", () => {
   });
 });
 
+Deno.test("parseOuterTotalistic B3/S23V", () => {
+  assertEquals(parseOuterTotalistic("B3/S23V"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3],
+      survive: [2, 3],
+    },
+    neighborhood: "von-neumann",
+  });
+});
+
+Deno.test("parseOuterTotalistic B3/S23H", () => {
+  assertEquals(parseOuterTotalistic("B3/S23H"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3],
+      survive: [2, 3],
+    },
+    neighborhood: "hexagonal",
+    hexagonalType: "honeycomb",
+  });
+});
+
+Deno.test("parseOuterTotalistic B3/S23h", () => {
+  assertEquals(parseOuterTotalistic("B3/S23h"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3],
+      survive: [2, 3],
+    },
+    neighborhood: "hexagonal",
+    hexagonalType: "honeycomb",
+  });
+});
+
+Deno.test("parseOuterTotalistic B3/S23HT", () => {
+  assertEquals(parseOuterTotalistic("B3/S23HT"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3],
+      survive: [2, 3],
+    },
+    neighborhood: "hexagonal",
+    hexagonalType: "tripod",
+  });
+});
+
 Deno.test("parseOuterTotalistic sort B62/S41", () => {
   assertEquals(parseOuterTotalistic("B62/S41"), {
     type: "outer-totalistic",
@@ -66,20 +117,114 @@ Deno.test("parseOuterTotalistic B9/S", () => {
   });
 });
 
+Deno.test("parseOuterTotalistic XYZ", () => {
+  const items = [
+    "B3/S23X",
+    "B3/S23Y",
+    "B3/S23Z",
+    "B3/S23x",
+    "B3/S23y",
+    "B3/S23z",
+  ];
+
+  for (const item of items) {
+    assertThrows(
+      () => {
+        parseOuterTotalistic(item);
+      },
+      Error,
+      `Invalid Outer-Totalistic Rule Format`,
+    );
+
+    assertThrows(
+      () => {
+        parseOuterTotalistic(item + "H");
+      },
+      Error,
+      `Invalid Outer-Totalistic Rule Format`,
+    );
+
+    assertThrows(
+      () => {
+        parseOuterTotalistic(item + "V");
+      },
+      Error,
+      `Invalid Outer-Totalistic Rule Format`,
+    );
+  }
+});
+
 Deno.test("parseOuterTotalistic B/S9", () => {
   assertThrows(() => {
     parseOuterTotalistic("B/S9");
   });
 });
 
+Deno.test("parseOuterTotalistic B3/S5V", () => {
+  assertThrows(() => {
+    parseOuterTotalistic("B3/S5V");
+  });
+});
+
+Deno.test("parseOuterTotalistic B3/S7H", () => {
+  assertThrows(() => {
+    parseOuterTotalistic("B3/S5V");
+  });
+});
+
+Deno.test("parseOuterTotalistic triangular B3/S23L", () => {
+  assertEquals(parseOuterTotalistic("B3/S23L"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3],
+      survive: [2, 3],
+    },
+    neighborhood: "triangular",
+    triangularType: "moore",
+  });
+});
+
+Deno.test("parseOuterTotalistic triangular B39Z/S23XYZL", () => {
+  assertEquals(parseOuterTotalistic("B39Z/S23XYZL"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3, 9, 12],
+      survive: [2, 3, 10, 11, 12],
+    },
+    neighborhood: "triangular",
+    triangularType: "moore",
+  });
+});
+
+Deno.test("parseOuterTotalistic triangular max", () => {
+  const items = [
+    "B/S4XLE",
+    "B/S4XLR",
+    "B/S7XLO",
+    "B/S7XLI",
+    "B/SXLB",
+    "B/SXLV",
+  ];
+
+  for (const item of items) {
+    assertThrows(() => {
+      parseOuterTotalistic(item);
+    });
+  }
+});
+
 Deno.test("parseOuterTotalistic Generations", () => {
   const items = [
+    "S23/B2/8", // use by Catagolue
     "B2/S23/8",
     "B2/S23/G8",
     "b2/s23/g8",
     "B2/S23/C8",
     "b2/s23/c8",
     "G8/B2/S23",
+    "g8b2s23", // lifelib
+    "G8B2S23",
+    "B2S23G8",
     "C8/B2/S23",
     "23/2/8",
   ];
@@ -107,7 +252,7 @@ Deno.test("parseOuterTotalistic Generations error less than 2: 1", () => {
       parseOuterTotalistic("B2/S23/1");
     },
     Error,
-    "Generations should be greater than or equal to 2",
+    "Generations value must be greater than or equal to 2.",
   );
 });
 
@@ -117,7 +262,7 @@ Deno.test("parseOuterTotalistic Generations error less than 2: 0", () => {
       parseOuterTotalistic("B2/S23/0");
     },
     Error,
-    "Generations should be greater than or equal to 2",
+    "Generations value must be greater than or equal to 2.",
   );
 });
 
@@ -150,6 +295,23 @@ Deno.test("parseOuterTotalistic Generations error 23/2/", () => {
   });
 });
 
+Deno.test("parseOuterTotalistic gridParameter", () => {
+  assertEquals(parseOuterTotalistic("B3/S23:P30,20"), {
+    type: "outer-totalistic",
+    transition: {
+      birth: [3],
+      survive: [2, 3],
+    },
+    gridParameter: {
+      size: {
+        width: 30,
+        height: 20,
+      },
+      topology: { type: "P" },
+    },
+  });
+});
+
 Deno.test("parseOuterTotalistic stringifyOuterTotalistic", () => {
   function assertBack(rule: string) {
     const parsedRule = parseOuterTotalistic(rule);
@@ -161,6 +323,23 @@ Deno.test("parseOuterTotalistic stringifyOuterTotalistic", () => {
     "B3/S23/8",
     "B/S",
     "B012345678/S012345678",
+    "B3/S23:T20,30",
+    "B3/S23/3:T20,40",
+    "B3/S23V",
+    "B3/S23V:T30+1,20",
+    "B3/S23:K30,20*+1",
+    "B3/S23:S30",
+    "B3/S23:S30*",
+    "B3/S23HT",
+    "B3/S23L",
+    "B3/S23XYZL",
+    "B3XYZ/S23L",
+    "B3/S23LI",
+    "B3/S23LO",
+    "B3/S23LB",
+    "B3/S23LV",
+    "B3/S23LE",
+    "B3/S23LR",
   ];
 
   for (const item of items) {
@@ -177,6 +356,53 @@ Deno.test("stringifyOuterTotalistic sort", () => {
     },
   });
   assertEquals(rule, "B26/S14");
+});
+
+Deno.test("stringifyOuterTotalistic sort triangular", () => {
+  const rule = stringifyOuterTotalistic({
+    type: "outer-totalistic",
+    transition: {
+      birth: [6, 10, 2],
+      survive: [11, 4, 1],
+    },
+    neighborhood: "triangular",
+    triangularType: "moore",
+  });
+  assertEquals(rule, "B26X/S14YL");
+});
+
+Deno.test("stringifyOuterTotalistic triangular error", () => {
+  assertThrows(
+    () => {
+      stringifyOuterTotalistic({
+        type: "outer-totalistic",
+        transition: {
+          birth: [6, 2],
+          survive: [4, 1],
+        },
+        triangularType: "moore",
+      });
+    },
+    Error,
+    "triangularType is only valid when neighborhood is 'triangular'",
+  );
+});
+
+Deno.test("stringifyOuterTotalistic hexagonal error", () => {
+  assertThrows(
+    () => {
+      stringifyOuterTotalistic({
+        type: "outer-totalistic",
+        transition: {
+          birth: [6, 2],
+          survive: [4, 1],
+        },
+        hexagonalType: "honeycomb",
+      });
+    },
+    Error,
+    "hexagonalType is only valid when neighborhood is 'hexagonal'",
+  );
 });
 
 Deno.test("stringifyOuterTotalistic error", () => {

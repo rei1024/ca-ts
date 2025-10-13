@@ -1,3 +1,84 @@
+## [0.13.1] - 2025-10-05
+
+### Changed
+
+- Add `BitGrid.getSize`
+- Add `BitGrid.setAll`
+- Add `BitGrid.getByPosition`
+
+## [0.13.0] - 2025-10-05
+
+### Changed
+
+- Add `BitWorld.setVonNeumannOTRule`
+
+## [0.12.2] - 2025-10-03
+
+### Changed
+
+- Improve documentation
+
+## [0.12.1] - 2025-09-29
+
+### Changed
+
+- Optimize `BitGrid.getBoundingBox`
+
+## [0.12.0] - 2025-09-27
+
+### Changed
+
+- Add `BitGrid.getTopRowLeftCellPosition`
+- Add `BitGird.isSamePatternIgnoreTranslation`
+
+## [0.11.3] - 2025-09-27
+
+### Changed
+
+- Fix `BitGrid.expanded`
+
+## [0.11.2] - 2025-09-02
+
+### Changed
+
+- Check rule on `RuleLoaderWorld` constructor
+- Fix types
+
+## [0.11.1] - 2025-07-03
+
+### Changed
+
+- Fix documentation
+- Optimize `BitGrid.getBoundingBox`
+
+## [0.11.0] - 2025-07-02
+
+### Changed
+
+- **BREAKING** Removed rule options from `BitWorld` constructor
+- **BREAKING** Make `BitWorld.bitGrid` readonly
+- Add `BitWorld.setBitGrid`
+- Change `BitGrid.expanded` signature
+
+## [0.10.0] - 2025-07-01
+
+### Changed
+
+- Add `BitGrid.expanded`
+
+## [0.9.0] - 2025-05-29
+
+### Changed
+
+- Add `RuleLoaderWorld`
+
+## [0.8.0] - 2025-04-17
+
+### Changed
+
+- Add `BitGrid.borderAlive`
+- Add `BitWorld.setMAPRule` for MAP rules.
+
 ## [0.7.0] - 2025-04-11
 
 ### Changed

@@ -32,4 +32,8 @@ export type {
   ApgcodeSpaceship,
   ApgcodeStillLife,
 } from "./Apgcode.ts";
-export { parseApgcode, parseExtendedWechslerFormat } from "./parseApgcode.ts";
+export {
+  ApgcodeParseError,
+  parseApgcode,
+  parseExtendedWechslerFormat,
+} from "./parseApgcode.ts";

@@ -6,6 +6,7 @@
     "noUncheckedIndexedAccess": true
   },
   "imports": {
+    "@deno/dnt": "jsr:@deno/dnt@^0.42.3",
     "@std/assert": "jsr:@std/assert@^1.0.0"
   },
   "tasks": {
@@ -36,6 +37,7 @@
     "./packages/plaintext",
     "./packages/apgcode",
     "./packages/algo",
-    "./packages/rule"
+    "./packages/rule",
+    "./packages/rule-format"
   ]
 }

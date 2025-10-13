@@ -1,23 +1,145 @@
+import { intConditionList } from "../int/mod.ts";
+import { isLifeTransition } from "../internal/is-life-transition.ts";
+
 function mod(i: number, j: number) {
   const k = i % j;
   return k < 0 ? (k + (j < 0 ? -j : j)) : k;
 }
 
+type CellState = 0 | 1;
+
+type NextCellFn = (
+  center: CellState,
+  ne: CellState,
+  n: CellState,
+  nw: CellState,
+  e: CellState,
+  w: CellState,
+  se: CellState,
+  s: CellState,
+  sw: CellState,
+) => CellState;
+
 /**
  * Rule of Conway's Game of Life
  * @param cell state of center cell
- * @param count number of neighbour live cell
+ * @param count number of neighbor live cell
  * @returns next state of center cell
  */
-const updateCell = (cell: 0 | 1, count: number): 0 | 1 => {
-  if (cell === 0 && count === 3) {
+const updateLifeCell: NextCellFn = (
+  center: CellState,
+  ne: CellState,
+  n: CellState,
+  nw: CellState,
+  e: CellState,
+  w: CellState,
+  se: CellState,
+  s: CellState,
+  sw: CellState,
+): CellState => {
+  const count = ne + n + nw + e + w + se + s + sw;
+  if (center === 0 && count === 3) {
     return 1;
-  } else if (cell === 1 && (count === 2 || count === 3)) {
+  } else if (center === 1 && (count === 2 || count === 3)) {
     return 1;
   } else {
     return 0;
   }
 };
+
+function createOTNextCell(
+  transition: { birth: number[]; survive: number[] },
+): (
+  center: CellState,
+  ne: CellState,
+  n: CellState,
+  nw: CellState,
+  e: CellState,
+  w: CellState,
+  se: CellState,
+  s: CellState,
+  sw: CellState,
+) => CellState {
+  const birthSet = new Set(transition.birth);
+  const surviveSet = new Set(transition.survive);
+  return (cell, ne, n, nw, e, w, se, s, sw) => {
+    const count = ne + n + nw + e + w + se + s + sw;
+    return (cell === 0 ? birthSet.has(count) : surviveSet.has(count)) ? 1 : 0;
+  };
+}
+
+function createVonOTNextCell(
+  transition: { birth: number[]; survive: number[] },
+): (
+  center: CellState,
+  ne: CellState,
+  n: CellState,
+  nw: CellState,
+  e: CellState,
+  w: CellState,
+  se: CellState,
+  s: CellState,
+  sw: CellState,
+) => CellState {
+  if (
+    transition.birth.some((x) => x > 4) || transition.survive.some((x) => x > 4)
+  ) {
+    throw new Error("count should be less than 5 for von Neumann neighborhood");
+  }
+  const birthSet = new Set(transition.birth);
+  const surviveSet = new Set(transition.survive);
+  return (cell, ne, n, nw, e, w, se, s, sw) => {
+    const count = n + e + w + s;
+    return (cell === 0 ? birthSet.has(count) : surviveSet.has(count)) ? 1 : 0;
+  };
+}
+
+function createINTNextCell(
+  transition: { birth: string[]; survive: string[] },
+): (
+  center: CellState,
+  ne: CellState,
+  n: CellState,
+  nw: CellState,
+  e: CellState,
+  w: CellState,
+  se: CellState,
+  s: CellState,
+  sw: CellState,
+) => CellState {
+  const birth = transition.birth;
+  const survive = transition.survive;
+
+  if (birth.includes("0")) {
+    throw new Error("B0 rule");
+  }
+
+  const lookupTableBirth = new Uint8Array(256);
+  const lookupTableSurvive = new Uint8Array(256);
+
+  for (let i = 0; i < 256; i++) {
+    const condition = intConditionList[i] ?? "";
+    lookupTableBirth[i] = birth.includes(condition) ? 1 : 0;
+    lookupTableSurvive[i] = survive.includes(condition) ? 1 : 0;
+  }
+
+  // 1   2   4
+  // 8      16
+  // 32 64 128
+  /**
+   * ```txt
+   * ne n nw
+   * e  c  w
+   * se s sw
+   * ```
+   */
+
+  return (cell, ne, n, nw, e, w, se, s, sw) => {
+    const index = ne + (n << 1) + (nw << 2) + (e << 3) + (w << 4) + (se << 5) +
+      (s << 6) + (sw << 7);
+    return (cell === 0 ? lookupTableBirth : lookupTableSurvive)[index] ? 1 : 0;
+  };
+}
 
 /**
  * Game of Life
@@ -27,6 +149,8 @@ export class World {
   private height: number;
   private array: Uint8Array;
   private tempArray: Uint8Array;
+  private nextCell = updateLifeCell;
+  private neighborhood: "moore" | "von" = "moore";
   /**
    * @param width
    * @param height
@@ -44,12 +168,45 @@ export class World {
     this.tempArray = new Uint8Array(len);
   }
 
+  static make({ width, height }: { width: number; height: number }) {
+    return new World(width, height);
+  }
+
+  /**
+   * Set outer totalistic rule
+   */
+  setOTRule(transition: { birth: number[]; survive: number[] }) {
+    if (isLifeTransition(transition)) {
+      this.nextCell = updateLifeCell;
+      return;
+    }
+    this.nextCell = createOTNextCell(transition);
+    this.neighborhood = "moore";
+  }
+
+  /**
+   * Set von Neumann neighbourhood outer totalistic rule
+   */
+  setVonNeumannOTRule(transition: { birth: number[]; survive: number[] }) {
+    this.nextCell = createVonOTNextCell(transition);
+    this.neighborhood = "von";
+  }
+
+  setINTRule(transition: { birth: string[]; survive: string[] }) {
+    this.nextCell = createINTNextCell(transition);
+    this.neighborhood = "moore";
+  }
+
   getWidth() {
     return this.width;
   }
 
   getHeight() {
     return this.height;
+  }
+
+  getSize(): { width: number; height: number } {
+    return { width: this.width, height: this.height };
   }
 
   /**
@@ -64,7 +221,16 @@ export class World {
    * @param y
    */
   set(x: number, y: number) {
-    this.array[y * this.width + x] = 1;
+    const array = this.array;
+    const width = this.width;
+    const height = this.height;
+    if (x < 0 || x >= width) {
+      throw new RangeError("x is out of range");
+    }
+    if (y < 0 || y >= height) {
+      throw new RangeError("x is out of range");
+    }
+    array[y * width + x] = 1;
   }
 
   random({ liveRatio }: { liveRatio?: number } = {}) {
@@ -104,9 +270,11 @@ export class World {
   }
 
   /**
-   * 次の世代に更新する
+   * Advances the simulation to the next generation, updating all cells according
+   * to the current rule.
    */
   next() {
+    const nextCell = this.nextCell;
     const width = this.width;
     const height = this.height;
     const array = this.array;
@@ -118,18 +286,33 @@ export class World {
       for (let j = 0; j < width; j++) {
         const left = mod(j - 1, width);
         const right = (j + 1) % width;
-        const count = array[up + left]! +
-          array[up + j]! +
-          array[up + right]! +
-          array[middle + left]! +
-          array[middle + right]! +
-          array[down + left]! +
-          array[down + j]! +
-          array[down + right]!;
         const middleOffset = middle + j;
-        tempArray[middleOffset] = updateCell(
-          array[middleOffset]! as 0 | 1,
-          count,
+        /**
+         * ```txt
+         * ne n nw
+         * e  c  w
+         * se s sw
+         * ```
+         */
+        const c = array[middleOffset]! as CellState;
+        const ne = array[up + left]! as CellState;
+        const n = array[up + j]! as CellState;
+        const nw = array[up + right]! as CellState;
+        const e = array[middle + left]! as CellState;
+        const w = array[middle + right]! as CellState;
+        const se = array[down + left]! as CellState;
+        const s = array[down + j]! as CellState;
+        const sw = array[down + right]! as CellState;
+        tempArray[middleOffset] = nextCell(
+          c,
+          ne,
+          n,
+          nw,
+          e,
+          w,
+          se,
+          s,
+          sw,
         );
       }
     }

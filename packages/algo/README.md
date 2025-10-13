@@ -1,76 +1,164 @@
-# Cellular automaton simulation
+# @ca-ts/algo
 
-## Game of Life
+A fast cellular automaton simulation library for TypeScript, supporting various
+rule types. This package provides `BitWorld`, an optimized simulator for 2-state
+cellular automata, and `RuleLoaderWorld`, a flexible simulator for multi-state
+and custom rules.
 
-```ts ignore
+## Features
+
+### `BitWorld`
+
+`BitWorld` is optimized for speed using bitwise operations.
+
+Supported rules:
+
+- **Outer-totalistic:** Rules defined by birth and survival conditions based on
+  the number of neighbors (e.g., Conway's Game of Life: B3/S23). Both Moore
+  (8-neighbor) and von Neumann (4-neighbor) neighborhoods are supported.
+- **Isotropic Non-totalistic:** Rules where the next state depends on the
+  specific arrangement of neighbors, not just their count (e.g., "Just Friends":
+  B2-a/S12).
+- **Non-isotropic (MAP):** Rules where each of the 8 neighbors can have a
+  different effect on the cell's next state.
+
+### `RuleLoaderWorld`
+
+`RuleLoaderWorld` supports multi-state automata and custom rules.
+
+## Usage
+
+### Conway's Game of Life
+
+Here's a basic example of how to simulate Conway's Game of Life:
+
+```ts
 import { BitWorld } from "@ca-ts/algo/bit";
+// from npm
+// import { BitWorld } from "@rei1024/ca-algo/bit";
 
-// Simulate Conway's Game of Life
+// Create a 32x32 world
 const world = BitWorld.make({ width: 32, height: 32 });
 
-// Fill random state
+// Fill the world with a random pattern
 world.random();
 
-setInterval(() => {
-  console.clear();
-  console.log("__".repeat(32));
-  console.log(
-    world.getArray().map((row) =>
-      row.map((x) => x === 1 ? "O " : "  ").join("")
-    )
-      .join("\n"),
-  );
-  // Next generation
-  world.next();
-}, 100);
+// Run the simulation
+function run() {
+  setInterval(() => {
+    console.clear();
+    console.log("__".repeat(32));
+    console.log(
+      world.getArray().map((row) =>
+        row.map((cell) => (cell === 1 ? "O " : "  ")).join("")
+      ).join("\n"),
+    );
+
+    // Advance to the next generation
+    world.next();
+  }, 100);
+}
 ```
 
-## Outer-totalistic cellular automata
+### Outer-Totalistic Rules (e.g., HighLife)
 
-```ts ignore
+You can specify different rules for the simulation. For example, to simulate
+"HighLife" (B36/S23):
+
+```ts
 import { BitWorld } from "@ca-ts/algo/bit";
 
-const world = BitWorld.make(
-  { width: 32, height: 32 },
-  // B36/S23 HighLife
-  { transition: { birth: [3, 6], survive: [2, 3] } },
-);
+const world = BitWorld.make({ width: 32, height: 32 });
+
+// Set the rule to HighLife (B36/S23)
+world.setRule({ birth: [3, 6], survive: [2, 3] });
+
 world.random();
-setInterval(() => {
-  console.clear();
-  console.log("__".repeat(32));
-  console.log(
-    world.getArray().map((row) =>
-      row.map((x) => x === 1 ? "O " : "  ").join("")
-    )
-      .join("\n"),
-  );
-  world.next();
-}, 100);
+
+// ... (simulation loop)
 ```
 
-## Isotropic non-totalistic cellular automata
+### Isotropic Non-Totalistic Rules
 
-```ts ignore
+The library also supports isotropic non-totalistic rules.
+
+```ts
 import { BitWorld } from "@ca-ts/algo/bit";
 import { parseRule } from "@ca-ts/rule";
 
-const rule = parseRule("B2-a/S12"); // Just friends;
-if (rule.type !== "int") throw new Error();
-const world = BitWorld.make(
-  { width: 32, height: 32 },
-  { intTransition: rule.transition },
-);
+const rule = parseRule("B2-a/S12"); // Just Friends
+if (rule.type !== "int") throw new Error("Invalid rule type");
+
+const world = BitWorld.make({ width: 32, height: 32 });
+
+// Set the INT rule
+world.setINTRule(rule.transition);
+
 world.random();
-setInterval(() => {
-  console.clear();
-  console.log("__".repeat(32));
-  console.log(
-    world.getArray().map((row) =>
-      row.map((x) => x === 1 ? "O " : "  ").join("")
-    )
-      .join("\n"),
-  );
-  world.next();
-}, 100);
+
+// ... (simulation loop)
+```
+
+### Multi-State and Custom Rules (`RuleLoaderWorld`)
+
+For cellular automata with more than 2 states, or with rules that cannot be
+expressed in the formats supported by `BitWorld`, the `RuleLoaderWorld` class
+provides a more flexible alternative. It takes a custom rule function that
+determines the next state of a cell based on its 8 neighbors and its own state.
+
+Here is an example of a 3-state cyclic cellular automaton:
+
+```ts
+import { RuleLoaderWorld } from "@ca-ts/algo/rule-loader";
+// for npm
+// import { RuleLoaderWorld } from "@rei1024/ca-algo/rule-loader";
+
+const NUM_STATES = 3;
+const THRESHOLD = 3;
+
+const world = new RuleLoaderWorld({
+  size: { width: 32, height: 32 },
+  rule: (neighbors) => {
+    const centerState = neighbors[0];
+    if (centerState == null) return 0;
+    const nextState = (centerState + 1) % NUM_STATES;
+
+    let count = 0;
+    // Count neighbors with the state that "eats" the current state
+    for (let i = 1; i < neighbors.length; i++) {
+      if (neighbors[i] === nextState) {
+        count++;
+      }
+    }
+
+    // If there are enough "predators", the cell changes state
+    if (count >= THRESHOLD) {
+      return nextState;
+    }
+
+    return centerState;
+  },
+});
+
+// Initialize with random states
+const { width, height } = world.getSize();
+for (let y = 0; y < height; y++) {
+  for (let x = 0; x < width; x++) {
+    world.set(x, y, Math.floor(Math.random() * NUM_STATES));
+  }
+}
+
+// Run the simulation
+function run() {
+  setInterval(() => {
+    console.clear();
+    console.log(
+      world
+        .getArray()
+        .map((row) => row.map((cell) => ".:*"[cell]).join(""))
+        .join("\n"),
+    );
+    world.next();
+  }, 100);
+}
 ```

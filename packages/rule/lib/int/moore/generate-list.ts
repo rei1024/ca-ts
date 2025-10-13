@@ -1,9 +1,9 @@
-import { intModifiers } from "./int-condition.ts";
+import { intModifiers } from "../moore/int-condition.ts";
 
 /**
- * `console.log(createIndexed().join(" "))
+ * `console.log(createConditionList().join(" "))
  */
-export function createIndexed(): string[] {
+export function createConditionList(): string[] {
   const pat = getAll();
 
   const resultArray = [];

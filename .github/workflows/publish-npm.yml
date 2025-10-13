@@ -1,0 +1,37 @@
+name: Publish npm
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: read
+      # Need for publish
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Check
+        run: deno task ok
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      # Ensure npm 11.5.1 or later is installed
+      - name: Update npm
+        run: npm install -g npm@11.6.1
+
+      - name: Publish npm
+        run: ./scripts/build_all.sh publish

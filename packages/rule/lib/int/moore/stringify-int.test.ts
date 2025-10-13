@@ -1,7 +1,7 @@
 import { assertEquals, assertThrows } from "@std/assert";
 
 import { stringifyINT } from "./stringify-int.ts";
-import { parseIntRule } from "../int.ts";
+import { parseIntRule } from "./parse-int.ts";
 
 Deno.test("stringifyINT", () => {
   assertEquals(
@@ -62,6 +62,12 @@ Deno.test("stringifyINT parseIntRule", () => {
 
   // with generations
   assertBack(`B3/S23/7`);
+
+  // grid parameter
+  assertBack(`B3/S23:T20,40`);
+
+  // generations and grid parameter
+  assertBack(`B3/S23/3:T20,40`);
 });
 
 Deno.test("stringifyINT condition error", () => {

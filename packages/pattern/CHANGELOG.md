@@ -1,3 +1,9 @@
+## [0.3.0] - 2025-10-02
+
+### Changed
+
+- Add readonly modifier
+
 ## [0.2.0] - 2025-04-05
 
 ### Changed

@@ -1,5 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { bitCount, sort } from "./bitwise.ts";
+import { bitCount, sort8 } from "./bitwise.ts";
 
 function error(): never {
   throw new Error("assert");
@@ -25,7 +25,7 @@ function checkCorrect() {
   const array = Array(8).fill(0).map(() => [0, 1]);
   for (const x of cartesian(array)) {
     // @ts-ignore length is correct
-    const sorted = sort(...x);
+    const sorted = sort8(...x);
     const num = sum(sorted);
 
     if (sorted.slice(sorted.length - num).every((x) => x === 1)) {
@@ -39,7 +39,7 @@ function checkCorrect() {
   }
 }
 
-Deno.test("sort", () => {
+Deno.test("sort8", () => {
   checkCorrect();
 });
 

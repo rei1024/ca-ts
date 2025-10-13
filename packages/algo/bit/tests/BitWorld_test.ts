@@ -5,7 +5,9 @@ import { BitWorld } from "../BitWorld.ts";
 import { World } from "./world.ts";
 import { parseRule } from "../../../rule/mod.ts";
 import { parseRLE } from "../../../rle/mod.ts";
-import { parseIntRule } from "../../../rule/lib/int.ts";
+import { parseIntRule } from "../../../rule/lib/int/moore/parse-int.ts";
+import { parseMapRule } from "../../../rule/lib/map/parse-map.ts";
+import { TEST_MAP_CGOL } from "../../../rule/lib/map/parse-map.test.ts";
 
 function d(a: BitWorld) {
   return a.getArray().slice(0, 4).map((r) => r.slice(0, 4).join(""));
@@ -29,27 +31,74 @@ Deno.test("BitWorld is correct block", () => {
 });
 
 Deno.test("BitWorld is correct", () => {
-  const bitWorld = BitWorld.make({ width: 32 * 3, height: 32 });
-  const world = new World(32 * 3, 32);
+  const size = { width: 32 * 3, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  const world = World.make(size);
 
   randomCheck(bitWorld, world, 50);
 });
 
 Deno.test("BitWorld is correct 2", () => {
-  const bitWorld = BitWorld.make({ width: 32 * 1, height: 32 });
-  const world = new World(32 * 1, 32);
+  const size = { width: 32 * 1, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  const world = World.make(size);
+  randomCheck(bitWorld, world, 50);
+});
+
+Deno.test("BitWorld is correct OT rule", () => {
+  // HighLife
+  const transition = {
+    birth: [3, 6],
+    survive: [2, 3],
+  };
+  const size = { width: 32 * 2, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  bitWorld.setRule(transition);
+  const world = World.make(size);
+  world.setOTRule(transition);
+  randomCheck(bitWorld, world, 50);
+});
+
+Deno.test("BitWorld is correct INT rule", () => {
+  // https://conwaylife.com/forums/viewtopic.php?f=11&t=6956
+  const rule = parseRule(
+    `B2cik3-cijn4cknqr5-anqy6ekn7/S1c2acn3-aijq4cjktw5ejny6aen7c8`,
+  );
+  if (rule.type !== "int") {
+    throw new Error("expected int rule");
+  }
+  const size = { width: 32 * 2, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  bitWorld.setINTRule(rule.transition);
+  const world = World.make(size);
+  world.setINTRule(rule.transition);
+  randomCheck(bitWorld, world, 50);
+});
+
+Deno.test("BitWorld is correct von Neumann neighborhood rule", () => {
+  const transition = {
+    birth: [2, 3],
+    survive: [2, 3],
+  };
+  const size = { width: 32 * 2, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  bitWorld.setVonNeumannOTRule(transition);
+  const world = World.make(size);
+  world.setVonNeumannOTRule(transition);
   randomCheck(bitWorld, world, 50);
 });
 
 Deno.test("BitWorld is correct transition", () => {
-  const bitWorld = BitWorld.make({ width: 32 * 1, height: 32 }, {
-    transition: { birth: [3], survive: [2, 3] },
+  const bitWorld = BitWorld.make({ width: 32 * 1, height: 32 });
+  bitWorld.setRule({
+    birth: [3],
+    survive: [2, 3],
   });
   const world = new World(32 * 1, 32);
   randomCheck(bitWorld, world, 50);
 });
 
-function randomCheck(bitWorld: BitWorld, world: World, n: number) {
+function randomCheck(bitWorld: BitWorld, world: World, generations: number) {
   bitWorld.forEach((x, y) => {
     if (Math.random() > 0.5) {
       bitWorld.set(x, y);
@@ -57,7 +106,7 @@ function randomCheck(bitWorld: BitWorld, world: World, n: number) {
     }
   });
 
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < generations; i++) {
     assertEquals(
       bitWorld.getArray(),
       world.getArray().map((x) => x.map((y) => Number(y))),
@@ -66,6 +115,31 @@ function randomCheck(bitWorld: BitWorld, world: World, n: number) {
     world.next();
   }
 }
+
+Deno.test("BitWorld is correct von", () => {
+  const world = BitWorld.make({ width: 64, height: 64 });
+
+  const rle = parseRLE(`x = 13, y = 23, rule = B23/S234V
+4$5bobobo$6bobo$5bobobo$8bo$5bobobo$5bobobo$4bobo$7bobo$4bobo$5bo3bo$
+4bobo$7bobo$4bobo$5bobobo!
+`);
+  world.bitGrid.setAll(rle.cells.map((c) => c.position));
+
+  const rule = parseRule(rle.ruleString);
+  if (rule.type !== "outer-totalistic") {
+    throw new Error("expected outer totalistic rule");
+  }
+
+  world.setVonNeumannOTRule(rule.transition);
+  const initialGrid = world.bitGrid.clone();
+  for (let i = 0; i < 26; i++) {
+    world.next();
+  }
+
+  if (!world.bitGrid.equal(initialGrid)) {
+    throw new Error(`not a oscillator`);
+  }
+});
 
 Deno.test("BitWorld is correct intTransition", () => {
   const world = BitWorld.make({ width: 64, height: 64 });
@@ -79,11 +153,9 @@ Deno.test("BitWorld is correct intTransition", () => {
   `,
   );
 
-  for (const cell of rle.cells) {
-    world.set(cell.position.x, cell.position.y);
-  }
+  world.bitGrid.setAll(rle.cells.map((c) => c.position));
 
-  const rule = parseRule(`B3-cnqy5cek/S2-ci3-ay4ceinrtz5-aiqy6-ak7c8`);
+  const rule = parseRule(rle.ruleString);
   if (rule.type !== "int") {
     throw new Error("expected int rule");
   }
@@ -101,9 +173,18 @@ Deno.test("BitWorld is correct intTransition", () => {
 
 Deno.test("BitWorld is correct intTransition cgol", () => {
   const cgolAsINT = parseIntRule("B3/S23");
-  const bitWorld = BitWorld.make({ width: 32 * 2, height: 32 }, {
-    intTransition: cgolAsINT.transition,
-  });
-  const world = new World(32 * 2, 32);
+  const size = { width: 32 * 3, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  bitWorld.setINTRule(cgolAsINT.transition);
+  const world = new World(size.width, size.height);
+  randomCheck(bitWorld, world, 20);
+});
+
+Deno.test("BitWorld is correct MAP cgol", () => {
+  const cgolAsMAP = parseMapRule(TEST_MAP_CGOL);
+  const size = { width: 32 * 3, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  bitWorld.setMAPRule(cgolAsMAP.data);
+  const world = new World(size.width, size.height);
   randomCheck(bitWorld, world, 20);
 });

@@ -12,7 +12,7 @@
 /**
  * Sort bitwise
  */
-export function sort(
+export function sort8(
   a: number,
   b: number,
   c: number,
@@ -175,9 +175,9 @@ function createTotalisticNextCellCount(
     const p3 = o3 & o4;
     const p4 = o3 | o4;
 
-    // alive neighbour count is less than or equal to zero
+    // alive neighbor count is less than or equal to zero
     const sort1 = m7;
-    // alive neighbour count is less than or equal to one
+    // alive neighbor count is less than or equal to one
     const sort2 = n6;
     const sort3 = o5;
     const sort4 = p4;
@@ -186,9 +186,9 @@ function createTotalisticNextCellCount(
     const sort7 = n1;
     const sort8 = m0;
 
-    // alive neighbour count is zero
+    // alive neighbor count is zero
     const count0 = ~sort1;
-    // alive neighbour count is one
+    // alive neighbor count is one
     const count1 = sort1 & (~sort2);
     const count2 = sort2 & (~sort3);
     const count3 = sort3 & (~sort4);
@@ -386,7 +386,7 @@ export function bitCount(n: number) {
   return ((n + (n >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
 }
 
-export function bitCountArrayBuffer(buffer: ArrayBuffer) {
+export function bitCountArrayBuffer(buffer: ArrayBufferLike) {
   let sum = 0;
   const array = new Uint32Array(buffer);
   for (const n of array) {
@@ -399,13 +399,12 @@ export function bitCountArrayBuffer(buffer: ArrayBuffer) {
  * a = a | b
  */
 export function bitOrUint32Array(a: Uint32Array, b: Uint32Array) {
-  if (a.length !== b.length) {
+  const aLen = a.length;
+  if (aLen !== b.length) {
     throw Error("bitOrUint32Array different length");
   }
 
-  const len = a.length;
-
-  for (let i = 0; i < len; i++) {
+  for (let i = 0; i < aLen; i++) {
     a[i] = a[i]! | b[i]!;
   }
 }
@@ -414,13 +413,28 @@ export function bitOrUint32Array(a: Uint32Array, b: Uint32Array) {
  * a = a & b
  */
 export function bitAndUint32Array(a: Uint32Array, b: Uint32Array) {
-  if (a.length !== b.length) {
+  const aLen = a.length;
+  if (aLen !== b.length) {
     throw Error("bitAndUint32Array different length");
   }
 
-  const len = a.length;
-
-  for (let i = 0; i < len; i++) {
+  for (let i = 0; i < aLen; i++) {
     a[i] = a[i]! & b[i]!;
   }
 }
+
+/**
+ * Count Trailing Zeros (ctrz) utility.
+ * Calculates the number of trailing zero bits in a 32-bit integer.
+ * * @param integer - The 32-bit unsigned integer value.
+ * @returns The number of trailing zero bits (0 to 32).
+ */
+export const ctrz = (integer: number): number => {
+  // If integer is 0, all bits are zero, so return 32.
+  if (integer === 0) {
+    return 32;
+  }
+  // Isolate the LSB (Least Significant Bit) and calculate the distance from the MSB (clz32)
+  // which corresponds to the number of trailing zeros.
+  return 31 - Math.clz32(integer & -integer);
+};

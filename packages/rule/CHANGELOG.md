@@ -1,3 +1,80 @@
+## [Unreleased]
+
+### Changed
+
+- Use `Uint8Array.fromBase64` for MAP rules.
+
+## [0.16.1] - 2025-10-03
+
+### Changed
+
+- Support more Generations rulestring formats.
+  - `S23/B3/17`, `g17b3s23` , `b3s23g17`
+- Specifying only the width of a grid topology will result in the same height.
+  - `:P30`
+
+## [0.16.0] - 2025-10-01
+
+### Changed
+
+- **BREAKING** `parseRule` throws `AggregateError`.
+- Exported `ParseRuleError`.
+
+## [0.15.0] - 2025-09-29
+
+### Changed
+
+- **BREAKING** Add hexagonal neighborhood isotropic non-totalistic rule.
+  - Add `HexagonalINTRule` and `HexagonalINTCondition`
+
+## [0.14.0] - 2025-09-27
+
+### Changed
+
+- **BREAKING** Supported other connecting directions in sphere grid.
+- Exported `GridParameter`.
+
+## [0.13.0] - 2025-09-27
+
+### Changed
+
+- **BREAKING** Support for hexagonal tripod neighborhood
+  - `OuterTotalisticRule.hexagonalType` is added.
+- Fix parsing for triangular vertices.
+
+## [0.12.0] - 2025-09-26
+
+### Changed
+
+- **BREAKING** Support for triangular neighborhood
+  - Add `"triangular"` to `OuterTotalisticRule.neighborhood`
+  - `OuterTotalisticRule.triangularType` is added.
+
+## [0.11.0] - 2025-04-16
+
+### Changed
+
+- **BREAKING** `OuterTotalisticRule.neighborhood` is added.
+- **BREAKING** `stringifyRule` for MAP rules does not add padding.
+
+## [0.10.0] - 2025-04-14
+
+### Changed
+
+- **BREAKING** Removed `/int` module.
+- **BREAKING** `parseRule` Do not parse empty string as "B3/S23".
+- Fix `stringifyRule` for 0 shift.
+- `INTRule.transitions` order of conditions are canonicalized.
+- Fix: Export `MAPRule`
+
+## [0.9.0] - 2025-04-14
+
+### Changed
+
+- Add MAP strings support.
+- `parseRule` and `stringifyRule` handles grid parameter.
+  - Example: `B3/S23:T20,30`
+
 ## [0.8.0] - 2025-04-12
 
 ### Changed

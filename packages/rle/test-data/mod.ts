@@ -8,6 +8,7 @@ x = 13, y = 13, rule = B3/S23
 4bo3bo$3bobobobo$3bobobobo$b2o2bobo2b2o$o4bobo4bo$b4o3b4o2$b4o3b4o$o4b
 obo4bo$b2o2bobo2b2o$3bobobobo$3bobobobo$4bo3bo!`,
 
+  // contains niemiec cells
   chacha: `#N 16chacha.rle
 #O Mark D. Niemiec's life synthesis database, Thu Feb 19 02:03:06 2015
 x = 129, y = 46, rule = B3/S23

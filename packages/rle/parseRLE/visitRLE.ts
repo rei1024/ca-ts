@@ -76,7 +76,7 @@ class VisitState {
       line.startsWith("x") &&
       (line.startsWith("x ") || line.startsWith("x="))
     ) {
-      this.readRule(line, lineNum);
+      this.readHeader(line, lineNum);
       return "continue";
     }
 
@@ -85,15 +85,17 @@ class VisitState {
     const visitor = this.visitor;
     for (let i = 0; i < len; i++) {
       const c = line[i];
+
+      if (c === undefined) {
+        throw new Error("internal error");
+      }
+
       if (n != null && c === " ") {
         throw new RLEParseError("Illegal whitespace after count", {
           line: lineNum,
         });
       }
 
-      if (c === undefined) {
-        throw new Error("internal error");
-      }
       if ("0" <= c && c <= "9") {
         n = (n === null ? 0 : n) * 10 + c.charCodeAt(0) - ZERO_CODE;
       } else {
@@ -102,12 +104,6 @@ class VisitState {
         }
         if (c === "b" || c === ".") {
           this.x += n;
-        } else if (c === "$") {
-          this.x = 0;
-          this.y += n;
-        } else if (c === "!") {
-          visitor.visitTrailingComment(line.slice(i + 1));
-          return "end";
         } else if (
           ("o" <= c && c <= "y") || ("A" <= c && c <= "X")
         ) {
@@ -130,15 +126,21 @@ class VisitState {
               i--;
             }
           }
-          const x = this.offsetX + this.x;
-          const y = this.offsetY + this.y;
           if (state > 255) {
             throw new RLEParseError("invalid state", { line: lineNum });
           }
+          const x = this.offsetX + this.x;
+          const y = this.offsetY + this.y;
           for (let j = 0; j < n; j++) {
             visitor.visitCell(x + j, y, state);
           }
           this.x += n;
+        } else if (c === "$") {
+          this.x = 0;
+          this.y += n;
+        } else if (c === "!") {
+          visitor.visitTrailingComment(line.slice(i + 1));
+          return "end";
         }
         n = null;
       }
@@ -173,19 +175,20 @@ class VisitState {
     this.visitor.visitComment(line);
   }
 
-  private readRule(line: string, lineNum: number) {
-    const reg = /x\s*=\s*(\d+)\s*,\s*y\s*=\s*(\d+)\s*(,\s*rule\s*=(.*))?/;
+  private readHeader(line: string, lineNum: number) {
+    const reg =
+      /x\s*=\s*(?<width>\d+)\s*,\s*y\s*=\s*(?<height>\d+)\s*(,\s*rule\s*=(?<rule>.*))?/;
     const res = line.match(reg);
     if (res === null) {
       throw new RLEParseError("invalid header", { line: lineNum });
     }
-    const x = res[1];
-    const y = res[2];
+    const x = res.groups?.width;
+    const y = res.groups?.height;
     if (x === undefined || y === undefined) {
       throw new RLEParseError("invalid header", { line: lineNum });
     }
     this.visitor.visitSize({ x: Number(x), y: Number(y) });
-    const rule = res[4];
+    const rule = res.groups?.rule;
     if (rule !== undefined) {
       this.sawRule = true;
       this.visitor.visitRule(rule.trim());

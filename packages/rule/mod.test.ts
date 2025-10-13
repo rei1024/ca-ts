@@ -1,5 +1,11 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { parseRule, stringifyRule } from "./mod.ts";
+import {
+  type ParsedRule,
+  parseRule,
+  ParseRuleError,
+  stringifyRule,
+} from "./mod.ts";
+import { TEST_MAP_CGOL } from "./lib/map/parse-map.test.ts";
 
 Deno.test("parseRule B3/S23", () => {
   assertEquals(parseRule("B3/S23"), {
@@ -58,5 +64,59 @@ Deno.test("stringifyRule INT", () => {
       },
     }),
     "B2a4a/S",
+  );
+});
+
+Deno.test("stringifyRule parseRule", () => {
+  function assertBack(rule: string) {
+    const parsedRule = parseRule(rule);
+    assertEquals(stringifyRule(parsedRule), rule);
+  }
+  assertBack("B3/S23");
+  assertBack("B3/S23H");
+  assertBack("B3/S23oH");
+  assertBack(TEST_MAP_CGOL);
+});
+
+function getResult(str: string): ParsedRule | Error {
+  try {
+    return parseRule(str);
+  } catch (error) {
+    if (error instanceof Error) {
+      return error;
+    } else {
+      throw new Error("is not a Error");
+    }
+  }
+}
+
+Deno.test("parseRule empty string", () => {
+  assertThrows(
+    () => {
+      parseRule("");
+    },
+    AggregateError,
+    "Parse error",
+  );
+
+  assertThrows(() => {
+    parseRule(" ");
+  });
+});
+
+Deno.test("parseRule error kind", () => {
+  const result = getResult(`B3/S23:T`);
+  if (!(result instanceof AggregateError)) {
+    throw new Error("not AggregateError");
+  }
+
+  assertEquals(
+    result.errors.map((e) => e instanceof ParseRuleError ? e.kind : "unknown"),
+    [
+      "format",
+      "topology",
+      "topology",
+      "topology",
+    ],
   );
 });

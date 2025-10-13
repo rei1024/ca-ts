@@ -38,6 +38,20 @@ Deno.test("stringifyRLE", () => {
   assertEquals(
     stringifyRLE({
       cells: [],
+      comments: [],
+      ruleString: "B3/S23",
+      size: {
+        width: 0,
+        height: 0,
+      },
+      XRLE: null,
+    }),
+    "x = 0, y = 0, rule = B3/S23\n!\n",
+  );
+
+  assertEquals(
+    stringifyRLE({
+      cells: [],
       comments: ["#Comment"],
       trailingComment: "",
       ruleString: "B3/S23",
@@ -53,16 +67,27 @@ Deno.test("stringifyRLE", () => {
   assertEquals(
     stringifyRLE({
       cells: [],
-      comments: [],
       trailingComment: "abc\ndef",
       ruleString: "B3/S23",
       size: {
         width: 0,
         height: 0,
       },
-      XRLE: null,
     }),
-    "x = 0, y = 0, rule = B3/S23\n!abc\ndef\n",
+    "x = 0, y = 0, rule = B3/S23\n!abc\ndef",
+  );
+
+  assertEquals(
+    stringifyRLE({
+      cells: [],
+      trailingComment: "\nabc\ndef",
+      ruleString: "B3/S23",
+      size: {
+        width: 0,
+        height: 0,
+      },
+    }),
+    "x = 0, y = 0, rule = B3/S23\n!\nabc\ndef",
   );
 
   // empty size
@@ -153,6 +178,32 @@ Deno.test("stringifyRLE not sorted", () => {
     },
     Error,
     "cells must be sorted",
+  );
+});
+
+Deno.test("stringifyRLE XRLE", () => {
+  const rle = {
+    cells: makeCells([
+      { x: 0, y: 0 },
+      { x: 1, y: 1 },
+    ]),
+    trailingComment: "",
+    ruleString: "B3/S23",
+    XRLE: { position: { x: 4, y: 5 }, generation: "100" },
+  };
+  assertEquals(
+    stringifyRLE(rle),
+    "#CXRLE Pos=4,5 Gen=100\nx = 2, y = 2, rule = B3/S23\no$bo!\n",
+  );
+
+  assertEquals(
+    stringifyRLE({ ...rle, comments: [] }),
+    "#CXRLE Pos=4,5 Gen=100\nx = 2, y = 2, rule = B3/S23\no$bo!\n",
+  );
+
+  assertEquals(
+    stringifyRLE({ ...rle, comments: ["# Comment"] }),
+    "#CXRLE Pos=4,5 Gen=100\n# Comment\nx = 2, y = 2, rule = B3/S23\no$bo!\n",
   );
 });
 
@@ -253,23 +304,29 @@ Deno.test("stringifyRLE chacha", () => {
 Deno.test("stringifyRLE parseRLE", () => {
   function assertBack(
     str: string,
-    { checkMetaRecovery = true } = {},
+    { checkMetaRecovery = true, withTrim = false } = {},
   ) {
     const parsed = parseRLE(str);
 
-    assertEquals(stringifyRLE(parsed).trim(), str.trim());
+    function maybeTrim(v: string) {
+      return withTrim ? v.trim() : v;
+    }
+
+    assertEquals(maybeTrim(stringifyRLE(parsed)), maybeTrim(str));
 
     if (checkMetaRecovery) {
       assertEquals(
-        stringifyRLE({ ...parsed, size: null, XRLE: null }).trim(),
-        str.trim(),
+        maybeTrim(stringifyRLE({ ...parsed, size: null, XRLE: null })),
+        maybeTrim(str),
       );
     }
   }
 
   assertBack(`x = 0, y = 0, rule = B3/S23\n!\n`);
 
-  assertBack(`x = 3, y = 3, rule = B3/S23\no!\n`, { checkMetaRecovery: false });
+  assertBack(`x = 3, y = 3, rule = B3/S23\no!\n`, {
+    checkMetaRecovery: false,
+  });
 
   assertBack(`x = 3, y = 3, rule = B3/S23\nbo$2bo$3o!\n`);
 
@@ -296,30 +353,35 @@ obo$35b3o3b3o29bo$36bo5bo30b2o2$35b2o5b2o$35b2o5b2o!\n`);
   assertBack(`x = 9, y = 3, rule = JvN29
 5.pA3I$M3IpAJR$4.2QR!\n`);
 
-  assertBack(RLE_TEST_DATA.cloverleaf);
+  assertBack(RLE_TEST_DATA.cloverleaf, { withTrim: true });
 
   assertBack(`x = 0, y = 0, rule = B3/S23\n!abc\ndef`);
   assertBack("x = 1, y = 8, rule = B3/S23\no7$o!\n");
+  assertBack("x = 1, y = 8, rule = B3/S23\no7$o!\nabc\ndef\nabc");
 
-  assertBack(`#CXRLE Gen=0 Pos=0,0\nx = 2, y = 3, rule = B3/S23\no!`, {
+  assertBack(`#CXRLE Gen=0 Pos=0,0\nx = 2, y = 3, rule = B3/S23\no!\n`, {
     checkMetaRecovery: false,
   });
 
   // with offset
-  assertBack(`#CXRLE Gen=0 Pos=1,2\nx = 2, y = 3, rule = B3/S23\no!`, {
+  assertBack(`#CXRLE Gen=0 Pos=1,2\nx = 2, y = 3, rule = B3/S23\no!\n`, {
     checkMetaRecovery: false,
   });
   assertBack(`#CXRLE Gen=0 Pos=-1,-2\nx = 2, y = 3, rule = B3/S23\no!`, {
     checkMetaRecovery: false,
+    withTrim: true,
   });
 
   assertBack("#CXRLE Pos=-1,-2\nx = 1, y = 8, rule = B3/S23\no7$o!\n");
 
-  assertBack([
-    `#CXRLE Pos=-11,-9`,
-    `x = 10, y = 7, rule = B3/S23`,
-    `4b6o$3bo5bo$b2o5b2o$2o2bo3b2o$o3bo$ob2o$3o!`,
-  ].join("\n"));
+  assertBack(
+    [
+      `#CXRLE Pos=-11,-9`,
+      `x = 10, y = 7, rule = B3/S23`,
+      `4b6o$3bo5bo$b2o5b2o$2o2bo3b2o$o3bo$ob2o$3o!`,
+    ].join("\n"),
+    { withTrim: true },
+  );
 });
 
 Deno.test("stringifyRLE 1..255", () => {
@@ -337,4 +399,22 @@ Deno.test("stringifyRLE 1..255", () => {
   });
   const rle = parseRLE(str);
   assertEquals(rle.cells, cells);
+});
+
+Deno.test("stringifyRLE maxLineChars", () => {
+  const rle = parseRLE(`x = 1, y = 1, rule = B3/S23\nobobo!`);
+
+  assertEquals(
+    stringifyRLE(rle, { maxLineChars: 3 }),
+    `x = 1, y = 1, rule = B3/S23\nobo\nbo!\n`,
+  );
+
+  assertEquals(
+    stringifyRLE(rle, { maxLineChars: 1 }),
+    `x = 1, y = 1, rule = B3/S23\no\nb\no\nb\no\n!\n`,
+  );
+
+  assertThrows(() => {
+    stringifyRLE(rle, { maxLineChars: 0 });
+  });
 });
