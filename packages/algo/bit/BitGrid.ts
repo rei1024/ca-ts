@@ -23,7 +23,11 @@ export class BitGrid {
     private readonly uint32array: Uint32Array,
   ) {
     if (width32 * height !== uint32array.length) {
-      throw new Error("Error");
+      throw new Error(
+        `Precondition failed: (width32 * height) ${
+          width32 * height
+        } does not equal uint32array.length ${uint32array.length}`,
+      );
     }
   }
 
@@ -49,8 +53,9 @@ export class BitGrid {
       crypto.getRandomValues(array);
     } else {
       const len = array.length;
+      const max = Math.pow(2, 32);
       for (let i = 0; i < len; i++) {
-        array[i] = Math.floor(Math.random() * Math.pow(2, 32));
+        array[i] = Math.floor(Math.random() * max);
       }
     }
   }
@@ -104,6 +109,32 @@ export class BitGrid {
       );
     }
     array[index] = array[index]! | (1 << (31 - (x % 32)));
+  }
+
+  /**
+   * Sets the cell at the specified coordinates (x, y) to "dead" (0).
+   */
+  unset(x: number, y: number) {
+    const width32 = this.width32;
+    if (x < 0 || width32 * 32 <= x || y < 0 || this.height <= y) {
+      throw new RangeError(
+        `BitGrid.unset out of range x=${x} y=${y}`,
+      );
+    }
+    const offset = x >>> 5; // = Math.floor(x / 32)
+    const index = y * width32 + offset;
+    const array = this.uint32array;
+    if (array.length <= index) {
+      throw new RangeError(
+        `BitGrid.unset array.length=${array.length} index=${index} x=${x} y=${y}`,
+      );
+    }
+
+    // ビットをクリアするためのマスクを計算
+    const mask = 1 << (31 - (x % 32));
+
+    // ビットマスクの反転とビット単位のAND演算により、指定されたビットのみを0に設定します。
+    array[index] = array[index]! & ~mask;
   }
 
   setAll(positions: { x: number; y: number }[]) {
@@ -417,8 +448,8 @@ export class BitGrid {
 
   private assertSameSize(name: string, otherBitGrid: BitGrid) {
     if (
-      this.getWidth32() !== otherBitGrid.getWidth32() ||
-      this.getHeight() !== otherBitGrid.getHeight()
+      this.width32 !== otherBitGrid.width32 ||
+      this.height !== otherBitGrid.height
     ) {
       throw TypeError(name + ": different grid size");
     }
