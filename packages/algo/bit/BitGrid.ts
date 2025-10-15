@@ -130,10 +130,7 @@ export class BitGrid {
       );
     }
 
-    // ビットをクリアするためのマスクを計算
     const mask = 1 << (31 - (x % 32));
-
-    // ビットマスクの反転とビット単位のAND演算により、指定されたビットのみを0に設定します。
     array[index] = array[index]! & ~mask;
   }
 
