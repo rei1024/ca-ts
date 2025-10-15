@@ -11,10 +11,15 @@ const getOffset = (width32: number, iHeight: number, jWidth: number) => {
 };
 
 /**
- * 2D bit array
+ * A 2D bit array class designed for speed, typically used
+ * for cellular automata or dense boolean grids.
+ * Data is stored internally as a flat Uint32Array, using bitwise operations
+ * to manipulate individual cells (bits).
  */
 export class BitGrid {
   /**
+   * Creates a new instance of {@link BitGrid}.
+   *
    * Precondition: `width32 * height = uint32array.length`
    */
   constructor(
@@ -31,6 +36,9 @@ export class BitGrid {
     }
   }
 
+  /**
+   * Creates a new, empty BitGrid with the specified dimensions.
+   */
   static make({ width, height }: { width: number; height: number }): BitGrid {
     const width32 = Math.ceil(width / 32);
     const len = width32 * height;
@@ -45,7 +53,7 @@ export class BitGrid {
   }
 
   /**
-   * Fills the grid with random bit values
+   * Fills the grid with random bit values.
    */
   random() {
     const array = this.uint32array;
@@ -74,6 +82,9 @@ export class BitGrid {
     return this.uint32array;
   }
 
+  /**
+   * Gets the total width of the grid.
+   */
   getWidth(): number {
     return this.width32 * 32;
   }
@@ -82,16 +93,24 @@ export class BitGrid {
     return this.width32;
   }
 
+  /**
+   * Gets the height (number of rows) of the grid.
+   */
   getHeight(): number {
     return this.height;
   }
 
+  /**
+   * Gets the dimensions of the grid.
+   */
   getSize(): { width: number; height: number } {
     return { width: this.getWidth(), height: this.height };
   }
 
   /**
    * Sets the cell at the specified coordinates (x, y) to "alive" (1).
+   * @param x - X-coordinate (0 to width-1).
+   * @param y - Y-coordinate (0 to height-1).
    */
   set(x: number, y: number) {
     const width32 = this.width32;
@@ -113,6 +132,8 @@ export class BitGrid {
 
   /**
    * Sets the cell at the specified coordinates (x, y) to "dead" (0).
+   * @param x - X-coordinate (0 to width-1).
+   * @param y - Y-coordinate (0 to height-1).
    */
   unset(x: number, y: number) {
     const width32 = this.width32;
@@ -134,6 +155,10 @@ export class BitGrid {
     array[index] = array[index]! & ~mask;
   }
 
+  /**
+   * Sets multiple cells to "alive" (1).
+   * @param positions - An array of `{x, y}` coordinates to set.
+   */
   setAll(positions: { x: number; y: number }[]) {
     for (const p of positions) {
       this.set(p.x, p.y);
@@ -280,7 +305,8 @@ export class BitGrid {
   }
 
   /**
-   * Checks if there are any live cells at the each border of the grid.
+   * Checks for the presence of live cells on the boundaries of the grid.
+   * @returns An object indicating if cells are alive on the left, right, top, and bottom borders.
    */
   borderAlive(): {
     left: boolean;
@@ -330,7 +356,8 @@ export class BitGrid {
   }
 
   /**
-   * Checks if there are any live cells at the border of the grid.
+   * Checks quickly if there are *any* live cells on the border of the grid.
+   * @returns `true` if any cell on any border is alive, otherwise `false`.
    */
   hasAliveCellAtBorder(): boolean {
     const width = this.width32;
@@ -488,12 +515,23 @@ export class BitGrid {
     );
   }
 
+  /**
+   * Creates a new, larger BitGrid by expanding the current grid's boundaries
+   * and copying the existing pattern into the new space, optionally applying an offset.
+   *
+   * NOTE: `offsetX` must be a multiple of 32 (a full word offset).
+   *
+   * @returns The new, expanded BitGrid instance.
+   * @throws {RangeError} If `expand` values are negative, `offsetX` is not a multiple of 32,
+   * or if the resulting copy would go out of bounds of the new grid.
+   */
   expanded(
-    { expand, offset }: {
+    options: {
       expand: { x: number; y: number };
       offset?: { x?: number; y?: number };
     },
   ): BitGrid {
+    const { expand, offset } = options;
     if (expand.x < 0 || expand.y < 0) {
       throw new RangeError("expandX and expandY must be non-negative");
     }
