@@ -1,3 +1,10 @@
+## [0.13.2] - 2025-10-15
+
+### Changed
+
+- Add `BitGrid.unset`
+- Improve documentation
+
 ## [0.13.1] - 2025-10-05
 
 ### Changed

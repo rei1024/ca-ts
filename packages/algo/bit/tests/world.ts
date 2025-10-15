@@ -228,9 +228,26 @@ export class World {
       throw new RangeError("x is out of range");
     }
     if (y < 0 || y >= height) {
-      throw new RangeError("x is out of range");
+      throw new RangeError("y is out of range");
     }
     array[y * width + x] = 1;
+  }
+
+  /**
+   * @param x
+   * @param y
+   */
+  unset(x: number, y: number) {
+    const array = this.array;
+    const width = this.width;
+    const height = this.height;
+    if (x < 0 || x >= width) {
+      throw new RangeError("x is out of range");
+    }
+    if (y < 0 || y >= height) {
+      throw new RangeError("y is out of range");
+    }
+    array[y * width + x] = 0;
   }
 
   random({ liveRatio }: { liveRatio?: number } = {}) {
