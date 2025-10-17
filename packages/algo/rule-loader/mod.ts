@@ -38,6 +38,11 @@ export class RuleLoaderWorld {
   private tempArray: Uint8Array;
   private readonly size: { readonly width: number; readonly height: number };
 
+  /**
+   * Create `RuleLoaderWorld`
+   *
+   * `rule` takes neighborhood by `C,N,NE,E,SE,S,SW,W,NW`
+   */
   constructor(
     { size, rule }: {
       size: { width: number; height: number };
@@ -59,12 +64,15 @@ export class RuleLoaderWorld {
     this.tempArray = new Uint8Array(len);
   }
 
+  /**
+   * Get the size of the world.
+   */
   getSize(): { readonly width: number; readonly height: number } {
     return this.size;
   }
 
   /**
-   * set all cells to dead
+   * Set all cells to dead
    */
   clear(): void {
     this.array.fill(0);
@@ -109,7 +117,7 @@ export class RuleLoaderWorld {
   }
 
   /**
-   * Next generation
+   * Advance to next generation
    */
   next(): void {
     const width = this.size.width;

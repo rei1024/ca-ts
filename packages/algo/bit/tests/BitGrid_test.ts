@@ -154,6 +154,14 @@ Deno.test("BitGrid get", () => {
   });
 });
 
+Deno.test("BitGrid get set unset", () => {
+  const grid = BitGrid.make({ width: 32, height: 5 });
+  grid.set(2, 3);
+  assertEquals(grid.get(2, 3), 1);
+  grid.unset(2, 3);
+  assertEquals(grid.get(2, 3), 0);
+});
+
 Deno.test("BitGrid expanded expandX", () => {
   const grid = BitGrid.make({ width: 32, height: 5 });
   const newGrid = grid.expanded({ expand: { x: 32, y: 0 } });
