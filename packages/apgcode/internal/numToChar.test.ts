@@ -1,6 +1,10 @@
 import { assertEquals } from "@std/assert/equals";
 import { charToNum, charToNumForY } from "./charToNum.ts";
-import { numToChar, numToCharForYSingleChar } from "./numToChar.ts";
+import {
+  numToChar,
+  numToCharForY,
+  numToCharForYSingleChar,
+} from "./numToChar.ts";
 import { assertThrows } from "@std/assert/throws";
 
 Deno.test("numToChar", () => {
@@ -11,6 +15,14 @@ Deno.test("numToChar", () => {
   for (let i = 0; i <= 31; i++) {
     assertBack(i);
   }
+});
+
+Deno.test("numToCharForY 40", () => {
+  assertEquals(numToCharForY(40), "yz0");
+});
+
+Deno.test("numToCharForY 80", () => {
+  assertEquals(numToCharForY(80), "yzyzw");
 });
 
 Deno.test("numToCharForYSingleChar", () => {

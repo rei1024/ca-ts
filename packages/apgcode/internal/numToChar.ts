@@ -41,13 +41,18 @@ export function numToCharForY(n: number): string {
     throw new Error("invalid number");
   }
 
-  if (n === 1) {
-    return "0";
-  } else if (n === 2) {
-    return "w";
-  } else if (n === 3) {
-    return "x";
+  const quotient = Math.floor(n / 39);
+  const remainder = n % 39;
+
+  const yz = "yz".repeat(quotient);
+
+  if (remainder === 1) {
+    return yz + "0";
+  } else if (remainder === 2) {
+    return yz + "w";
+  } else if (remainder === 3) {
+    return yz + "x";
   } else {
-    return "y" + numToCharForYSingleChar(n);
+    return yz + "y" + numToCharForYSingleChar(remainder);
   }
 }
