@@ -88,6 +88,22 @@ Deno.test("BitWorld is correct von Neumann neighborhood rule", () => {
   randomCheck(bitWorld, world, 50);
 });
 
+Deno.test("BitWorld is correct MAP rule", () => {
+  // https://conwaylife.com/forums/viewtopic.php?f=11&t=6956
+  const rule = parseRule(
+    TEST_MAP_CGOL,
+  );
+  if (rule.type !== "map") {
+    throw new Error("expected map rule");
+  }
+  const size = { width: 32 * 2, height: 32 };
+  const bitWorld = BitWorld.make(size);
+  bitWorld.setMAPRule(rule.data);
+  const world = World.make(size);
+  world.setMapRule(rule.data);
+  randomCheck(bitWorld, world, 50);
+});
+
 Deno.test("BitWorld is correct transition", () => {
   const bitWorld = BitWorld.make({ width: 32 * 1, height: 32 });
   bitWorld.setRule({
