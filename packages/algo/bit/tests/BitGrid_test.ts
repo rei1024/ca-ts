@@ -1,5 +1,31 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { BitGrid } from "../BitGrid.ts";
+
+Deno.test("BitGrid construct", () => {
+  assertThrows(() => {
+    BitGrid.make({ width: 1.5, height: 2 });
+  });
+
+  assertThrows(() => {
+    new BitGrid(1, 2, new Uint32Array());
+  });
+
+  assertThrows(() => {
+    new BitGrid(1.5, 2, new Uint32Array());
+  });
+
+  assertThrows(() => {
+    new BitGrid(NaN, 2, new Uint32Array());
+  });
+
+  assertThrows(() => {
+    new BitGrid(-1, 0, new Uint32Array());
+  });
+
+  assertThrows(() => {
+    new BitGrid(Infinity, 0, new Uint32Array());
+  });
+});
 
 Deno.test("BitGrid", () => {
   const grid = BitGrid.make({ width: 32, height: 32 });
