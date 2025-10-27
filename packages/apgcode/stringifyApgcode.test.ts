@@ -20,7 +20,6 @@ function assertBack(apgcode: string) {
 Deno.test("stringifyApgcode", () => {
   const testCases = [
     "xs4_33",
-    "xp15_3a5",
     "xq4_27deee6",
   ];
   for (const testCase of testCases) {

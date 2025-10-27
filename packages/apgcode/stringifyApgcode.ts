@@ -1,4 +1,5 @@
 import type { Apgcode } from "./Apgcode.ts";
+import { numToChar } from "./internal/numToChar.ts";
 
 /**
  * Convert Apgcode object back to apgcode string.
@@ -28,8 +29,6 @@ export function stringifyApgcode(apgcode: Apgcode): string {
   }
 }
 
-type RowData = { y: number; data: { x: number; y: number }[] };
-
 function cellsOffsetZero(
   cells: { x: number; y: number }[],
 ): { x: number; y: number }[] {
@@ -51,7 +50,80 @@ export function stringifyExtendedWechslerFormat(
     throw new Error("empty pattern");
   }
 
-  // TODO
+  const normalizedCells = cellsOffsetZero(cells);
+
+  if (normalizedCells.length === 0) {
+    return "";
+  }
+
+  const maxY = normalizedCells.reduce((max, cell) => Math.max(max, cell.y), 0);
+  const numStrips = Math.floor(maxY / 5) + 1;
+  const strips: string[] = [];
+
+  for (let i = 0; i < numStrips; i++) {
+    const stripCells = normalizedCells.filter(
+      (cell) => Math.floor(cell.y / 5) === i,
+    );
+
+    if (stripCells.length === 0) {
+      strips.push("");
+      continue;
+    }
+
+    const maxX = stripCells.reduce((max, cell) => Math.max(max, cell.x), 0);
+    const columnValues: number[] = new Array(maxX + 1).fill(0);
+
+    for (const cell of stripCells) {
+      const bit = 1 << (cell.y % 5);
+      columnValues[cell.x]! |= bit;
+    }
+
+    let lastNonZero = columnValues.length - 1;
+    while (lastNonZero >= 0 && columnValues[lastNonZero] === 0) {
+      lastNonZero--;
+    }
+    if (lastNonZero < 0) {
+      strips.push("");
+      continue;
+    }
+    const trimmedColumnValues = columnValues.slice(0, lastNonZero + 1);
+
+    let stripStr = "";
+    let zeroCount = 0;
+
+    for (const value of trimmedColumnValues) {
+      if (value === 0) {
+        zeroCount++;
+      } else {
+        stripStr += compressZeros(zeroCount);
+        zeroCount = 0;
+        stripStr += numToChar(value);
+      }
+    }
+
+    strips.push(stripStr);
+  }
+
+  return strips.join("z").replace(/z*$/, "");
+}
+
+function compressZeros(n: number): string {
+  if (n === 0) {
+    return "";
+  }
+  if (n === 1) {
+    return "0";
+  }
+  if (n === 2) {
+    return "w";
+  }
+  if (n === 3) {
+    return "x";
+  }
+  if (n >= 4 && n <= 39) {
+    return "y" + numToChar(n - 4);
+  }
+  return "yz" + compressZeros(n - 39);
 }
 
 function validate(cells: { x: number; y: number }[]) {
