@@ -6,7 +6,7 @@ const LOWER_Z_CODE = "z".charCodeAt(0);
 
 export function numToChar(n: number): string {
   if (!Number.isInteger(n) || n < 0) {
-    throw new Error("invalid number");
+    throw new Error("invalid number " + n);
   }
 
   if (n <= 9) {
@@ -17,12 +17,12 @@ export function numToChar(n: number): string {
     return String.fromCharCode(n - 10 + LOWER_A_CODE);
   }
 
-  throw new Error("invalid number");
+  throw new Error("invalid number " + n);
 }
 
 export function numToCharForYSingleChar(n: number): string {
   if (!Number.isInteger(n) || n < 4) {
-    throw new Error("invalid number");
+    throw new Error("invalid number " + n);
   }
 
   if (n <= 4 + 9) {
@@ -33,12 +33,12 @@ export function numToCharForYSingleChar(n: number): string {
     return String.fromCharCode(n - 10 - 4 + LOWER_A_CODE);
   }
 
-  throw new Error("invalid number");
+  throw new Error("invalid number " + n);
 }
 
 export function numToCharForY(n: number): string {
   if (!Number.isInteger(n) || n < 0) {
-    throw new Error("invalid number");
+    throw new Error("invalid number " + n);
   }
 
   if (n === 0) {
@@ -50,7 +50,9 @@ export function numToCharForY(n: number): string {
 
   const yz = "yz".repeat(quotient);
 
-  if (remainder === 1) {
+  if (remainder === 0) {
+    return yz;
+  } else if (remainder === 1) {
     return yz + "0";
   } else if (remainder === 2) {
     return yz + "w";

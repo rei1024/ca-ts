@@ -37,3 +37,7 @@ export {
   parseApgcode,
   parseExtendedWechslerFormat,
 } from "./parseApgcode.ts";
+export {
+  stringifyApgcode,
+  stringifyExtendedWechslerFormat,
+} from "./stringifyApgcode.ts";

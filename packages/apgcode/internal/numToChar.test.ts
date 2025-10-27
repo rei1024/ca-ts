@@ -21,6 +21,10 @@ Deno.test("numToCharForY 0", () => {
   assertEquals(numToCharForY(0), "");
 });
 
+Deno.test("numToCharForY 39", () => {
+  assertEquals(numToCharForY(39), "yz");
+});
+
 Deno.test("numToCharForY 40", () => {
   assertEquals(numToCharForY(40), "yz0");
 });

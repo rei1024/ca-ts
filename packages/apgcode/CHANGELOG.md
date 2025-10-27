@@ -1,7 +1,8 @@
-## [0.3.2] - 2025-10-13
+## [0.4.0] - 2025-10-28
 
 ### Changed
 
+- Export `stringifyApgcode`
 - Export `ApgcodeParseError`
 
 ## [0.3.1] - 2025-04-11
