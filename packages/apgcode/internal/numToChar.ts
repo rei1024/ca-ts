@@ -37,8 +37,12 @@ export function numToCharForYSingleChar(n: number): string {
 }
 
 export function numToCharForY(n: number): string {
-  if (!Number.isInteger(n) || n < 1) {
+  if (!Number.isInteger(n) || n < 0) {
     throw new Error("invalid number");
+  }
+
+  if (n === 0) {
+    return "";
   }
 
   const quotient = Math.floor(n / 39);
