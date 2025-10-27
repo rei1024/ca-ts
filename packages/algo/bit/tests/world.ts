@@ -141,6 +141,28 @@ function createINTNextCell(
   };
 }
 
+function createMapNextCell(
+  data: (0 | 1)[],
+): (
+  center: CellState,
+  ne: CellState,
+  n: CellState,
+  nw: CellState,
+  e: CellState,
+  w: CellState,
+  se: CellState,
+  s: CellState,
+  sw: CellState,
+) => CellState {
+  const uint8Array = new Uint8Array(data);
+
+  return (cell, ne, n, nw, e, w, se, s, sw) => {
+    const index = (sw << 8) | (s << 7) | (se << 6) | (w << 5) | (cell << 4) |
+      (e << 3) | (nw << 2) | (n << 1) | ne;
+    return uint8Array[index]! as CellState;
+  };
+}
+
 /**
  * Game of Life
  */
@@ -194,6 +216,11 @@ export class World {
 
   setINTRule(transition: { birth: string[]; survive: string[] }) {
     this.nextCell = createINTNextCell(transition);
+    this.neighborhood = "moore";
+  }
+
+  setMapRule(data: (0 | 1)[]) {
+    this.nextCell = createMapNextCell(data);
     this.neighborhood = "moore";
   }
 

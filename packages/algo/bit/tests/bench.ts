@@ -1,3 +1,5 @@
+import { TEST_MAP_CGOL } from "../../../rule/lib/map/parse-map.test.ts";
+import { parseRule } from "@ca-ts/rule";
 import { BitWorld } from "../mod.ts";
 import { World } from "./world.ts";
 
@@ -90,6 +92,26 @@ Deno.bench({ name: "BitWorld Int", group: "algo" }, () => {
         // "8",
       ],
     });
+    bitWorld.forEach((x, y) => {
+      if (Math.random() > 0.5) {
+        bitWorld.set(x, y);
+      }
+    });
+
+    for (let i = 0; i < M; i++) {
+      bitWorld.next();
+    }
+  }
+});
+
+Deno.bench({ name: "BitWorld MAP", group: "algo" }, () => {
+  const cgolAsMAP = parseRule(TEST_MAP_CGOL);
+  if (cgolAsMAP.type !== "map") {
+    throw new Error("error");
+  }
+  for (let j = 0; j < N; j++) {
+    const bitWorld = BitWorld.make({ width, height });
+    bitWorld.setMAPRule(cgolAsMAP.data);
     bitWorld.forEach((x, y) => {
       if (Math.random() > 0.5) {
         bitWorld.set(x, y);

@@ -27,6 +27,13 @@ export class BitGrid {
     private readonly height: number,
     private readonly uint32array: Uint32Array,
   ) {
+    if (
+      !Number.isInteger(width32) || width32 < 0 || !Number.isInteger(height) ||
+      height < 0
+    ) {
+      throw new Error("width32 and height must be a nonnegative integer");
+    }
+
     if (width32 * height !== uint32array.length) {
       throw new Error(
         `Precondition failed: (width32 * height) ${
@@ -40,6 +47,12 @@ export class BitGrid {
    * Creates a new, empty BitGrid with the specified dimensions.
    */
   static make({ width, height }: { width: number; height: number }): BitGrid {
+    if (
+      !Number.isInteger(width) || width < 0 || !Number.isInteger(height) ||
+      height < 0
+    ) {
+      throw new Error("width and height must be a nonnegative integer");
+    }
     const width32 = Math.ceil(width / 32);
     const len = width32 * height;
     return new BitGrid(width32, height, new Uint32Array(len));

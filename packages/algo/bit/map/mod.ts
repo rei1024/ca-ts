@@ -1,5 +1,5 @@
 /**
- * MAP rule
+ * MAP (Non-isotropic) rule
  */
 export function createMAPNextCell(
   data: (0 | 1)[],
