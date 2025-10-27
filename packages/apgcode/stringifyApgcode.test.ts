@@ -1,9 +1,5 @@
-import { assertEquals, assertThrows } from "@std/assert";
-import {
-  ApgcodeParseError,
-  parseApgcode,
-  parseExtendedWechslerFormat,
-} from "./parseApgcode.ts";
+import { assertEquals } from "@std/assert";
+import { parseApgcode, parseExtendedWechslerFormat } from "./parseApgcode.ts";
 import { type CACell, CACellList } from "../pattern/mod.ts";
 import {
   cellsOffsetZero,
