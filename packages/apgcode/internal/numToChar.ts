@@ -1,8 +1,5 @@
 const ZERO_CODE = "0".charCodeAt(0);
-const NINE_CODE = "9".charCodeAt(0);
 const LOWER_A_CODE = "a".charCodeAt(0);
-const LOWER_V_CODE = "v".charCodeAt(0);
-const LOWER_Z_CODE = "z".charCodeAt(0);
 
 export function numToChar(n: number): string {
   if (!Number.isInteger(n) || n < 0) {
