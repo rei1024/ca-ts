@@ -46,4 +46,13 @@ export const packages: Record<string, {
       "parse",
     ],
   },
+  "apgcode": {
+    npmPackageName: "@rei1024/ca-apgcode",
+    description: "apgcode parser.",
+    keywords: [
+      "cellular-automata",
+      "parse",
+      "apgcode",
+    ],
+  },
 };

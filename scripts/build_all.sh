@@ -39,6 +39,7 @@ build_and_publish() {
 }
 
 # Process each package
+build_and_publish apgcode
 build_and_publish pattern
 build_and_publish rule
 build_and_publish rle
