@@ -45,6 +45,8 @@ export class BitGrid {
 
   /**
    * Creates a new, empty BitGrid with the specified dimensions.
+   *
+   * The width is rounded up to the nearest multiple of 32.
    */
   static make({ width, height }: { width: number; height: number }): BitGrid {
     if (
@@ -380,10 +382,10 @@ export class BitGrid {
     // right and left
     for (let i = 0; i < height; i++) {
       const leftCell = array[getOffset(width, i, 0)]!;
-      const rightCell = array[getOffset(width, i, width - 1)]!;
       if (leftCell >>> 31 === 1) {
         return true;
       }
+      const rightCell = array[getOffset(width, i, width - 1)]!;
       if (rightCell & 1) {
         return true;
       }
@@ -507,6 +509,8 @@ export class BitGrid {
   }
 
   /**
+   * Modifies this BitGrid by performing a bitwise OR operation
+   * with another BitGrid of the same size.
    * @throws not same size
    */
   bitOr(other: BitGrid) {
@@ -518,6 +522,8 @@ export class BitGrid {
   }
 
   /**
+   * Modifies this BitGrid by performing a bitwise AND operation
+   * with another BitGrid of the same size.
    * @throws not same size
    */
   bitAnd(other: BitGrid) {
