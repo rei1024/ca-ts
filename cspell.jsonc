@@ -51,6 +51,7 @@
     "CMOS",
     "neighbourhood",
     "ctrz",
-    "bitmasks"
+    "bitmasks",
+    "Stringifying"
   ]
 }
