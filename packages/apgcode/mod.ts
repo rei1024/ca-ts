@@ -5,6 +5,7 @@
  * See [apgcode](https://conwaylife.com/wiki/Apgcode) for more information.
  *
  * ## Example
+ * Parsing an apgcode string:
  * ```ts
  * import { parseApgcode } from "@ca-ts/apgcode";
  * import { assertEquals } from "@std/assert";
@@ -20,6 +21,26 @@
  *     { x: 1, y: 1 },
  *   ],
  * });
+ * ```
+ *
+ * Stringifying an apgcode object:
+ * ```ts
+ * import { stringifyApgcode } from "@ca-ts/apgcode";
+ * import { assertEquals } from "@std/assert";
+ *
+ * const apgcodeObject = {
+ *   type: "still-life" as const,
+ *   population: 4,
+ *   cells: [
+ *    { x: 0, y: 0 },
+ *    { x: 1, y: 0 },
+ *    { x: 0, y: 1 },
+ *    { x: 1, y: 1 },
+ *  ],
+ * };
+ *
+ * const apgcodeString = stringifyApgcode(apgcodeObject);
+ * assertEquals(apgcodeString, "xs4_33");
  * ```
  *
  * @module
