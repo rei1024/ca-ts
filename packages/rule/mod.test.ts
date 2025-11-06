@@ -67,6 +67,15 @@ Deno.test("stringifyRule INT", () => {
   );
 });
 
+Deno.test("stringifyRule unknwon type error", () => {
+  assertThrows(() => {
+    stringifyRule({
+      // @ts-ignore ignore type error
+      type: "unknown-type",
+    });
+  });
+});
+
 Deno.test("stringifyRule parseRule", () => {
   function assertBack(rule: string) {
     const parsedRule = parseRule(rule);

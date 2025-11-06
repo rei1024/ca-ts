@@ -1,7 +1,8 @@
-## [Unreleased]
+## [0.16.2] - 2025-11-07
 
 ### Changed
 
+- `stringifyRule` throws unknown type.
 - Use `Uint8Array.fromBase64` for MAP rules.
 
 ## [0.16.1] - 2025-10-03
