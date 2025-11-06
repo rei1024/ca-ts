@@ -199,7 +199,8 @@ export function parseRule(ruleString: string): ParsedRule {
  * ```
  */
 export function stringifyRule(rule: ParsedRule): string {
-  switch (rule.type) {
+  const type = rule.type;
+  switch (type) {
     case "int": {
       return stringifyINT(rule);
     }
@@ -211,6 +212,9 @@ export function stringifyRule(rule: ParsedRule): string {
     }
     case "hexagonal-int": {
       return stringifyHexagonalINT(rule);
+    }
+    default: {
+      throw new Error(`Unknown rule type: ${type satisfies never}`);
     }
   }
 }
