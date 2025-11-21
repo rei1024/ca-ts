@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    // 1. ESM形式のインポートを許可し、パスを維持する
+    "module": "NodeNext",
+
+    // 2. モジュール解決戦略をESM（またはハイブリッド）に設定する
+    "moduleResolution": "NodeNext",
+
+    // 3. 型定義ファイルの検索を有効にする
+    //    .jsファイルをインポートした際に、対応する.d.tsを探すようにする
+    "allowJs": true,
+    "checkJs": true,
+
+    // 4. その他の一般的な設定
+    "target": "ES2022", // またはそれ以降
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  }
+}

@@ -4,7 +4,7 @@ const mod = await fetch("../dist/ca_algo_wasm_bg.wasm").then((response) =>
   response.arrayBuffer()
 );
 
-const wasm = initSync(mod);
+const wasm = initSync({ module: mod });
 
 const result = wasm.greet("World");
 console.log("WASM greet result:", result);
