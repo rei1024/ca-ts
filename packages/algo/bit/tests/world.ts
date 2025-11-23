@@ -280,7 +280,7 @@ export class World {
   random({ liveRatio }: { liveRatio?: number } = {}) {
     const array = this.array;
     array.forEach((_, i) => {
-      array[i] = Math.random() < (liveRatio ?? 0.5) ? 0 : 1;
+      array[i] = Math.random() > (liveRatio ?? 0.5) ? 0 : 1;
     });
   }
 
