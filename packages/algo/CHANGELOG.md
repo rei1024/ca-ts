@@ -1,3 +1,9 @@
+## [0.13.3] - 2025-11-23
+
+### Changed
+
+- Fixed `liveRatio` parameter of `RuleLoader.random`
+
 ## [0.13.2] - 2025-10-15
 
 ### Changed

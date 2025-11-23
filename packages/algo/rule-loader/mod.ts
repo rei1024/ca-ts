@@ -85,10 +85,13 @@ export class RuleLoaderWorld {
     this.array[y * this.size.width + x] = state;
   }
 
+  /**
+   * Set random states to cells
+   */
   random({ liveRatio }: { liveRatio?: number } = {}): void {
     const array = this.array;
     array.forEach((_, i) => {
-      array[i] = Math.random() < (liveRatio ?? 0.5) ? 0 : 1;
+      array[i] = Math.random() > (liveRatio ?? 0.5) ? 0 : 1;
     });
   }
 
