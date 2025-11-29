@@ -29,9 +29,15 @@ Deno.test("stringifyApgcode", () => {
 
 // Generate random cells for testing
 function generateRandomCells(
-  count: number,
-  width: number,
-  height: number,
+  {
+    count,
+    width,
+    height,
+  }: {
+    count: number;
+    width: number;
+    height: number;
+  },
 ): { x: number; y: number }[] {
   const cellMap = new Map<string, { x: number; y: number }>();
   const maxCells = width * height;
@@ -74,7 +80,11 @@ Deno.test("stringifyExtendedWechslerFormat and parseExtendedWechslerFormat round
 
 Deno.test("stringifyExtendedWechslerFormat and parseExtendedWechslerFormat roundtrip random", () => {
   for (let i = 0; i < 100; i++) { // Run multiple random tests
-    const randomCells = generateRandomCells(100, 100, 100);
+    const randomCells = generateRandomCells({
+      count: 100,
+      width: 100,
+      height: 100,
+    });
     if (randomCells.length === 0) {
       continue;
     }

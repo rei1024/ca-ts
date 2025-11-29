@@ -10,9 +10,9 @@
   - changed-files:
       - any-glob-to-any-file: "packages/rule-format/*"
 
-"package:rule-rle":
+"package:rle":
   - changed-files:
-      - any-glob-to-any-file: "packages/rule-rle/*"
+      - any-glob-to-any-file: "packages/rle/*"
 
 "package:apgcode":
   - changed-files:
