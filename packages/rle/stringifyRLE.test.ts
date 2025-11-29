@@ -384,6 +384,79 @@ obo$35b3o3b3o29bo$36bo5bo30b2o2$35b2o5b2o$35b2o5b2o!\n`);
   );
 });
 
+// Generate random cells for testing
+function generateRandomCells(
+  {
+    count,
+    width,
+    height,
+    maxState = 1,
+  }: {
+    count: number;
+    width: number;
+    height: number;
+    maxState?: number;
+  },
+): CACell[] {
+  if (maxState < 2) {
+    throw new Error("maxState must be at least 2");
+  }
+
+  const cellMap = new Map<string, CACell>();
+  const maxCells = width * height;
+
+  if (count > maxCells) {
+    count = maxCells;
+  }
+
+  while (cellMap.size < count) {
+    const x = Math.floor(Math.random() * width);
+    const y = Math.floor(Math.random() * height);
+    /**
+     * 1 to maxState - 1
+     */
+    const state = Math.floor(Math.random() * (maxState - 1)) + 1;
+    cellMap.set(`${x},${y}`, { position: { x, y }, state: state });
+  }
+
+  return Array.from(cellMap)
+    .map((s) => {
+      return s[1];
+    })
+    .sort((a, b) => {
+      if (a.position.y !== b.position.y) return a.position.y - b.position.y;
+      return a.position.x - b.position.x;
+    });
+}
+
+Deno.test("stringifyRLE parseRLE roundtrip tests by randomized", () => {
+  for (let i = 0; i < 50; i++) {
+    const randomCells = generateRandomCells({
+      count: 100,
+      width: 50,
+      height: 50,
+      maxState: 255,
+    });
+
+    if (randomCells.length === 0) {
+      continue;
+    }
+
+    const rleObj = {
+      cells: randomCells,
+      comments: [],
+      trailingComment: "",
+      ruleString: "B3/S23",
+      size: null,
+      XRLE: null,
+    };
+
+    const rleString = stringifyRLE(rleObj);
+    const parsedRLE = parseRLE(rleString);
+    assertEquals(parsedRLE.cells, rleObj.cells);
+  }
+});
+
 Deno.test("stringifyRLE 1..255", () => {
   const cells = Array(255).fill(null).map((_, i) => {
     return { position: { x: i, y: 0 }, state: i + 1 };

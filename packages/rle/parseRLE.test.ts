@@ -270,6 +270,33 @@ Deno.test("parseRLE multi state x", () => {
   ]);
 });
 
+Deno.test("parseRLE run count with invalid multi state", () => {
+  // Input: 2pZ o
+  // 1. '2' sets run count n=2.
+  // 2. 'p': The two-char logic runs. It sees 'Z' (invalid c2), falls back to state=1, and decrements the index (i--).
+  // 3. The run count n=2 is applied. Two cells (0,0,1) and (1,0,1) are created. x is now 2.
+  // 4. 'Z' is skipped in the next iteration due to index manipulation.
+  // 5. 'o': A single state 1 cell is created at x=2.
+  const output = parseRLE(`2pZ o`);
+  assertEquals(output.cells.length, 3);
+  assertEquals(output.cells, [
+    { position: { x: 0, y: 0 }, state: 1 }, // from 2pZ (j=0)
+    { position: { x: 1, y: 0 }, state: 1 }, // from 2pZ (j=1)
+    { position: { x: 2, y: 0 }, state: 1 }, // from 'o'
+  ]);
+});
+
+Deno.test("parseRLE count not followed by state", () => {
+  assertThrows(
+    () => {
+      parseRLE(`2o2`);
+    },
+    Error,
+    // TODO: improve error message
+    "Illegal whitespace after count",
+  );
+});
+
 Deno.test("parseRLE !", () => {
   const output = parseRLE(`o!o`);
   assertEquals(output.cells, [
