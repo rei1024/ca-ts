@@ -30,8 +30,8 @@ export function stringifyApgcode(apgcode: Apgcode): string {
 }
 
 export function cellsOffsetZero(
-  cells: { x: number; y: number }[],
-): { x: number; y: number }[] {
+  cells: readonly { x: number; y: number }[],
+): readonly { x: number; y: number }[] {
   if (cells.length === 0) {
     return cells;
   }
@@ -45,7 +45,7 @@ export function cellsOffsetZero(
  * NOTE: this function does not compute minimal representation.
  */
 export function stringifyExtendedWechslerFormat(
-  cells: { x: number; y: number }[],
+  cells: readonly { x: number; y: number }[],
 ): string {
   validate(cells);
 
@@ -110,7 +110,7 @@ export function stringifyExtendedWechslerFormat(
   return strips.join("z").replace(/z*$/, "");
 }
 
-function validate(cells: { x: number; y: number }[]) {
+function validate(cells: readonly { x: number; y: number }[]) {
   let prevCell = undefined;
   for (const cell of cells) {
     if (!Number.isInteger(cell.x) || !Number.isInteger(cell.y)) {
