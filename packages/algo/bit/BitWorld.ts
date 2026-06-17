@@ -16,6 +16,8 @@ function mod(i: number, j: number): number {
 const MOORE_NEIGHBORHOOD = 0;
 const VON_NEUMANN_NEIGHBORHOOD = 1;
 
+let setRuleWarned = false;
+
 /**
  * A optimized simulator for 2-state cellular automata on a 2D grid.
  * It supports various rule types, including Conway's Game of Life, other
@@ -74,9 +76,35 @@ export class BitWorld {
    * @example
    * // HighLife (B36/S23)
    * world.setRule({ birth: [3, 6], survive: [2, 3] });
+   * @deprecated Use `setOuterTotalisticRule` instead.
    */
   setRule(transition: { birth: number[]; survive: number[] } | null) {
+    if (!setRuleWarned) {
+      // deno-lint-ignore no-console
+      console.warn(
+        "BitWorld.setRule is deprecated. Use setOuterTotalisticRule instead.",
+      );
+      setRuleWarned = true;
+    }
     this.nextCell = transition == null || isLifeTransition(transition)
+      ? nextCellConway
+      : createTotalisticNextCell(transition);
+    this.nextVonCell = undefined;
+    this.neighborhood = MOORE_NEIGHBORHOOD;
+  }
+
+  /**
+   * Sets an outer-totalistic rule for the simulation.
+   *
+   * @param transition An object with `birth` and `survive` arrays.
+   * @example
+   * // HighLife (B36/S23)
+   * world.setOuterTotalisticRule({ birth: [3, 6], survive: [2, 3] });
+   */
+  setOuterTotalisticRule(
+    transition: { birth: number[]; survive: number[] },
+  ) {
+    this.nextCell = isLifeTransition(transition)
       ? nextCellConway
       : createTotalisticNextCell(transition);
     this.nextVonCell = undefined;
@@ -229,11 +257,11 @@ export class BitWorld {
   next() {
     switch (this.neighborhood) {
       case MOORE_NEIGHBORHOOD: {
-        this.nextMoore();
+        this._nextMoore();
         break;
       }
       case VON_NEUMANN_NEIGHBORHOOD: {
-        this.nextVon();
+        this._nextVon();
         break;
       }
     }
@@ -243,7 +271,7 @@ export class BitWorld {
    * Advances the simulation to the next generation, updating all cells according
    * to the current rule.
    */
-  private nextMoore() {
+  private _nextMoore() {
     const bitGrid = this._bitGrid;
     const width = bitGrid.getWidth32();
     const height = bitGrid.getHeight();
@@ -279,7 +307,7 @@ export class BitWorld {
    * Advances the simulation to the next generation, updating all cells according
    * to the current rule.
    */
-  private nextVon() {
+  private _nextVon() {
     const bitGrid = this._bitGrid;
     const width = bitGrid.getWidth32();
     const height = bitGrid.getHeight();

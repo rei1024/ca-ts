@@ -71,7 +71,7 @@ import { BitWorld } from "@ca-ts/algo/bit";
 const world = BitWorld.make({ width: 32, height: 32 });
 
 // Set the rule to HighLife (B36/S23)
-world.setRule({ birth: [3, 6], survive: [2, 3] });
+world.setOuterTotalisticRule({ birth: [3, 6], survive: [2, 3] });
 
 world.random();
 

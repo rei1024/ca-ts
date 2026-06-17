@@ -1,3 +1,14 @@
+## [0.14.0] - 2026-06-17
+
+### Deprecation
+
+- `BitWorld.setRule` is deprecated. Use `BitWorld.setOuterTotalisticRule`.
+
+### Changed
+
+- Add `BitGrid.setStateAt`
+- Add `BitGrid.getMaybe`
+
 ## [0.13.3] - 2025-11-23
 
 ### Changed

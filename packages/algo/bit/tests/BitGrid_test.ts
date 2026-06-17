@@ -172,6 +172,12 @@ Deno.test("BitGrid make", () => {
   assertEquals(grid.getHeight(), 32);
 });
 
+Deno.test("BitGrid make large", () => {
+  assertThrows(() => {
+    BitGrid.make({ width: 2 ** 54, height: 1 });
+  });
+});
+
 Deno.test("BitGrid get", () => {
   const grid = BitGrid.make({ width: 32, height: 5 });
   grid.random();
@@ -185,6 +191,14 @@ Deno.test("BitGrid get set unset", () => {
   grid.set(2, 3);
   assertEquals(grid.get(2, 3), 1);
   grid.unset(2, 3);
+  assertEquals(grid.get(2, 3), 0);
+});
+
+Deno.test("BitGrid setTo", () => {
+  const grid = BitGrid.make({ width: 32, height: 5 });
+  grid.setStateAt(2, 3, 1);
+  assertEquals(grid.get(2, 3), 1);
+  grid.setStateAt(2, 3, 0);
   assertEquals(grid.get(2, 3), 0);
 });
 

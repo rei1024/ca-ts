@@ -12,7 +12,7 @@ const height = 32 * 1;
 Deno.bench({ name: "BitWorld cgol", group: "algo" }, () => {
   for (let j = 0; j < N; j++) {
     const bitWorld = BitWorld.make({ width, height });
-    bitWorld.setRule({ birth: [3], survive: [2, 3] });
+    bitWorld.setOuterTotalisticRule({ birth: [3], survive: [2, 3] });
     bitWorld.forEach((x, y) => {
       if (Math.random() > 0.5) {
         bitWorld.set(x, y);
@@ -28,7 +28,7 @@ Deno.bench({ name: "BitWorld cgol", group: "algo" }, () => {
 Deno.bench({ name: "BitWorld outer totalistic", group: "algo" }, () => {
   for (let j = 0; j < N; j++) {
     const bitWorld = BitWorld.make({ width, height });
-    bitWorld.setRule({ birth: [2, 3], survive: [2, 3] });
+    bitWorld.setOuterTotalisticRule({ birth: [2, 3], survive: [2, 3] });
     bitWorld.forEach((x, y) => {
       if (Math.random() > 0.5) {
         bitWorld.set(x, y);

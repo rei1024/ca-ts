@@ -48,7 +48,8 @@ export class BitGrid {
    *
    * The width is rounded up to the nearest multiple of 32.
    */
-  static make({ width, height }: { width: number; height: number }): BitGrid {
+  static make(size: { width: number; height: number }): BitGrid {
+    const { width, height } = size;
     if (
       !Number.isInteger(width) || width < 0 || !Number.isInteger(height) ||
       height < 0
@@ -57,6 +58,11 @@ export class BitGrid {
     }
     const width32 = Math.ceil(width / 32);
     const len = width32 * height;
+    if (len >= 2 ** 54 - 1) {
+      throw new Error(
+        `BitGrid.make: width=${width} height=${height} is too large.`,
+      );
+    }
     return new BitGrid(width32, height, new Uint32Array(len));
   }
 
@@ -104,6 +110,9 @@ export class BitGrid {
     return this.width32 * 32;
   }
 
+  /**
+   * @returns this.getWidth() / 32
+   */
   getWidth32(): number {
     return this.width32;
   }
@@ -171,6 +180,20 @@ export class BitGrid {
   }
 
   /**
+   * Sets the cell at the specified coordinates (x, y) to the given state (0 or 1).
+   * @param x - X-coordinate (0 to width-1).
+   * @param y - Y-coordinate (0 to height-1).
+   * @param state - The state to set (0 for dead, 1 for alive).
+   */
+  setStateAt(x: number, y: number, state: 0 | 1) {
+    if (state === 1) {
+      this.set(x, y);
+    } else {
+      this.unset(x, y);
+    }
+  }
+
+  /**
    * Sets multiple cells to "alive" (1).
    * @param positions - An array of `{x, y}` coordinates to set.
    */
@@ -182,9 +205,10 @@ export class BitGrid {
 
   /**
    * Gets the state of the cell at the specified coordinates (x, y).
+   * @throws {RangeError} If the coordinates are out of bounds.
    */
   get(x: number, y: number): 0 | 1 {
-    const res = this.getSafe(x, y);
+    const res = this.getMaybe(x, y);
     if (res === null) {
       throw new RangeError(`BitGrid.get out of range x=${x} y=${y}`);
     }
@@ -193,12 +217,16 @@ export class BitGrid {
 
   /**
    * Gets the state of the cell at the specified coordinates (x, y).
+   * @throws {RangeError} If the coordinates are out of bounds.
    */
   getByPosition(position: { x: number; y: number }): 0 | 1 {
     return this.get(position.x, position.y);
   }
 
-  private getSafe(x: number, y: number): 0 | 1 | null {
+  /**
+   * returns null if out of bounds
+   */
+  getMaybe(x: number, y: number): 0 | 1 | null {
     const offset = x >>> 5; // = Math.floor(x / 32)
     const width32 = this.width32;
     if (x < 0 || width32 * 32 <= x || y < 0 || this.height <= y) {
@@ -639,7 +667,7 @@ export class BitGrid {
 
     this.forEachAliveWithBreak((x, y) => {
       // if out of range, treat as blank space
-      if (other.getSafe(x + dx, y + dy) !== 1) {
+      if (other.getMaybe(x + dx, y + dy) !== 1) {
         match = false;
         return true; // break
       }
