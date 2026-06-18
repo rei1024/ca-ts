@@ -3,6 +3,7 @@
 ### Deprecation
 
 - `BitWorld.setRule` is deprecated. Use `BitWorld.setOuterTotalisticRule`.
+- `BitGrid.getWidth32` is deprecated. Use `BitGrid.getInternalUint32ArrayWidth`.
 
 ### Changed
 

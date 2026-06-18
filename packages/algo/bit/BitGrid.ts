@@ -73,8 +73,7 @@ export class BitGrid {
   }
 
   /**
-   * Fills the grid with pseudo-random bit values using cryptographic
-   * security where available, otherwise falls back to Math.random.
+   * Fills the grid with random bit values.
    */
   random() {
     const array = this.uint32array;
@@ -112,8 +111,16 @@ export class BitGrid {
 
   /**
    * @returns this.getWidth() / 32 (number of 32-bit words per row)
+   * @deprecated Use {@link getInternalArrayWidth} instead.
    */
   getWidth32(): number {
+    return this.width32;
+  }
+
+  /**
+   * @returns this.getWidth() / 32 (number of 32-bit words per row)
+   */
+  getInternalUint32ArrayWidth(): number {
     return this.width32;
   }
 
@@ -324,7 +331,8 @@ export class BitGrid {
   }
 
   /**
-   * Checks for the presence of live cells on the physical boundaries.
+   * Checks for the presence of live cells on the boundaries of the grid.
+   * @returns An object indicating if cells are alive on the left, right, top, and bottom borders.
    */
   borderAlive(): {
     left: boolean;
@@ -548,14 +556,18 @@ export class BitGrid {
   ): BitGrid {
     const { expand, offset } = options;
     if (expand.x < 0 || expand.y < 0) {
-      throw new RangeError("expand.x and expand.y must be non-negative");
+      throw new RangeError(
+        "BitGrid.expanded: expand.x and expand.y must be non-negative",
+      );
     }
 
     const offsetX = offset?.x ?? 0;
     const offsetY = offset?.y ?? 0;
 
     if (offsetX % 32 !== 0) {
-      throw new RangeError("offsetX must be a multiple of 32");
+      throw new RangeError(
+        "BitGrid.expanded: offset.x must be a multiple of 32",
+      );
     }
 
     // use arithmetic shift to get word offset even for negative offsetX
@@ -567,8 +579,8 @@ export class BitGrid {
     const array = this.asInternalUint32Array();
     const newArray = newGrid.asInternalUint32Array();
 
-    const newWidth32 = newGrid.getWidth32();
-    const currentWidth32 = this.getWidth32();
+    const newWidth32 = newGrid.getInternalUint32ArrayWidth();
+    const currentWidth32 = this.getInternalUint32ArrayWidth();
     const currentHeight = this.height;
 
     for (let i = 0; i < currentHeight; i++) {
@@ -588,7 +600,7 @@ export class BitGrid {
    */
   getTopRowLeftCellPosition(): { x: number; y: number } | null {
     const height = this.getHeight();
-    const width32 = this.getWidth32();
+    const width32 = this.getInternalUint32ArrayWidth();
     const array = this.asInternalUint32Array();
     const BITS = 32;
     for (let i = 0; i < height; i++) {

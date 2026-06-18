@@ -273,19 +273,19 @@ export class BitWorld {
    */
   private _nextMoore() {
     const bitGrid = this._bitGrid;
-    const width = bitGrid.getWidth32();
+    const arrayWidth = bitGrid.getInternalUint32ArrayWidth();
     const height = bitGrid.getHeight();
     const array = bitGrid.asInternalUint32Array();
     const next = this.nextCell;
 
     const tempArray = this.tempArray;
     for (let i = 0; i < height; i++) {
-      const up = mod(i - 1, height) * width;
-      const middle = i * width;
-      const down = ((i + 1) % height) * width;
-      for (let j = 0; j < width; j++) {
-        const left = j === 0 ? width - 1 : (j - 1) % width;
-        const right = (j + 1) % width;
+      const up = mod(i - 1, height) * arrayWidth;
+      const middle = i * arrayWidth;
+      const down = ((i + 1) % height) * arrayWidth;
+      for (let j = 0; j < arrayWidth; j++) {
+        const left = j === 0 ? arrayWidth - 1 : (j - 1) % arrayWidth;
+        const right = (j + 1) % arrayWidth;
         const ne = array[up + left]!;
         const n = array[up + j]!;
         const nw = array[up + right]!;
@@ -309,7 +309,7 @@ export class BitWorld {
    */
   private _nextVon() {
     const bitGrid = this._bitGrid;
-    const width = bitGrid.getWidth32();
+    const arrayWidth = bitGrid.getInternalUint32ArrayWidth();
     const height = bitGrid.getHeight();
     const array = bitGrid.asInternalUint32Array();
     const next = this.nextVonCell;
@@ -319,12 +319,12 @@ export class BitWorld {
 
     const tempArray = this.tempArray;
     for (let i = 0; i < height; i++) {
-      const up = mod(i - 1, height) * width;
-      const middle = i * width;
-      const down = ((i + 1) % height) * width;
-      for (let j = 0; j < width; j++) {
-        const left = j === 0 ? width - 1 : (j - 1) % width;
-        const right = (j + 1) % width;
+      const up = mod(i - 1, height) * arrayWidth;
+      const middle = i * arrayWidth;
+      const down = ((i + 1) % height) * arrayWidth;
+      for (let j = 0; j < arrayWidth; j++) {
+        const left = j === 0 ? arrayWidth - 1 : (j - 1) % arrayWidth;
+        const right = (j + 1) % arrayWidth;
         const n = array[up + j]!;
         const w = array[middle + right]!;
         const e = array[middle + left]!;
