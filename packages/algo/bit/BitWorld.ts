@@ -142,6 +142,12 @@ export class BitWorld {
 
   /**
    * Set von Neumann neighbourhood outer totalistic rule
+   * @example
+   * // B13/S012V
+   * world.setVonNeumannOTRule({
+   *   birth: [1, 3],
+   *   survive: [0, 1, 2],
+   * });
    */
   setVonNeumannOTRule(transition: { birth: number[]; survive: number[] }) {
     this.nextVonCell = createVonNeumannNextCell(transition);
