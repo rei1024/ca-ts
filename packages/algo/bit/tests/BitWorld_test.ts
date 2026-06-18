@@ -53,7 +53,7 @@ Deno.test("BitWorld is correct OT rule", () => {
   };
   const size = { width: 32 * 2, height: 32 };
   const bitWorld = BitWorld.make(size);
-  bitWorld.setRule(transition);
+  bitWorld.setOuterTotalisticRule(transition);
   const world = World.make(size);
   world.setOTRule(transition);
   randomCheck(bitWorld, world, 50);
@@ -106,7 +106,7 @@ Deno.test("BitWorld is correct MAP rule", () => {
 
 Deno.test("BitWorld is correct transition", () => {
   const bitWorld = BitWorld.make({ width: 32 * 1, height: 32 });
-  bitWorld.setRule({
+  bitWorld.setOuterTotalisticRule({
     birth: [3],
     survive: [2, 3],
   });

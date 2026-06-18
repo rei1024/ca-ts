@@ -30,7 +30,7 @@ Deno.test("BitGrid construct", () => {
 Deno.test("BitGrid", () => {
   const grid = BitGrid.make({ width: 32, height: 32 });
   assertEquals(grid.getWidth(), 32);
-  assertEquals(grid.getWidth32(), 1);
+  assertEquals(grid.getInternalUint32ArrayWidth(), 1);
   assertEquals(grid.getHeight(), 32);
   assertEquals(grid.getPopulation(), 0);
   assertEquals(grid.hasAliveCellAtBorder(), false);
@@ -168,8 +168,14 @@ Deno.test("BitGrid forEach", () => {
 Deno.test("BitGrid make", () => {
   const grid = BitGrid.make({ width: 48, height: 32 });
   assertEquals(grid.getWidth(), 64);
-  assertEquals(grid.getWidth32(), 2);
+  assertEquals(grid.getInternalUint32ArrayWidth(), 2);
   assertEquals(grid.getHeight(), 32);
+});
+
+Deno.test("BitGrid make large", () => {
+  assertThrows(() => {
+    BitGrid.make({ width: 2 ** 54, height: 1 });
+  });
 });
 
 Deno.test("BitGrid get", () => {
@@ -185,6 +191,14 @@ Deno.test("BitGrid get set unset", () => {
   grid.set(2, 3);
   assertEquals(grid.get(2, 3), 1);
   grid.unset(2, 3);
+  assertEquals(grid.get(2, 3), 0);
+});
+
+Deno.test("BitGrid setStateAt", () => {
+  const grid = BitGrid.make({ width: 32, height: 5 });
+  grid.setStateAt(2, 3, 1);
+  assertEquals(grid.get(2, 3), 1);
+  grid.setStateAt(2, 3, 0);
   assertEquals(grid.get(2, 3), 0);
 });
 

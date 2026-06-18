@@ -11,10 +11,10 @@ const getOffset = (width32: number, iHeight: number, jWidth: number) => {
 };
 
 /**
- * A 2D bit array class designed for speed, typically used
- * for cellular automata or dense boolean grids.
- * Data is stored internally as a flat Uint32Array, using bitwise operations
- * to manipulate individual cells (bits).
+ * A 2D bit array class designed for high-performance grid manipulation,
+ * typically used for cellular automata (Conway's Game of Life) or dense boolean maps.
+ * Data is stored internally as a flat Uint32Array, using MSB-0 bit indexing
+ * (the leftmost column coordinate corresponds to the most significant bit).
  */
 export class BitGrid {
   /**
@@ -45,10 +45,10 @@ export class BitGrid {
 
   /**
    * Creates a new, empty BitGrid with the specified dimensions.
-   *
-   * The width is rounded up to the nearest multiple of 32.
+   * The actual internal width is rounded up to the nearest multiple of 32.
    */
-  static make({ width, height }: { width: number; height: number }): BitGrid {
+  static make(size: { width: number; height: number }): BitGrid {
+    const { width, height } = size;
     if (
       !Number.isInteger(width) || width < 0 || !Number.isInteger(height) ||
       height < 0
@@ -57,6 +57,11 @@ export class BitGrid {
     }
     const width32 = Math.ceil(width / 32);
     const len = width32 * height;
+    if (len >= 2 ** 53 - 1) { // JavaScript Max Safe Integer check
+      throw new Error(
+        `BitGrid.make: width=${width} height=${height} requires an allocation size too large.`,
+      );
+    }
     return new BitGrid(width32, height, new Uint32Array(len));
   }
 
@@ -72,11 +77,11 @@ export class BitGrid {
    */
   random() {
     const array = this.uint32array;
-    if (crypto.getRandomValues) {
+    if (typeof crypto !== "undefined" && crypto.getRandomValues) {
       crypto.getRandomValues(array);
     } else {
       const len = array.length;
-      const max = Math.pow(2, 32);
+      const max = 4294967296; // 2^32
       for (let i = 0; i < len; i++) {
         array[i] = Math.floor(Math.random() * max);
       }
@@ -98,13 +103,24 @@ export class BitGrid {
   }
 
   /**
-   * Gets the total width of the grid.
+   * Gets the maximum capacity width of the grid (always a multiple of 32).
    */
   getWidth(): number {
     return this.width32 * 32;
   }
 
+  /**
+   * @returns this.getWidth() / 32 (number of 32-bit words per row)
+   * @deprecated Use {@link getInternalArrayWidth} instead.
+   */
   getWidth32(): number {
+    return this.width32;
+  }
+
+  /**
+   * @returns this.getWidth() / 32 (number of 32-bit words per row)
+   */
+  getInternalUint32ArrayWidth(): number {
     return this.width32;
   }
 
@@ -116,58 +132,54 @@ export class BitGrid {
   }
 
   /**
-   * Gets the dimensions of the grid.
+   * Gets the actual dimensions of the grid capacity.
    */
   getSize(): { width: number; height: number } {
     return { width: this.getWidth(), height: this.height };
   }
 
   /**
-   * Sets the cell at the specified coordinates (x, y) to "alive" (1).
+   * Sets the cell at coordinates (x, y) to "alive" (1).
    * @param x - X-coordinate (0 to width-1).
    * @param y - Y-coordinate (0 to height-1).
    */
   set(x: number, y: number) {
     const width32 = this.width32;
-    if (x < 0 || width32 * 32 <= x || y < 0 || this.height <= y) {
-      throw new RangeError(
-        `BitGrid.set x=${x} y=${y}`,
-      );
+    if (x < 0 || (width32 << 5) <= x || y < 0 || this.height <= y) {
+      throw new RangeError(`BitGrid.set x=${x} y=${y} is out of bounds.`);
     }
-    const offset = x >>> 5; // = Math.floor(x / 32)
+    const offset = x >>> 5; // Math.floor(x / 32)
     const index = y * width32 + offset;
     const array = this.uint32array;
-    if (array.length <= index) {
-      throw new RangeError(
-        `BitGrid.set array.length=${array.length} index=${index} x=${x} y=${y}`,
-      );
-    }
-    array[index] = array[index]! | (1 << (31 - (x % 32)));
+    array[index] = array[index]! | (1 << (31 - (x & 31)));
   }
 
   /**
-   * Sets the cell at the specified coordinates (x, y) to "dead" (0).
+   * Sets the cell at coordinates (x, y) to "dead" (0).
    * @param x - X-coordinate (0 to width-1).
    * @param y - Y-coordinate (0 to height-1).
    */
   unset(x: number, y: number) {
     const width32 = this.width32;
-    if (x < 0 || width32 * 32 <= x || y < 0 || this.height <= y) {
-      throw new RangeError(
-        `BitGrid.unset out of range x=${x} y=${y}`,
-      );
+    if (x < 0 || (width32 << 5) <= x || y < 0 || this.height <= y) {
+      throw new RangeError(`BitGrid.unset x=${x} y=${y} is out of bounds.`);
     }
-    const offset = x >>> 5; // = Math.floor(x / 32)
+    const offset = x >>> 5;
     const index = y * width32 + offset;
     const array = this.uint32array;
-    if (array.length <= index) {
-      throw new RangeError(
-        `BitGrid.unset array.length=${array.length} index=${index} x=${x} y=${y}`,
-      );
-    }
-
-    const mask = 1 << (31 - (x % 32));
+    const mask = 1 << (31 - (x & 31));
     array[index] = array[index]! & ~mask;
+  }
+
+  /**
+   * Sets the cell at coordinates (x, y) to the given state (0 or 1).
+   */
+  setStateAt(x: number, y: number, state: 0 | 1) {
+    if (state === 1) {
+      this.set(x, y);
+    } else {
+      this.unset(x, y);
+    }
   }
 
   /**
@@ -182,9 +194,10 @@ export class BitGrid {
 
   /**
    * Gets the state of the cell at the specified coordinates (x, y).
+   * @throws {RangeError} If the coordinates are out of bounds.
    */
   get(x: number, y: number): 0 | 1 {
-    const res = this.getSafe(x, y);
+    const res = this.getMaybe(x, y);
     if (res === null) {
       throw new RangeError(`BitGrid.get out of range x=${x} y=${y}`);
     }
@@ -192,35 +205,33 @@ export class BitGrid {
   }
 
   /**
-   * Gets the state of the cell at the specified coordinates (x, y).
+   * Gets the state of the cell using a coordinate object.
    */
   getByPosition(position: { x: number; y: number }): 0 | 1 {
     return this.get(position.x, position.y);
   }
 
-  private getSafe(x: number, y: number): 0 | 1 | null {
-    const offset = x >>> 5; // = Math.floor(x / 32)
+  /**
+   * Returns state (0 or 1) of the coordinates, or null if coordinates are out of bounds.
+   */
+  getMaybe(x: number, y: number): 0 | 1 | null {
     const width32 = this.width32;
-    if (x < 0 || width32 * 32 <= x || y < 0 || this.height <= y) {
+    if (x < 0 || (width32 << 5) <= x || y < 0 || this.height <= y) {
       return null;
     }
+    const offset = x >>> 5;
     const index = y * width32 + offset;
     const array = this.uint32array;
-    if (array.length <= index) {
-      throw new RangeError(
-        `BitGrid.get array.length=${array.length} index=${index} x=${x} y=${y}`,
-      );
-    }
-
-    return (array[index]! & (1 << (31 - (x % 32)))) === 0 ? 0 : 1;
+    return (array[index]! & (1 << (31 - (x & 31)))) === 0 ? 0 : 1;
   }
 
   /**
-   * Returns the entire grid as a 2D array of 0s and 1s.
+   * Converts the entire internal bit-grid into an accessible 2D Array of 0s and 1s.
    */
   getArray(): (0 | 1)[][] {
     const width = this.getWidth();
-    const array: (0 | 1)[][] = Array(this.getHeight())
+    const height = this.height;
+    const array: (0 | 1)[][] = Array(height)
       .fill(0)
       .map(() =>
         Array(width)
@@ -236,14 +247,14 @@ export class BitGrid {
   }
 
   /**
-   * Iterates over all cells in the grid, calling the provided function for each cell.
+   * Iterates over all cells in the grid, calling the callback.
    */
   forEach(fn: (x: number, y: number, alive: 0 | 1) => void) {
     const width = this.width32;
     const height = this.height;
     const array = this.uint32array;
     const BITS = 32;
-    const BITS_MINUS_1 = BITS - 1;
+    const BITS_MINUS_1 = 31;
     for (let i = 0; i < height; i++) {
       const rowIndex = i * width;
       for (let j = 0; j < width; j++) {
@@ -490,15 +501,12 @@ export class BitGrid {
       this.width32 !== otherBitGrid.width32 ||
       this.height !== otherBitGrid.height
     ) {
-      throw TypeError(name + ": different grid size");
+      throw new TypeError(`${name}: grids must have identical dimensions`);
     }
   }
 
   /**
-   * Checks if this BitGrid is equal to another BitGrid.  Two BitGrids are considered
-   * equal if they have the same dimensions and the same cell values.
-   *
-   * @throws {TypeError} If the dimensions of the two BitGrids are different.
+   * Check structural and data equality.
    */
   equal(otherBitGrid: BitGrid): boolean {
     this.assertSameSize("BitGrid.equal", otherBitGrid);
@@ -535,14 +543,10 @@ export class BitGrid {
   }
 
   /**
-   * Creates a new, larger BitGrid by expanding the current grid's boundaries
-   * and copying the existing pattern into the new space, optionally applying an offset.
+   * Creates a larger grid and copies the current pattern.
    *
-   * NOTE: `offsetX` must be a multiple of 32 (a full word offset).
-   *
-   * @returns The new, expanded BitGrid instance.
-   * @throws {RangeError} If `expand` values are negative, `offsetX` is not a multiple of 32,
-   * or if the resulting copy would go out of bounds of the new grid.
+   * @param options.expand - The amount to expand grid size by (must be non-negative).
+   * @param options.offset - Absolute offsets (where offset.x must be a multiple of 32).
    */
   expanded(
     options: {
@@ -552,14 +556,18 @@ export class BitGrid {
   ): BitGrid {
     const { expand, offset } = options;
     if (expand.x < 0 || expand.y < 0) {
-      throw new RangeError("expandX and expandY must be non-negative");
+      throw new RangeError(
+        "BitGrid.expanded: expand.x and expand.y must be non-negative",
+      );
     }
 
     const offsetX = offset?.x ?? 0;
     const offsetY = offset?.y ?? 0;
 
     if (offsetX % 32 !== 0) {
-      throw new RangeError("offsetX must be a multiple of 32");
+      throw new RangeError(
+        "BitGrid.expanded: offset.x must be a multiple of 32",
+      );
     }
 
     // use arithmetic shift to get word offset even for negative offsetX
@@ -571,8 +579,8 @@ export class BitGrid {
     const array = this.asInternalUint32Array();
     const newArray = newGrid.asInternalUint32Array();
 
-    const newWidth32 = newGrid.getWidth32();
-    const currentWidth32 = this.getWidth32();
+    const newWidth32 = newGrid.getInternalUint32ArrayWidth();
+    const currentWidth32 = this.getInternalUint32ArrayWidth();
     const currentHeight = this.height;
 
     for (let i = 0; i < currentHeight; i++) {
@@ -592,7 +600,7 @@ export class BitGrid {
    */
   getTopRowLeftCellPosition(): { x: number; y: number } | null {
     const height = this.getHeight();
-    const width32 = this.getWidth32();
+    const width32 = this.getInternalUint32ArrayWidth();
     const array = this.asInternalUint32Array();
     const BITS = 32;
     for (let i = 0; i < height; i++) {
@@ -615,8 +623,8 @@ export class BitGrid {
   }
 
   /**
-   * Checks if this BitGrid has the same pattern as another BitGrid,
-   * ignoring translation (position).
+   * Normalizes translational coordinates and validates structural identity
+   * ignoring global grid coordinate translation.
    */
   isSamePatternIgnoreTranslation(other: BitGrid): boolean {
     const aPopulation = this.getPopulation();
@@ -638,14 +646,13 @@ export class BitGrid {
     let match = true;
 
     this.forEachAliveWithBreak((x, y) => {
-      // if out of range, treat as blank space
-      if (other.getSafe(x + dx, y + dy) !== 1) {
+      if (other.getMaybe(x + dx, y + dy) !== 1) {
         match = false;
-        return true; // break
+        return true; // Exits iteration early
       }
       return false;
     });
-    if (!match) return false;
+
     return match;
   }
 }

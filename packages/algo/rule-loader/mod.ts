@@ -96,8 +96,9 @@ export class RuleLoaderWorld {
   }
 
   forEach(fn: (x: number, y: number, state: number) => void) {
-    const width = this.size.width;
-    const height = this.size.height;
+    const size = this.size;
+    const width = size.width;
+    const height = size.height;
     const array = this.array;
     for (let i = 0; i < height; i++) {
       const offset = i * width;

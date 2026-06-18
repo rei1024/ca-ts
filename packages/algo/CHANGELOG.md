@@ -1,3 +1,15 @@
+## [0.14.0] - 2026-06-17
+
+### Deprecation
+
+- `BitWorld.setRule` is deprecated. Use `BitWorld.setOuterTotalisticRule`.
+- `BitGrid.getWidth32` is deprecated. Use `BitGrid.getInternalUint32ArrayWidth`.
+
+### Changed
+
+- Add `BitGrid.setStateAt`
+- Add `BitGrid.getMaybe`
+
 ## [0.13.3] - 2025-11-23
 
 ### Changed
