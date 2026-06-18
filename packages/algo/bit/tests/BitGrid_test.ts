@@ -144,16 +144,49 @@ Deno.test("BitGrid outerIsAlive", () => {
 
 Deno.test("BitGrid forEachAlive", () => {
   const grid = BitGrid.make({ width: 64, height: 64 });
-  let count = 0;
-  grid.forEachAlive(() => {
-    count++;
+
+  const cells: { x: number; y: number }[] = [];
+  grid.forEachAlive((x, y) => {
+    cells.push({ x, y });
   });
-  assertEquals(count, 0);
+
+  assertEquals(cells, []);
+  cells.length = 0;
   grid.set(0, 0);
-  grid.forEachAlive(() => {
-    count++;
+  grid.forEachAlive((x, y) => {
+    cells.push({ x, y });
   });
-  assertEquals(count, 1);
+  assertEquals(cells, [{ x: 0, y: 0 }]);
+  cells.length = 0;
+  grid.set(17, 22);
+  grid.forEachAlive((x, y) => {
+    cells.push({ x, y });
+  });
+  assertEquals(cells, [{ x: 0, y: 0 }, { x: 17, y: 22 }]);
+  cells.length = 0;
+  grid.set(17, 23);
+  grid.set(33, 33);
+  grid.forEachAlive((x, y) => {
+    cells.push({ x, y });
+  });
+  assertEquals(cells, [
+    { x: 0, y: 0 },
+    { x: 17, y: 22 },
+    { x: 17, y: 23 },
+    { x: 33, y: 33 },
+  ]);
+});
+
+Deno.test("BitGrid forEachAlive correct", () => {
+  for (let i = 0; i < 10; i++) {
+    const grid = BitGrid.make({ width: 64, height: 64 });
+    grid.random();
+    let count = 0;
+    grid.forEachAlive(() => {
+      count++;
+    });
+    assertEquals(count, grid.getPopulation());
+  }
 });
 
 Deno.test("BitGrid forEach", () => {

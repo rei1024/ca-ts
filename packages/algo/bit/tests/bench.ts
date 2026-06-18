@@ -2,6 +2,7 @@ import { TEST_MAP_CGOL } from "../../../rule/lib/map/parse-map.test.ts";
 import { parseRule } from "@ca-ts/rule";
 import { BitWorld } from "../mod.ts";
 import { World } from "./world.ts";
+import { BitGrid } from "../BitGrid.ts";
 
 const N = 1;
 const M = 262;
@@ -201,5 +202,13 @@ Deno.bench({ name: "Prim const", group: "prim" }, () => {
   const min = Math.min;
   for (let i = 0; i < 10000000; i++) {
     x = min(x, y);
+  }
+});
+
+Deno.bench({ name: "BitGrid forEachAlive", group: "forEachAlive" }, () => {
+  const bitGrid = BitGrid.make({ width, height });
+  bitGrid.random();
+  for (let j = 0; j < N; j++) {
+    bitGrid.forEachAlive(() => {});
   }
 });
