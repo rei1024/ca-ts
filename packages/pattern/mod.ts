@@ -25,5 +25,6 @@
  * @module
  */
 export type { CACell, Position } from "./types.ts";
+export { Pos } from "./position.ts";
 export { CACellList } from "./ca-cell-list.ts";
 export { BoundingRect } from "./bounding-rect.ts";
