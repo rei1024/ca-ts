@@ -42,11 +42,11 @@ export class Pos {
     pos: Position,
     axisX: number | { between: { x0: number; x1: number } },
   ): Position {
-    const dobulex = typeof axisX === "number"
+    const doubleX = typeof axisX === "number"
       ? axisX * 2
       : (axisX.between.x0 + axisX.between.x1);
 
-    return { x: dobulex - pos.x, y: pos.y };
+    return { x: doubleX - pos.x, y: pos.y };
   }
 
   /**
@@ -57,11 +57,11 @@ export class Pos {
     pos: Position,
     axisY: number | { between: { y0: number; y1: number } },
   ): Position {
-    const dobuleY = typeof axisY === "number"
+    const doubleY = typeof axisY === "number"
       ? axisY * 2
       : (axisY.between.y0 + axisY.between.y1);
 
-    return { x: pos.x, y: dobuleY - pos.y };
+    return { x: pos.x, y: doubleY - pos.y };
   }
 
   /** Calculates the dot product of two position vectors (`a · b`). */
