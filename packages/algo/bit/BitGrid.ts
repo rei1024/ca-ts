@@ -303,7 +303,7 @@ export class BitGrid {
    * Iterates over only the "alive" cells in the grid, calling the provided function
    * for each alive cell. If the function returns true, the iteration stops.
    */
-  private forEachAliveWithBreak(isBreak: (x: number, y: number) => boolean) {
+  forEachAliveWithBreak(isBreak: (x: number, y: number) => boolean) {
     const width = this.width32;
     const height = this.height;
     const array = this.uint32array;
