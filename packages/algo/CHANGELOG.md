@@ -1,3 +1,9 @@
+## [0.14.1] - 2026-07-21
+
+### Changed
+
+- Add `BitGrid.forEachAliveWithBreak`.
+
 ## [0.14.0] - 2026-06-17
 
 ### Deprecation

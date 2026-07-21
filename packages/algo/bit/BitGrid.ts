@@ -303,7 +303,7 @@ export class BitGrid {
    * Iterates over only the "alive" cells in the grid, calling the provided function
    * for each alive cell. If the function returns true, the iteration stops.
    */
-  private forEachAliveWithBreak(isBreak: (x: number, y: number) => boolean) {
+  forEachAliveWithBreak(isBreak: (x: number, y: number) => boolean) {
     const width = this.width32;
     const height = this.height;
     const array = this.uint32array;
@@ -654,24 +654,5 @@ export class BitGrid {
     });
 
     return match;
-  }
-
-  setCombine(
-    other: BitGrid,
-    combineFn: (a: 0 | 1, b: 0 | 1) => 0 | 1,
-    convertOther: (pos: { x: number; y: number }) => { x: number; y: number },
-    rect: { x: number; y: number; width: number; height: number },
-  ) {
-    const { x, y, width, height } = rect;
-    for (let i = 0; i < height; i++) {
-      for (let j = 0; j < width; j++) {
-        const a = this.getMaybe(x + j, y + i) ?? 0;
-
-        const pos = convertOther({ x: x + j, y: y + i });
-        const b = other.getMaybe(pos.x, pos.y) ?? 0;
-        const newState = combineFn(a, b);
-        this.setStateAt(x + j, y + i, newState);
-      }
-    }
   }
 }
